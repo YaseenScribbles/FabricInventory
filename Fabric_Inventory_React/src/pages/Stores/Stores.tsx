@@ -1,59 +1,66 @@
 import { Button, Container, Spinner, Table } from "react-bootstrap";
-import "./Users.css";
+import Heading from "../../components/Heading";
 import { useEffect, useState } from "react";
+import AddStore from "./AddStore";
 import axios from "axios";
 import { LOCAL_URL } from "../../assets/common";
 import { useNotificationContext } from "../../contexts/NotificationsContext";
-import "boxicons";
-import AddUser from "./AddUserModal";
-import EditUser from "./EditUserModal";
+import EditStore from "./EditStore";
+import { useUserContext } from "../../contexts/UserContext";
 import MyPagination from "../../components/Pagination";
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            // Define box-icon as a custom element
-            "box-icon": any; // You can refine this type if you have more information about it
-        }
-    }
+import "./stores.css";
+
+interface Store {
+    id: number;
+    code: string;
+    name: string;
+    supervisor?: string;
+    phone?: string;
+    active: string;
+    user: {
+        name: string;
+    };
 }
 
-export const Users: React.FC = () => {
-    interface User {
-        id: number;
-        name: string;
-        email: string;
-        role: string;
-        active?: string;
-    }
+interface Meta {
+    currentPage: number;
+    lastPage: number;
+}
 
-    interface Meta {
-        currentPage: number;
-        lastPage: number;
-    }
-
-    const [users, setUsers] = useState<User[]>([]);
+const Stores: React.FC = () => {
+    const [stores, setStores] = useState<Store[]>([]);
     const [loading, setLoading] = useState(false);
-    const { setNotifications } = useNotificationContext();
-    const [showAddUser, setShowAddUser] = useState(false);
-    const [showEditUser, setShowEditUser] = useState(false);
-    const [editUser, setEditUser] = useState<User>({
+    const [showAddStoreModal, setShowAddStoreModal] = useState(false);
+    const [showEditStoreModal, setShowEditStoreModal] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [editStore, setEditStore] = useState<Store>({
         id: 0,
+        code: "",
         name: "",
-        email: "",
-        role: "",
+        supervisor: "",
+        phone: "",
+        active: "",
+        user: {
+            name: "",
+        },
     });
     const [meta, setMeta] = useState<Meta>({
         currentPage: 1,
         lastPage: 1,
     });
-    const [currentPage, setCurrentPage] = useState(1);
+    const { setNotifications } = useNotificationContext();
+    const { user } = useUserContext();
 
-    const getUsers = async (page: number = 1) => {
+    useEffect(() => {
+        getStores();
+    }, []);
+
+    const getStores = async (page: number = 1) => {
         setLoading(true);
 
         try {
             const response = await axios.get(
-                `${LOCAL_URL}/users?page=${page}`,
+                `${LOCAL_URL}/stores?page=${page}`,
                 {
                     headers: {
                         Accept: "application/json",
@@ -62,7 +69,7 @@ export const Users: React.FC = () => {
             );
 
             const { data } = response;
-            setUsers(data.data);
+            setStores(data.data);
             setMeta({
                 lastPage: data.meta.last_page,
                 currentPage: data.meta.current_page,
@@ -78,16 +85,16 @@ export const Users: React.FC = () => {
         }
     };
 
-    const suspendUser = async (id: number) => {
+    const suspendStore = async (id: number) => {
         setLoading(true);
         try {
-            const response = await axios.delete(`${LOCAL_URL}/users/${id}`);
+            const response = await axios.delete(`${LOCAL_URL}/stores/${id}`);
             const { data } = response;
             setNotifications({
                 message: data.message,
                 result: "success",
             });
-            getUsers(currentPage);
+            getStores(currentPage);
         } catch (error: any) {
             const { response } = error;
             setNotifications({
@@ -99,61 +106,53 @@ export const Users: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        getUsers(1);
-    }, []);
-
     return (
-        <Container id="users" className="p-2">
+        <Container id="stores" className="p-2">
             {loading && (
                 <div className="text-center">
                     <Spinner animation="grow" variant="secondary" />
                 </div>
             )}
-            <div className="d-flex justify-content-between align-items-center mt-2">
-                <h4 className="me-auto">Users</h4>
-                <div
-                    className="border border-1 p-2 d-flex justify-content-around text-bg-success"
-                    onClick={() => setShowAddUser(true)}
-                    style={{ cursor: "pointer" }}
-                >
-                    <box-icon name="plus" color="white"></box-icon>
-                    &nbsp; Add User
-                </div>
-            </div>
-            <hr />
+            <Heading
+                title="Stores"
+                buttonText="Add Store"
+                onClick={() => setShowAddStoreModal(true)}
+            />
             <Table striped bordered hover>
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>Code</th>
                         <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
+                        <th>Supervisor</th>
+                        <th>Phone</th>
+                        <th>Created By</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user, i) => {
-                        let serialNumber: number =
-                            (currentPage - 1) * 10 + i + 1;
+                    {stores.map((store, index) => {
+                        let serialNo = (currentPage - 1) * 10 + index + 1;
+
                         return (
-                            <tr key={i}>
-                                <td>{serialNumber}</td>
-                                <td>{user.name.toUpperCase()}</td>
-                                <td>{user.email.toLowerCase()}</td>
-                                <td>{user.role.toUpperCase()}</td>
+                            <tr key={index}>
+                                <td>{serialNo}</td>
+                                <td>{store.code.toUpperCase()}</td>
+                                <td>{store.name.toUpperCase()}</td>
+                                <td>{store.supervisor?.toUpperCase()}</td>
+                                <td>{store.phone?.toUpperCase()}</td>
+                                <td>{store.user.name.toUpperCase()}</td>
                                 <td>
-                                    {user.active === "1"
+                                    {store.active === "1"
                                         ? "ACTIVE"
                                         : "INACTIVE"}
                                 </td>
                                 <td>
                                     <Button
-                                        variant="primary"
                                         onClick={() => {
-                                            setEditUser(user);
-                                            setShowEditUser(true);
+                                            setEditStore(store);
+                                            setShowEditStoreModal(true);
                                         }}
                                     >
                                         <box-icon
@@ -165,9 +164,9 @@ export const Users: React.FC = () => {
                                     &nbsp;
                                     <Button
                                         variant="danger"
-                                        onClick={() => suspendUser(user.id)}
+                                        onClick={() => suspendStore(store.id)}
                                     >
-                                        {user.active === "1" ? (
+                                        {store.active === "1" ? (
                                             <box-icon
                                                 name="minus"
                                                 color="white"
@@ -187,30 +186,41 @@ export const Users: React.FC = () => {
                     })}
                 </tbody>
             </Table>
-            <AddUser
-                show={showAddUser}
-                onClose={() => setShowAddUser(false)}
+            <AddStore
+                show={showAddStoreModal}
+                onClose={() => setShowAddStoreModal(false)}
                 onAdded={() => {
-                    setCurrentPage(meta.lastPage);
-                    getUsers(meta.lastPage);
+                    setCurrentPage(meta.lastPage)
+                    getStores(meta.lastPage);
                 }}
             />
-            <EditUser
-                show={showEditUser}
-                onClose={() => setShowEditUser(false)}
-                onUpdated={() => getUsers(currentPage)}
-                oldUser={editUser}
+            <EditStore
+                show={showEditStoreModal}
+                onClose={() => setShowEditStoreModal(false)}
+                onUpdated={() => {
+                    getStores(currentPage);
+                }}
+                oldStore={{
+                    id: editStore.id,
+                    code: editStore.code,
+                    name: editStore.name,
+                    supervisor: editStore.supervisor!,
+                    phone: editStore.phone!,
+                    user_id: user!.id,
+                }}
             />
-            {users.length > 0 && (
+            {stores.length > 0 && (
                 <MyPagination
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     lastPage={meta.lastPage}
-                    setState={setUsers}
-                    paginationURL={`${LOCAL_URL}/users`}
+                    paginationURL={`${LOCAL_URL}/stores`}
                     setLoading={setLoading}
+                    setState={setStores}
                 />
             )}
         </Container>
     );
 };
+
+export default Stores;

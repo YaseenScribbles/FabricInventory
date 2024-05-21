@@ -87,7 +87,15 @@ const EditUser: React.FC<EditUserProps> = ({
     return (
         <Modal
             show={show}
-            onHide={onClose}
+            onHide={() => {
+                onClose();
+                setUser({
+                    id: 0,
+                    name: "",
+                    email: "",
+                    role: "user",
+                });
+            }}
             backdrop="static"
             keyboard={false}
             size="lg"

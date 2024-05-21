@@ -42,4 +42,19 @@ class User extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
+
+    public function store()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function color()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function fabric()
+    {
+        return $this->hasMany(User::class);
+    }
 }

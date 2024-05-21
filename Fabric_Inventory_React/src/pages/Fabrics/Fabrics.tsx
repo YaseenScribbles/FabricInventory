@@ -1,59 +1,60 @@
 import { Button, Container, Spinner, Table } from "react-bootstrap";
-import "./Users.css";
+import Heading from "../../components/Heading";
 import { useEffect, useState } from "react";
+import AddFabric from "./AddFabric";
 import axios from "axios";
 import { LOCAL_URL } from "../../assets/common";
 import { useNotificationContext } from "../../contexts/NotificationsContext";
-import "boxicons";
-import AddUser from "./AddUserModal";
-import EditUser from "./EditUserModal";
+import EditFabric from "./EditFabric";
+import { useUserContext } from "../../contexts/UserContext";
 import MyPagination from "../../components/Pagination";
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            // Define box-icon as a custom element
-            "box-icon": any; // You can refine this type if you have more information about it
-        }
-    }
+import "./fabrics.css";
+
+interface Fabric {
+    id: number;
+    name: string;
+    active: string;
+    user: {
+        name: string;
+    };
 }
 
-export const Users: React.FC = () => {
-    interface User {
-        id: number;
-        name: string;
-        email: string;
-        role: string;
-        active?: string;
-    }
+interface Meta {
+    currentPage: number;
+    lastPage: number;
+}
 
-    interface Meta {
-        currentPage: number;
-        lastPage: number;
-    }
-
-    const [users, setUsers] = useState<User[]>([]);
+const Fabrics: React.FC = () => {
+    const [fabrics, setFabrics] = useState<Fabric[]>([]);
     const [loading, setLoading] = useState(false);
-    const { setNotifications } = useNotificationContext();
-    const [showAddUser, setShowAddUser] = useState(false);
-    const [showEditUser, setShowEditUser] = useState(false);
-    const [editUser, setEditUser] = useState<User>({
-        id: 0,
+    const [showAddFabricModal, setShowAddFabricModal] = useState(false);
+    const [showEditFabricModal, setShowEditFabricModal] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [editFabric, setEditFabric] = useState<Fabric>({
         name: "",
-        email: "",
-        role: "",
+        active: "",
+        id: 0,
+        user: {
+            name: "",
+        },
     });
     const [meta, setMeta] = useState<Meta>({
         currentPage: 1,
         lastPage: 1,
     });
-    const [currentPage, setCurrentPage] = useState(1);
+    const { setNotifications } = useNotificationContext();
+    const { user } = useUserContext();
 
-    const getUsers = async (page: number = 1) => {
+    useEffect(() => {
+        getFabrics();
+    }, []);
+
+    const getFabrics = async (page: number = 1) => {
         setLoading(true);
 
         try {
             const response = await axios.get(
-                `${LOCAL_URL}/users?page=${page}`,
+                `${LOCAL_URL}/fabrics?page=${page}`,
                 {
                     headers: {
                         Accept: "application/json",
@@ -62,7 +63,7 @@ export const Users: React.FC = () => {
             );
 
             const { data } = response;
-            setUsers(data.data);
+            setFabrics(data.data);
             setMeta({
                 lastPage: data.meta.last_page,
                 currentPage: data.meta.current_page,
@@ -78,16 +79,16 @@ export const Users: React.FC = () => {
         }
     };
 
-    const suspendUser = async (id: number) => {
+    const suspendFabric = async (id: number) => {
         setLoading(true);
         try {
-            const response = await axios.delete(`${LOCAL_URL}/users/${id}`);
+            const response = await axios.delete(`${LOCAL_URL}/fabrics/${id}`);
             const { data } = response;
             setNotifications({
                 message: data.message,
                 result: "success",
             });
-            getUsers(currentPage);
+            getFabrics(currentPage);
         } catch (error: any) {
             const { response } = error;
             setNotifications({
@@ -99,52 +100,39 @@ export const Users: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        getUsers(1);
-    }, []);
-
     return (
-        <Container id="users" className="p-2">
+        <Container id="fabrics" className="p-2">
             {loading && (
                 <div className="text-center">
                     <Spinner animation="grow" variant="secondary" />
                 </div>
             )}
-            <div className="d-flex justify-content-between align-items-center mt-2">
-                <h4 className="me-auto">Users</h4>
-                <div
-                    className="border border-1 p-2 d-flex justify-content-around text-bg-success"
-                    onClick={() => setShowAddUser(true)}
-                    style={{ cursor: "pointer" }}
-                >
-                    <box-icon name="plus" color="white"></box-icon>
-                    &nbsp; Add User
-                </div>
-            </div>
-            <hr />
+            <Heading
+                title="Fabrics"
+                buttonText="Add Fabric"
+                onClick={() => setShowAddFabricModal(true)}
+            />
             <Table striped bordered hover>
                 <thead>
                     <tr>
                         <th>#</th>
                         <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
+                        <th>Created By</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user, i) => {
-                        let serialNumber: number =
-                            (currentPage - 1) * 10 + i + 1;
+                    {fabrics.map((fabric, index) => {
+                        let serialNo = (currentPage - 1) * 10 + index + 1;
+
                         return (
-                            <tr key={i}>
-                                <td>{serialNumber}</td>
-                                <td>{user.name.toUpperCase()}</td>
-                                <td>{user.email.toLowerCase()}</td>
-                                <td>{user.role.toUpperCase()}</td>
+                            <tr key={index}>
+                                <td>{serialNo}</td>
+                                <td>{fabric.name.toUpperCase()}</td>
+                                <td>{fabric.user.name.toUpperCase()}</td>
                                 <td>
-                                    {user.active === "1"
+                                    {fabric.active === "1"
                                         ? "ACTIVE"
                                         : "INACTIVE"}
                                 </td>
@@ -152,8 +140,8 @@ export const Users: React.FC = () => {
                                     <Button
                                         variant="primary"
                                         onClick={() => {
-                                            setEditUser(user);
-                                            setShowEditUser(true);
+                                            setEditFabric(fabric);
+                                            setShowEditFabricModal(true);
                                         }}
                                     >
                                         <box-icon
@@ -165,9 +153,9 @@ export const Users: React.FC = () => {
                                     &nbsp;
                                     <Button
                                         variant="danger"
-                                        onClick={() => suspendUser(user.id)}
+                                        onClick={() => suspendFabric(fabric.id)}
                                     >
-                                        {user.active === "1" ? (
+                                        {fabric.active === "1" ? (
                                             <box-icon
                                                 name="minus"
                                                 color="white"
@@ -187,30 +175,36 @@ export const Users: React.FC = () => {
                     })}
                 </tbody>
             </Table>
-            <AddUser
-                show={showAddUser}
-                onClose={() => setShowAddUser(false)}
+            <AddFabric
+                show={showAddFabricModal}
+                onClose={() => setShowAddFabricModal(false)}
                 onAdded={() => {
                     setCurrentPage(meta.lastPage);
-                    getUsers(meta.lastPage);
+                    getFabrics(meta.lastPage);
                 }}
             />
-            <EditUser
-                show={showEditUser}
-                onClose={() => setShowEditUser(false)}
-                onUpdated={() => getUsers(currentPage)}
-                oldUser={editUser}
+            <EditFabric
+                show={showEditFabricModal}
+                onClose={() => setShowEditFabricModal(false)}
+                onUpdated={() => getFabrics(currentPage)}
+                oldFabric={{
+                    id: editFabric.id,
+                    name: editFabric.name,
+                    user_id: user!.id,
+                }}
             />
-            {users.length > 0 && (
+            {fabrics.length > 0 && (
                 <MyPagination
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     lastPage={meta.lastPage}
-                    setState={setUsers}
-                    paginationURL={`${LOCAL_URL}/users`}
+                    paginationURL={`${LOCAL_URL}/fabrics`}
                     setLoading={setLoading}
+                    setState={setFabrics}
                 />
             )}
         </Container>
     );
 };
+
+export default Fabrics;

@@ -1,9 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 import { LogIn } from "./pages/Login";
 import { Layout } from "./components/Layout";
-import { Stores } from "./pages/Stores";
-import { Fabrics } from "./pages/Fabrics";
-import { Colors } from "./pages/Colors";
+import Stores from "./pages/Stores/Stores";
+import Fabrics from "./pages/Fabrics/Fabrics";
+import Colors from "./pages/Colors/Colors";
 import { Users } from "./pages/Users/Users";
 
 const router = createBrowserRouter([
@@ -28,9 +28,9 @@ const router = createBrowserRouter([
                 element: <Colors />,
             },
             {
-                path:"/users",
-                element: <Users />
-            }
+                path: "/users",
+                element: <Users />,
+            },
         ],
     },
 ]);

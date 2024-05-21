@@ -48,22 +48,40 @@ export const Layout = () => {
         <div id="layout">
             <Navbar bg="light" data-bs-theme="light">
                 <Container>
-                        <Navbar.Brand href="/">Fabric Inventory</Navbar.Brand>
-                        <Nav className="me-auto">
-                            <Nav.Link href="/users" active={location.pathname === '/users'}>Users</Nav.Link>
-                            <Nav.Link href="/stores" active={location.pathname === '/stores'}>Stores</Nav.Link>
-                            <Nav.Link href="/fabrics" active={location.pathname === '/fabrics'}>Fabrics</Nav.Link>
-                            <Nav.Link href="/colors" active={location.pathname === '/colors'}>Colors</Nav.Link>
-                        </Nav>
-                        <Nav>
-                            <NavDropdown title={`${user.name.toUpperCase()}`}>
-                                <NavDropdown.Item
-                                    onClick={logOut}
-                                >
-                                    Logout
-                                </NavDropdown.Item>
-                            </NavDropdown>
-                        </Nav>
+                    <Navbar.Brand href="/">Fabric Inventory</Navbar.Brand>
+                    <Nav className="me-auto">
+                        <Nav.Link
+                            href="/users"
+                            active={location.pathname === "/users"}
+                        >
+                            Users
+                        </Nav.Link>
+                        <Nav.Link
+                            href="/stores"
+                            active={location.pathname === "/stores"}
+                        >
+                            Stores
+                        </Nav.Link>
+                        <Nav.Link
+                            href="/fabrics"
+                            active={location.pathname === "/fabrics"}
+                        >
+                            Fabrics
+                        </Nav.Link>
+                        <Nav.Link
+                            href="/colors"
+                            active={location.pathname === "/colors"}
+                        >
+                            Colors
+                        </Nav.Link>
+                    </Nav>
+                    <Nav>
+                        <NavDropdown title={`${user.name.toUpperCase()}`}>
+                            <NavDropdown.Item onClick={logOut}>
+                                Logout
+                            </NavDropdown.Item>
+                        </NavDropdown>
+                    </Nav>
                 </Container>
             </Navbar>
             {loading && (
@@ -89,7 +107,9 @@ export const Layout = () => {
                                     Fabric Inventory
                                 </strong>
                             </Toast.Header>
-                            <Toast.Body>{`${n.message.toUpperCase()}`}</Toast.Body>
+                            <Toast.Body>
+                                <b className={`${n.result === 'success' && 'text-light'}`}>{`${n.message.toUpperCase()}`}</b>
+                            </Toast.Body>
                         </Toast>
                     );
                 })}
