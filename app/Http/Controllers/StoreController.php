@@ -6,15 +6,22 @@ use App\Models\Store;
 use App\Http\Requests\StoreStoreRequest;
 use App\Http\Requests\UpdateStoreRequest;
 use App\Http\Resources\StoreResource;
+use Illuminate\Http\Request;
 
 class StoreController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index( Request $request )
     {
-        $stores = Store::with('user')->paginate(10);
+        if ($request->has('all') && $request->all == 'true')
+        {
+            $stores = Store::all();
+        } else
+        {
+            $stores = Store::with('user')->paginate(10);
+        }
         return StoreResource::collection($stores);
     }
 

@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Models\Color;
 use App\Models\Fabric;
 use App\Models\Store;
+use App\Models\UserStore;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -37,6 +38,8 @@ class DatabaseSeeder extends Seeder
 
         // Color::factory(50)->create();
 
-        Store::factory(50)->create();
+        // Store::factory(50)->create();
+
+        // UserStore::factory(25)->create();
     }
 }

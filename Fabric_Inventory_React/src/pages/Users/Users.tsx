@@ -1,4 +1,11 @@
-import { Button, Container, Spinner, Table } from "react-bootstrap";
+import {
+    Button,
+    Container,
+    OverlayTrigger,
+    Spinner,
+    Table,
+    Tooltip,
+} from "react-bootstrap";
 import "./Users.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -8,6 +15,7 @@ import "boxicons";
 import AddUser from "./AddUserModal";
 import EditUser from "./EditUserModal";
 import MyPagination from "../../components/Pagination";
+import StoreAssign from "./StoreAssignModal";
 declare global {
     namespace JSX {
         interface IntrinsicElements {
@@ -23,7 +31,10 @@ export const Users: React.FC = () => {
         name: string;
         email: string;
         role: string;
+        count?: string;
+        stores?: string;
         active?: string;
+        storeIds?: string;
     }
 
     interface Meta {
@@ -47,6 +58,13 @@ export const Users: React.FC = () => {
         lastPage: 1,
     });
     const [currentPage, setCurrentPage] = useState(1);
+    const [showAssignModal, setShowAssignModal] = useState(false);
+    const [ userInfo, setUserInfo ] = useState<User>({
+        id: 0,
+        name: "",
+        email: "",
+        role: "",
+    })
 
     const getUsers = async (page: number = 1) => {
         setLoading(true);
@@ -125,10 +143,12 @@ export const Users: React.FC = () => {
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th className="text-center">#</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
+                        <th className="text-center">Store Count</th>
+                        <th>Stores</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -139,16 +159,43 @@ export const Users: React.FC = () => {
                             (currentPage - 1) * 10 + i + 1;
                         return (
                             <tr key={i}>
-                                <td>{serialNumber}</td>
-                                <td>{user.name.toUpperCase()}</td>
-                                <td>{user.email.toLowerCase()}</td>
-                                <td>{user.role.toUpperCase()}</td>
-                                <td>
+                                <td className="col-1 text-center">
+                                    {serialNumber}
+                                </td>
+                                <td className="col-2">
+                                    {user.name.toUpperCase()}
+                                </td>
+                                <td className="col-2">
+                                    {user.email.toLowerCase()}
+                                </td>
+                                <td className="col-1">
+                                    {user.role.toUpperCase()}
+                                </td>
+                                <td className="col-1 text-center">
+                                    {user.count}
+                                </td>
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={
+                                        <Tooltip>
+                                            {user.stores
+                                                ? user.stores?.toUpperCase()
+                                                : "NOT ASSIGNED"}
+                                        </Tooltip>
+                                    }
+                                >
+                                    <td className="col-2 stores">
+                                        {user.stores
+                                            ? user.stores?.toUpperCase()
+                                            : "NOT ASSIGNED"}
+                                    </td>
+                                </OverlayTrigger>
+                                <td className="col-1">
                                     {user.active === "1"
                                         ? "ACTIVE"
                                         : "INACTIVE"}
                                 </td>
-                                <td>
+                                <td className="col-2">
                                     <Button
                                         variant="primary"
                                         onClick={() => {
@@ -158,6 +205,19 @@ export const Users: React.FC = () => {
                                     >
                                         <box-icon
                                             name="edit-alt"
+                                            color="white"
+                                            size="xs"
+                                        ></box-icon>
+                                    </Button>
+                                    &nbsp;
+                                    <Button
+                                        onClick={() => {
+                                            setUserInfo(user);
+                                            setShowAssignModal(true);
+                                        }}
+                                    >
+                                        <box-icon
+                                            name="store-alt"
                                             color="white"
                                             size="xs"
                                         ></box-icon>
@@ -200,6 +260,12 @@ export const Users: React.FC = () => {
                 onClose={() => setShowEditUser(false)}
                 onUpdated={() => getUsers(currentPage)}
                 oldUser={editUser}
+            />
+            <StoreAssign
+                show={showAssignModal}
+                onClose={() => setShowAssignModal(false)}
+                onUpdated={() => getUsers(currentPage)}
+                user={userInfo}
             />
             {users.length > 0 && (
                 <MyPagination

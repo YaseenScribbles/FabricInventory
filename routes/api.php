@@ -29,3 +29,4 @@ Route::apiResource('users', UserController::class);
 Route::apiResource('stores', StoreController::class);
 Route::apiResource('colors', ColorController::class);
 Route::apiResource('fabrics', FabricController::class);
+Route::post('/storeassign',[UserController::class,'storeAssign']);
