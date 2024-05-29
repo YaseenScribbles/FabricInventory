@@ -1,12 +1,13 @@
 type HeadingProps = {
     title: string;
     buttonText: string;
-    onClick: () => void
-}
+    onClick: () => void;
+};
 
-const Heading : React.FC<HeadingProps> = ({title, buttonText, onClick}) => {
-    return <>
-                <div className="d-flex justify-content-between align-items-center mt-2">
+const Heading: React.FC<HeadingProps> = ({ title, buttonText, onClick }) => {
+    return (
+        <>
+            <div className="d-flex justify-content-between align-items-center mt-2">
                 <h4 className="me-auto">{title}</h4>
                 <div
                     className="border border-1 p-2 d-flex justify-content-around text-bg-success"
@@ -17,7 +18,9 @@ const Heading : React.FC<HeadingProps> = ({title, buttonText, onClick}) => {
                     &nbsp; {buttonText}
                 </div>
             </div>
-            <hr /></>
-}
+            <hr />
+        </>
+    );
+};
 
 export default Heading;

@@ -7,7 +7,7 @@ type NotificationContextType = {
 
 interface Notification {
     result : 'success'|'failure',
-    message: 'string'
+    message: string
 }
 
 const NotificationContext = createContext<NotificationContextType>({

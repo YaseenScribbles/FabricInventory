@@ -5,6 +5,7 @@ import Stores from "./pages/Stores/Stores";
 import Fabrics from "./pages/Fabrics/Fabrics";
 import Colors from "./pages/Colors/Colors";
 import { Users } from "./pages/Users/Users";
+import Receipts from "./pages/Receipts/Receipts";
 
 const router = createBrowserRouter([
     {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
                 path: "/users",
                 element: <Users />,
             },
+            {
+                path:"/receipts",
+                element: <Receipts />
+            }
         ],
     },
 ]);

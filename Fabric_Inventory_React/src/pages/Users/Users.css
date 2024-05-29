@@ -9,3 +9,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.username {
+    white-space: nowrap;
+}
+
+.count {
+    white-space: nowrap;
+}

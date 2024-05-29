@@ -1,4 +1,4 @@
-import { Button, Container, Spinner, Table } from "react-bootstrap";
+import { Button, Container, Table } from "react-bootstrap";
 import Heading from "../../components/Heading";
 import { useEffect, useState } from "react";
 import AddStore from "./AddStore";
@@ -108,11 +108,6 @@ const Stores: React.FC = () => {
 
     return (
         <Container id="stores" className="p-2">
-            {loading && (
-                <div className="text-center">
-                    <Spinner animation="grow" variant="secondary" />
-                </div>
-            )}
             <Heading
                 title="Stores"
                 buttonText="Add Store"
@@ -132,65 +127,75 @@ const Stores: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {stores.map((store, index) => {
-                        let serialNo = (currentPage - 1) * 10 + index + 1;
+                    {loading ? (
+                        <tr>
+                            <td colSpan={8} className="text-center">
+                                Loading...
+                            </td>
+                        </tr>
+                    ) : (
+                        stores.map((store, index) => {
+                            let serialNo = (currentPage - 1) * 10 + index + 1;
 
-                        return (
-                            <tr key={index}>
-                                <td>{serialNo}</td>
-                                <td>{store.code.toUpperCase()}</td>
-                                <td>{store.name.toUpperCase()}</td>
-                                <td>{store.supervisor?.toUpperCase()}</td>
-                                <td>{store.phone?.toUpperCase()}</td>
-                                <td>{store.user.name.toUpperCase()}</td>
-                                <td>
-                                    {store.active === "1"
-                                        ? "ACTIVE"
-                                        : "INACTIVE"}
-                                </td>
-                                <td>
-                                    <Button
-                                        onClick={() => {
-                                            setEditStore(store);
-                                            setShowEditStoreModal(true);
-                                        }}
-                                    >
-                                        <box-icon
-                                            name="edit-alt"
-                                            color="white"
-                                            size="xs"
-                                        ></box-icon>
-                                    </Button>
-                                    &nbsp;
-                                    <Button
-                                        variant="danger"
-                                        onClick={() => suspendStore(store.id)}
-                                    >
-                                        {store.active === "1" ? (
+                            return (
+                                <tr key={index}>
+                                    <td>{serialNo}</td>
+                                    <td>{store.code.toUpperCase()}</td>
+                                    <td>{store.name.toUpperCase()}</td>
+                                    <td>{store.supervisor?.toUpperCase()}</td>
+                                    <td>{store.phone?.toUpperCase()}</td>
+                                    <td>{store.user.name.toUpperCase()}</td>
+                                    <td>
+                                        {store.active === "1"
+                                            ? "ACTIVE"
+                                            : "INACTIVE"}
+                                    </td>
+                                    <td>
+                                        <Button
+                                            onClick={() => {
+                                                setEditStore(store);
+                                                setShowEditStoreModal(true);
+                                            }}
+                                        >
                                             <box-icon
-                                                name="minus"
+                                                name="edit-alt"
                                                 color="white"
                                                 size="xs"
                                             ></box-icon>
-                                        ) : (
-                                            <box-icon
-                                                name="plus"
-                                                color="white"
-                                                size="xs"
-                                            ></box-icon>
-                                        )}
-                                    </Button>
-                                </td>
-                            </tr>
-                        );
-                    })}
+                                        </Button>
+                                        &nbsp;
+                                        <Button
+                                            variant="danger"
+                                            onClick={() =>
+                                                suspendStore(store.id)
+                                            }
+                                        >
+                                            {store.active === "1" ? (
+                                                <box-icon
+                                                    name="minus"
+                                                    color="white"
+                                                    size="xs"
+                                                ></box-icon>
+                                            ) : (
+                                                <box-icon
+                                                    name="plus"
+                                                    color="white"
+                                                    size="xs"
+                                                ></box-icon>
+                                            )}
+                                        </Button>
+                                    </td>
+                                </tr>
+                            );
+                        })
+                    )}
                 </tbody>
             </Table>
             <AddStore
                 show={showAddStoreModal}
                 onClose={() => setShowAddStoreModal(false)}
                 onAdded={() => {
-                    setCurrentPage(meta.lastPage)
+                    setCurrentPage(meta.lastPage);
                     getStores(meta.lastPage);
                 }}
             />

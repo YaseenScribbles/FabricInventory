@@ -50,18 +50,22 @@ export const Layout = () => {
                 <Container>
                     <Navbar.Brand href="/">Fabric Inventory</Navbar.Brand>
                     <Nav className="me-auto">
-                        <Nav.Link
-                            href="/users"
-                            active={location.pathname === "/users"}
-                        >
-                            Users
-                        </Nav.Link>
-                        <Nav.Link
-                            href="/stores"
-                            active={location.pathname === "/stores"}
-                        >
-                            Stores
-                        </Nav.Link>
+                        {user.role === "admin" && (
+                            <Nav.Link
+                                href="/users"
+                                active={location.pathname === "/users"}
+                            >
+                                Users
+                            </Nav.Link>
+                        )}
+                        {user.role === "admin" && (
+                            <Nav.Link
+                                href="/stores"
+                                active={location.pathname === "/stores"}
+                            >
+                                Stores
+                            </Nav.Link>
+                        )}
                         <Nav.Link
                             href="/fabrics"
                             active={location.pathname === "/fabrics"}
@@ -73,6 +77,12 @@ export const Layout = () => {
                             active={location.pathname === "/colors"}
                         >
                             Colors
+                        </Nav.Link>
+                        <Nav.Link
+                            href="/receipts"
+                            active={location.pathname === "/receipts"}
+                        >
+                            Receipts
                         </Nav.Link>
                     </Nav>
                     <Nav>
@@ -108,7 +118,11 @@ export const Layout = () => {
                                 </strong>
                             </Toast.Header>
                             <Toast.Body>
-                                <b className={`${n.result === 'success' && 'text-light'}`}>{`${n.message.toUpperCase()}`}</b>
+                                <b
+                                    className={`${
+                                        n.result === "success" && "text-light"
+                                    }`}
+                                >{`${n.message.toUpperCase()}`}</b>
                             </Toast.Body>
                         </Toast>
                     );

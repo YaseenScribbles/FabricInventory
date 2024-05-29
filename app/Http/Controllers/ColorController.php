@@ -6,14 +6,18 @@ use App\Models\Color;
 use App\Http\Requests\StoreColorRequest;
 use App\Http\Requests\UpdateColorRequest;
 use App\Http\Resources\ColorResource;
+use Illuminate\Http\Request;
 
 class ColorController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if($request->has('all') &&  $request->all == 'true'){
+            return ColorResource::collection(Color::where('active',1)->get());
+        }
         $colors = Color::with('user')->paginate(10);
         return ColorResource::collection($colors);
     }

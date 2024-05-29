@@ -12,10 +12,13 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials) && Auth::user()->active) {
             $user = Auth::user();
             return response()->json(['message' => 'logged in', 'user' => new UserResource($user)]);
         } else {
+            if (Auth::attempt($credentials) && !Auth::user()->active) {
+                return response()->json(['message' => 'Please contact administrator'], 401);
+            }
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
     }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\FabricController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -30,3 +31,4 @@ Route::apiResource('stores', StoreController::class);
 Route::apiResource('colors', ColorController::class);
 Route::apiResource('fabrics', FabricController::class);
 Route::post('/storeassign',[UserController::class,'storeAssign']);
+Route::apiResource('receipts',ReceiptController::class);

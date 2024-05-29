@@ -150,7 +150,7 @@ const StoreAssign: React.FC<StoreAssignProps> = ({
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Assign Store
+                    Assign Stores {`(${user.name.toUpperCase()})`}
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>

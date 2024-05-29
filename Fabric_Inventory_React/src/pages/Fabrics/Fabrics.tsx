@@ -1,4 +1,4 @@
-import { Button, Container, Spinner, Table } from "react-bootstrap";
+import { Button, Container, Table } from "react-bootstrap";
 import Heading from "../../components/Heading";
 import { useEffect, useState } from "react";
 import AddFabric from "./AddFabric";
@@ -102,11 +102,6 @@ const Fabrics: React.FC = () => {
 
     return (
         <Container id="fabrics" className="p-2">
-            {loading && (
-                <div className="text-center">
-                    <Spinner animation="grow" variant="secondary" />
-                </div>
-            )}
             <Heading
                 title="Fabrics"
                 buttonText="Add Fabric"
@@ -123,56 +118,66 @@ const Fabrics: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {fabrics.map((fabric, index) => {
-                        let serialNo = (currentPage - 1) * 10 + index + 1;
+                    {loading ? (
+                        <tr>
+                            <td colSpan={5} className="text-center">
+                                Loading...
+                            </td>
+                        </tr>
+                    ) : (
+                        fabrics.map((fabric, index) => {
+                            let serialNo = (currentPage - 1) * 10 + index + 1;
 
-                        return (
-                            <tr key={index}>
-                                <td>{serialNo}</td>
-                                <td>{fabric.name.toUpperCase()}</td>
-                                <td>{fabric.user.name.toUpperCase()}</td>
-                                <td>
-                                    {fabric.active === "1"
-                                        ? "ACTIVE"
-                                        : "INACTIVE"}
-                                </td>
-                                <td>
-                                    <Button
-                                        variant="primary"
-                                        onClick={() => {
-                                            setEditFabric(fabric);
-                                            setShowEditFabricModal(true);
-                                        }}
-                                    >
-                                        <box-icon
-                                            name="edit-alt"
-                                            color="white"
-                                            size="xs"
-                                        ></box-icon>
-                                    </Button>
-                                    &nbsp;
-                                    <Button
-                                        variant="danger"
-                                        onClick={() => suspendFabric(fabric.id)}
-                                    >
-                                        {fabric.active === "1" ? (
+                            return (
+                                <tr key={index}>
+                                    <td>{serialNo}</td>
+                                    <td>{fabric.name.toUpperCase()}</td>
+                                    <td>{fabric.user.name.toUpperCase()}</td>
+                                    <td>
+                                        {fabric.active === "1"
+                                            ? "ACTIVE"
+                                            : "INACTIVE"}
+                                    </td>
+                                    <td>
+                                        <Button
+                                            variant="primary"
+                                            onClick={() => {
+                                                setEditFabric(fabric);
+                                                setShowEditFabricModal(true);
+                                            }}
+                                        >
                                             <box-icon
-                                                name="minus"
+                                                name="edit-alt"
                                                 color="white"
                                                 size="xs"
                                             ></box-icon>
-                                        ) : (
-                                            <box-icon
-                                                name="plus"
-                                                color="white"
-                                                size="xs"
-                                            ></box-icon>
-                                        )}
-                                    </Button>
-                                </td>
-                            </tr>
-                        );
-                    })}
+                                        </Button>
+                                        &nbsp;
+                                        <Button
+                                            variant="danger"
+                                            onClick={() =>
+                                                suspendFabric(fabric.id)
+                                            }
+                                        >
+                                            {fabric.active === "1" ? (
+                                                <box-icon
+                                                    name="minus"
+                                                    color="white"
+                                                    size="xs"
+                                                ></box-icon>
+                                            ) : (
+                                                <box-icon
+                                                    name="plus"
+                                                    color="white"
+                                                    size="xs"
+                                                ></box-icon>
+                                            )}
+                                        </Button>
+                                    </td>
+                                </tr>
+                            );
+                        })
+                    )}
                 </tbody>
             </Table>
             <AddFabric

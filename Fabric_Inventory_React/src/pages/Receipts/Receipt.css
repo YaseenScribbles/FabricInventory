@@ -1,0 +1,11 @@
+#receipts {
+    font-family: 'Poppins',sans-serif;
+    box-sizing: border-box;
+}
+
+.remarks {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

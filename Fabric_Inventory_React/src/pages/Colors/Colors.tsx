@@ -1,4 +1,4 @@
-import { Button, Container, Spinner, Table } from "react-bootstrap";
+import { Button, Container, Table } from "react-bootstrap";
 import Heading from "../../components/Heading";
 import { useEffect, useState } from "react";
 import AddColor from "./AddColor";
@@ -102,11 +102,6 @@ const Colors: React.FC = () => {
 
     return (
         <Container id="colors" className="p-2">
-            {loading && (
-                <div className="text-center">
-                    <Spinner animation="grow" variant="secondary" />
-                </div>
-            )}
             <Heading
                 title="Colors"
                 buttonText="Add Color"
@@ -123,56 +118,66 @@ const Colors: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {colors.map((color, index) => {
-                        let serialNo = (currentPage - 1) * 10 + index + 1;
+                    {loading ? (
+                        <tr>
+                            <td colSpan={5} className="text-center">
+                                Loading...
+                            </td>
+                        </tr>
+                    ) : (
+                        colors.map((color, index) => {
+                            let serialNo = (currentPage - 1) * 10 + index + 1;
 
-                        return (
-                            <tr key={index}>
-                                <td>{serialNo}</td>
-                                <td>{color.name.toUpperCase()}</td>
-                                <td>{color.user.name.toUpperCase()}</td>
-                                <td>
-                                    {color.active === "1"
-                                        ? "ACTIVE"
-                                        : "INACTIVE"}
-                                </td>
-                                <td>
-                                    <Button
-                                        variant="primary"
-                                        onClick={() => {
-                                            setEditColor(color);
-                                            setShowEditColorModal(true);
-                                        }}
-                                    >
-                                        <box-icon
-                                            name="edit-alt"
-                                            color="white"
-                                            size="xs"
-                                        ></box-icon>
-                                    </Button>
-                                    &nbsp;
-                                    <Button
-                                        variant="danger"
-                                        onClick={() => suspendColor(color.id)}
-                                    >
-                                        {color.active === "1" ? (
+                            return (
+                                <tr key={index}>
+                                    <td>{serialNo}</td>
+                                    <td>{color.name.toUpperCase()}</td>
+                                    <td>{color.user.name.toUpperCase()}</td>
+                                    <td>
+                                        {color.active === "1"
+                                            ? "ACTIVE"
+                                            : "INACTIVE"}
+                                    </td>
+                                    <td>
+                                        <Button
+                                            variant="primary"
+                                            onClick={() => {
+                                                setEditColor(color);
+                                                setShowEditColorModal(true);
+                                            }}
+                                        >
                                             <box-icon
-                                                name="minus"
+                                                name="edit-alt"
                                                 color="white"
                                                 size="xs"
                                             ></box-icon>
-                                        ) : (
-                                            <box-icon
-                                                name="plus"
-                                                color="white"
-                                                size="xs"
-                                            ></box-icon>
-                                        )}
-                                    </Button>
-                                </td>
-                            </tr>
-                        );
-                    })}
+                                        </Button>
+                                        &nbsp;
+                                        <Button
+                                            variant="danger"
+                                            onClick={() =>
+                                                suspendColor(color.id)
+                                            }
+                                        >
+                                            {color.active === "1" ? (
+                                                <box-icon
+                                                    name="minus"
+                                                    color="white"
+                                                    size="xs"
+                                                ></box-icon>
+                                            ) : (
+                                                <box-icon
+                                                    name="plus"
+                                                    color="white"
+                                                    size="xs"
+                                                ></box-icon>
+                                            )}
+                                        </Button>
+                                    </td>
+                                </tr>
+                            );
+                        })
+                    )}
                 </tbody>
             </Table>
             <AddColor

@@ -2,7 +2,6 @@ import {
     Button,
     Container,
     OverlayTrigger,
-    Spinner,
     Table,
     Tooltip,
 } from "react-bootstrap";
@@ -59,12 +58,12 @@ export const Users: React.FC = () => {
     });
     const [currentPage, setCurrentPage] = useState(1);
     const [showAssignModal, setShowAssignModal] = useState(false);
-    const [ userInfo, setUserInfo ] = useState<User>({
+    const [userInfo, setUserInfo] = useState<User>({
         id: 0,
         name: "",
         email: "",
         role: "",
-    })
+    });
 
     const getUsers = async (page: number = 1) => {
         setLoading(true);
@@ -123,11 +122,6 @@ export const Users: React.FC = () => {
 
     return (
         <Container id="users" className="p-2">
-            {loading && (
-                <div className="text-center">
-                    <Spinner animation="grow" variant="secondary" />
-                </div>
-            )}
             <div className="d-flex justify-content-between align-items-center mt-2">
                 <h4 className="me-auto">Users</h4>
                 <div
@@ -147,104 +141,112 @@ export const Users: React.FC = () => {
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
-                        <th className="text-center">Store Count</th>
+                        <th className="text-center count">Store Count</th>
                         <th>Stores</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user, i) => {
-                        let serialNumber: number =
-                            (currentPage - 1) * 10 + i + 1;
-                        return (
-                            <tr key={i}>
-                                <td className="col-1 text-center">
-                                    {serialNumber}
-                                </td>
-                                <td className="col-2">
-                                    {user.name.toUpperCase()}
-                                </td>
-                                <td className="col-2">
-                                    {user.email.toLowerCase()}
-                                </td>
-                                <td className="col-1">
-                                    {user.role.toUpperCase()}
-                                </td>
-                                <td className="col-1 text-center">
-                                    {user.count}
-                                </td>
-                                <OverlayTrigger
-                                    placement="top"
-                                    overlay={
-                                        <Tooltip>
+                    {loading ? (
+                        <tr>
+                            <td colSpan={8} className="text-center">
+                                Loading...
+                            </td>
+                        </tr>
+                    ) : (
+                        users.map((user, i) => {
+                            let serialNumber: number =
+                                (currentPage - 1) * 10 + i + 1;
+                            return (
+                                <tr key={i}>
+                                    <td className="col-1 text-center">
+                                        {serialNumber}
+                                    </td>
+                                    <td className="col-2 username">
+                                        {user.name.toUpperCase()}
+                                    </td>
+                                    <td className="col-2">
+                                        {user.email.toLowerCase()}
+                                    </td>
+                                    <td className="col-1">
+                                        {user.role.toUpperCase()}
+                                    </td>
+                                    <td className="col-1 text-center">
+                                        {user.count}
+                                    </td>
+                                    <OverlayTrigger
+                                        placement="top"
+                                        overlay={
+                                            <Tooltip>
+                                                {user.stores
+                                                    ? user.stores?.toUpperCase()
+                                                    : "NOT ASSIGNED"}
+                                            </Tooltip>
+                                        }
+                                    >
+                                        <td className="col-2 stores">
                                             {user.stores
                                                 ? user.stores?.toUpperCase()
                                                 : "NOT ASSIGNED"}
-                                        </Tooltip>
-                                    }
-                                >
-                                    <td className="col-2 stores">
-                                        {user.stores
-                                            ? user.stores?.toUpperCase()
-                                            : "NOT ASSIGNED"}
+                                        </td>
+                                    </OverlayTrigger>
+                                    <td className="col-1">
+                                        {user.active === "1"
+                                            ? "ACTIVE"
+                                            : "INACTIVE"}
                                     </td>
-                                </OverlayTrigger>
-                                <td className="col-1">
-                                    {user.active === "1"
-                                        ? "ACTIVE"
-                                        : "INACTIVE"}
-                                </td>
-                                <td className="col-2">
-                                    <Button
-                                        variant="primary"
-                                        onClick={() => {
-                                            setEditUser(user);
-                                            setShowEditUser(true);
-                                        }}
-                                    >
-                                        <box-icon
-                                            name="edit-alt"
-                                            color="white"
-                                            size="xs"
-                                        ></box-icon>
-                                    </Button>
-                                    &nbsp;
-                                    <Button
-                                        onClick={() => {
-                                            setUserInfo(user);
-                                            setShowAssignModal(true);
-                                        }}
-                                    >
-                                        <box-icon
-                                            name="store-alt"
-                                            color="white"
-                                            size="xs"
-                                        ></box-icon>
-                                    </Button>
-                                    &nbsp;
-                                    <Button
-                                        variant="danger"
-                                        onClick={() => suspendUser(user.id)}
-                                    >
-                                        {user.active === "1" ? (
+                                    <td className="col-2">
+                                        <Button
+                                            variant="primary"
+                                            onClick={() => {
+                                                setEditUser(user);
+                                                setShowEditUser(true);
+                                            }}
+                                        >
                                             <box-icon
-                                                name="minus"
+                                                name="edit-alt"
                                                 color="white"
                                                 size="xs"
                                             ></box-icon>
-                                        ) : (
+                                        </Button>
+                                        &nbsp;
+                                        <Button
+                                            onClick={() => {
+                                                setUserInfo(user);
+                                                setShowAssignModal(true);
+                                            }}
+                                        >
                                             <box-icon
-                                                name="plus"
+                                                name="store-alt"
                                                 color="white"
                                                 size="xs"
                                             ></box-icon>
-                                        )}
-                                    </Button>
-                                </td>
-                            </tr>
-                        );
-                    })}
+                                        </Button>
+                                        &nbsp;
+                                        <Button
+                                            variant="danger"
+                                            onClick={() => suspendUser(user.id)}
+                                        >
+                                            {user.active === "1" ? (
+                                                <box-icon
+                                                    name="minus"
+                                                    color="white"
+                                                    size="xs"
+                                                ></box-icon>
+                                            ) : (
+                                                <box-icon
+                                                    name="plus"
+                                                    color="white"
+                                                    size="xs"
+                                                ></box-icon>
+                                            )}
+                                        </Button>
+                                    </td>
+                                </tr>
+                            );
+                        })
+                    )}
                 </tbody>
             </Table>
             <AddUser
