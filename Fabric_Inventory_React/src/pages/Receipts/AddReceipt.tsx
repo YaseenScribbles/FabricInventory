@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Button,
     Col,
@@ -15,7 +15,15 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import { LOCAL_URL } from "../../assets/common";
 import { useTypedSelector } from "../../store/Store";
-import { add, clear, remove } from "../../store/ReceiptItemsSlice";
+import {
+    add,
+    clear,
+    remove,
+    update,
+    updateColor,
+} from "../../store/ReceiptItemsSlice";
+import "./Receipt.css";
+import Select from "react-select";
 
 type AddReceiptProps = {
     show: boolean;
@@ -56,6 +64,22 @@ interface Error {
     message: string;
 }
 
+interface Detail {
+    dia: number;
+    rolls: number;
+    weight: string;
+}
+
+interface ReceiptItem2 {
+    color_id: number;
+    details: Detail[];
+}
+
+interface Summary {
+    rolls: number;
+    weight: number;
+}
+
 const AddReceipt: React.FC<AddReceiptProps> = ({
     show,
     onClose,
@@ -70,8 +94,10 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
     const receiptItems = useTypedSelector((s) => s.receiptItems);
     const [errors, setErrors] = useState<Error[]>([]);
     const [loading, setLoading] = useState(false);
-    const colorRef = useRef<HTMLSelectElement>(null);
-    // const [dias, setDias] = useState("");
+    const [diasString, setDiasString] = useState("");
+    const [dias, setDias] = useState<number[]>([]);
+    const [selectedColors, setSelectedColors] = useState<number[]>([]);
+    const [summary, setSummary] = useState<Summary>({ rolls: 0, weight: 0 });
 
     const [receipt, setReceipt] = useState<Receipt>({
         lot_no: "",
@@ -80,13 +106,6 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
         fabric_id: 0,
         remarks: "",
         user_id: user!.id,
-    });
-
-    const [receiptItem, setReceiptItem] = useState<ReceiptItem>({
-        color_id: 0,
-        dia: 0,
-        rolls: 0,
-        weight: "",
     });
 
     useEffect(() => {
@@ -130,6 +149,12 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
         setLoading(false);
     }, []);
 
+    const getAvailableColors = (colorId: number) => {
+        return colors.filter(
+            (c) => c.id === colorId || !selectedColors.includes(c.id)
+        );
+    };
+
     useEffect(() => {
         const getReceipt = async (id: number) => {
             setLoading(true);
@@ -146,23 +171,55 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                 });
 
                 dispatch(clear());
-                data.receipt_items.forEach((item: ReceiptItem) => {
-                    dispatch(
-                        add({
-                            color_id: +item.color_id,
-                            dia: +item.dia,
-                            rolls: +item.rolls,
-                            weight: item.weight,
-                        })
-                    );
+                const colorIds: number[] = Array.from(
+                    new Set(
+                        data.receipt_items.map(
+                            (item: ReceiptItem) => +item.color_id
+                        )
+                    )
+                );
+                const dias: number[] = Array.from(
+                    new Set(
+                        data.receipt_items.map((item: ReceiptItem) => +item.dia)
+                    )
+                );
+
+                setDias(dias);
+                setSelectedColors(colorIds);
+
+                let processedColors: number[] = [];
+
+                colorIds.forEach((c) => {
+                    if (!processedColors.includes(c)) {
+                        let details: Detail[] = data.receipt_items
+                            .filter((item: ReceiptItem) => +item.color_id === c)
+                            .map((item: ReceiptItem) => ({
+                                dia: +item.dia,
+                                rolls: +item.rolls,
+                                weight: (+item.weight).toFixed(2),
+                            }));
+
+                        dispatch(
+                            add({
+                                color_id: c,
+                                details: details,
+                            })
+                        );
+
+                        processedColors.push(c);
+                    }
                 });
             } catch (error: any) {
                 const { response } = error;
-                setErrors((p) => [
-                    ...p,
-                    { message: response.data.message, type: "failure" },
-                ]);
-                clearErrors();
+                if (response) {
+                    setErrors((p) => [
+                        ...p,
+                        { message: response.data.message, type: "failure" },
+                    ]);
+                    clearErrors();
+                } else {
+                    console.log(error);
+                }
             } finally {
                 setLoading(false);
             }
@@ -179,36 +236,13 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
     };
 
     const addEntry = () => {
-        if (receiptItem.color_id === 0) {
-            let error: Error = {
-                message: "Please select color",
-                type: "failure",
-            };
+        if (diasString.endsWith(",")) {
+            setDiasString(diasString.slice(0, diasString.length - 1));
+        }
 
-            setErrors((p) => [...p, error]);
-            clearErrors();
-            return;
-        } else if (receiptItem.dia === 0) {
+        if (!validateInput(diasString)) {
             let error: Error = {
-                message: "Please enter dia",
-                type: "failure",
-            };
-
-            setErrors((p) => [...p, error]);
-            clearErrors();
-            return;
-        } else if (receiptItem.rolls === 0) {
-            let error: Error = {
-                message: "Please enter rolls",
-                type: "failure",
-            };
-
-            setErrors((p) => [...p, error]);
-            clearErrors();
-            return;
-        } else if (parseFloat(receiptItem.weight) === 0) {
-            let error: Error = {
-                message: "Please enter weight",
+                message: "Please enter valid dias",
                 type: "failure",
             };
 
@@ -217,14 +251,17 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
             return;
         }
 
-        dispatch(add(receiptItem));
-        setReceiptItem({
-            color_id: 0,
-            dia: 0,
-            rolls: 0,
-            weight: "",
+        const diasArray = diasString.split(",").map((d) => parseInt(d));
+        let details: Detail[] = [];
+        diasArray.forEach((dia) => {
+            details.push({ dia: dia, rolls: 0, weight: "" });
         });
-        colorRef.current?.focus();
+        setDias(diasArray);
+        const newReceiptItem: ReceiptItem2 = {
+            color_id: 0,
+            details: details,
+        };
+        dispatch(add(newReceiptItem));
     };
 
     const saveReceipt = async () => {
@@ -276,12 +313,26 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
         }
 
         setLoading(true);
+
+        const receipt_items: ReceiptItem[] = [];
+
+        receiptItems.forEach((i) => {
+            i.details.forEach((j) => {
+                receipt_items.push({
+                    color_id: i.color_id,
+                    dia: j.dia,
+                    rolls: j.rolls,
+                    weight: j.weight,
+                });
+            });
+        });
+
         try {
             const response = await axios.post(
                 edit
                     ? `${LOCAL_URL}/receipts/${editId}?_method=PUT`
                     : `${LOCAL_URL}/receipts`,
-                { ...receipt, receipt_items: receiptItems },
+                { ...receipt, receipt_items: receipt_items },
                 { headers: { Accept: "application/json" } }
             );
 
@@ -303,13 +354,8 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                 remarks: "",
                 user_id: user!.id,
             });
-
-            setReceiptItem({
-                color_id: 0,
-                dia: 0,
-                rolls: 0,
-                weight: "",
-            });
+            setDiasString("");
+            setDias([]);
 
             dispatch(clear());
             onAdded();
@@ -323,6 +369,28 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
         } finally {
             setLoading(false);
         }
+    };
+
+    useEffect(() => {
+        let details = receiptItems.map((i) => i.details);
+
+        let rolls = details
+            .flat()
+            .reduce((acc, detail) => acc + +detail.rolls, 0);
+
+        let weight = details
+            .flat()
+            .reduce((acc, detail) => acc + +detail.weight, 0);
+
+        setSummary({
+            rolls: rolls,
+            weight: weight,
+        });
+    }, [receiptItems]);
+
+    const validateInput = (input: string) => {
+        const pattern = /^\d{2}(,\d{2})*$/;
+        return pattern.test(input);
     };
 
     return (
@@ -339,8 +407,15 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                         remarks: "",
                         user_id: user!.id,
                     });
-                    dispatch(clear());
                 }
+                dispatch(clear());
+                setDiasString("");
+                setDias([]);
+                setSelectedColors([]);
+                setSummary({
+                    rolls: 0,
+                    weight: 0,
+                });
             }}
             backdrop="static"
             keyboard={false}
@@ -472,7 +547,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                             </Form.Select>
                         </FloatingLabel>
                     </Col>
-                    <Col xs={5}>
+                    <Col xs={2}>
                         <FloatingLabel
                             controlId="remarks"
                             label="Remarks"
@@ -491,145 +566,305 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                             />
                         </FloatingLabel>
                     </Col>
-                </Row>
-                <hr />
-                <Row>
-                    <Col>
+                    <Col xs={2}>
                         <FloatingLabel
-                            controlId="color_id"
-                            label="Color"
-                            className="text-secondary"
-                        >
-                            <Form.Select
-                                value={receiptItem.color_id}
-                                onChange={(e) =>
-                                    setReceiptItem((prev) => ({
-                                        ...prev,
-                                        color_id: Number(e.target.value),
-                                    }))
-                                }
-                                ref={colorRef}
-                            >
-                                <option value="0">Select Color</option>
-                                {colors.map((c) => {
-                                    return (
-                                        <option key={c.id} value={c.id}>
-                                            {c.name.toUpperCase()}
-                                        </option>
-                                    );
-                                })}
-                            </Form.Select>
-                        </FloatingLabel>
-                    </Col>
-                    <Col>
-                        <FloatingLabel
-                            controlId="dia"
-                            label="Dia"
+                            controlId="dias"
+                            label="Dias"
                             className="text-secondary"
                         >
                             <Form.Control
                                 type="text"
                                 placeholder="***"
-                                value={receiptItem.dia || ""}
-                                onChange={(e) =>
-                                    setReceiptItem((prev) => ({
-                                        ...prev,
-                                        dia: Number(e.target.value),
-                                    }))
-                                }
+                                value={diasString ?? ""}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setDiasString(value);
+                                }}
                             />
                         </FloatingLabel>
                     </Col>
-                    <Col>
-                        <FloatingLabel
-                            controlId="rolls"
-                            label="Rolls"
-                            className="text-secondary"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder="***"
-                                value={receiptItem.rolls || ""}
-                                onChange={(e) =>
-                                    setReceiptItem((prev) => ({
-                                        ...prev,
-                                        rolls: Number(e.target.value),
-                                    }))
-                                }
-                            />
-                        </FloatingLabel>
-                    </Col>
-                    <Col>
-                        <FloatingLabel
-                            controlId="weight"
-                            label="Weight"
-                            className="text-secondary"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder="***"
-                                value={receiptItem.weight || ""}
-                                onChange={(e) =>
-                                    setReceiptItem((prev) => ({
-                                        ...prev,
-                                        weight: e.target.value,
-                                    }))
-                                }
-                            />
-                        </FloatingLabel>
-                    </Col>
-                    <Col>
-                        <Button className="w-50 h-100" onClick={addEntry}>
-                            ADD
+                    <Col xs={1} className="mt-1">
+                        <Button onClick={addEntry} className="p-0 b-0 d-flex">
+                            <box-icon
+                                name="plus"
+                                color="white"
+                                size="lg"
+                            ></box-icon>
                         </Button>
                     </Col>
                 </Row>
                 <hr />
-                <Table striped bordered hover>
+                <Table bordered hover>
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Color</th>
-                            <th>Dia</th>
-                            <th>Rolls</th>
-                            <th>Weight</th>
+                            <th style={{ minWidth: "250px" }}>Color</th>
+                            <th>Type</th>
+                            {dias.map((dia, index) => {
+                                return <th key={index}>{dia}</th>;
+                            })}
+                            <th>Total</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan={6} className="text-center">
+                                <td
+                                    colSpan={5 + dias.length}
+                                    className="text-center"
+                                >
                                     Loading...
                                 </td>
                             </tr>
                         ) : (
                             receiptItems.map((item, index) => {
+                                // const availableColors = getAvailableColors(
+                                //     item.color_id
+                                // ).map((color) => ({
+                                //     value: color.id,
+                                //     label: color.name,
+                                // }));
+                                const availableColors = getAvailableColors(
+                                    item.color_id
+                                ).map((option) => ({
+                                    value: option.id,
+                                    label: option.name,
+                                }));
                                 return (
                                     <tr key={index}>
                                         <td>{index + 1}</td>
                                         <td>
-                                            {colors
-                                                .find(
-                                                    (c) =>
-                                                        c.id === item.color_id
-                                                )
-                                                ?.name.toUpperCase()}
+                                            <Select
+                                                value={
+                                                    availableColors.find(
+                                                        (color) =>
+                                                            color.value ===
+                                                            item.color_id
+                                                    ) || null
+                                                }
+                                                onChange={(e) => {
+                                                    const colorId = e ?
+                                                        +e.value : 0;
+                                                    let newSelectedColors = [
+                                                        ...selectedColors,
+                                                    ];
+                                                    newSelectedColors[index] =
+                                                        colorId;
+                                                    setSelectedColors(
+                                                        newSelectedColors
+                                                    );
+                                                    dispatch(
+                                                        updateColor({
+                                                            color_id:
+                                                                colorId,
+                                                            index: index,
+                                                        })
+                                                    );
+                                                }}
+                                                options={availableColors}
+                                                placeholder="Select Color"
+                                            />
                                         </td>
-                                        <td>{item.dia}</td>
-                                        <td>{item.rolls}</td>
-                                        <td>{(+item.weight).toFixed(2)}</td>
                                         <td>
+                                            <Table
+                                                borderless
+                                                className="inner-table"
+                                            >
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <Form.Control
+                                                                size="sm"
+                                                                defaultValue={
+                                                                    "Rolls"
+                                                                }
+                                                                readOnly
+                                                                disabled
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <Form.Control
+                                                                size="sm"
+                                                                defaultValue={
+                                                                    "Weight"
+                                                                }
+                                                                readOnly
+                                                                disabled
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </Table>
+                                        </td>
+                                        {dias.map((d, i) => (
+                                            <td key={i}>
+                                                <Table
+                                                    borderless
+                                                    className="inner-table"
+                                                >
+                                                    <tbody>
+                                                        <tr className="table-input">
+                                                            <td>
+                                                                <Form.Control
+                                                                    size="sm"
+                                                                    disabled={
+                                                                        item.color_id ===
+                                                                        0
+                                                                    }
+                                                                    value={
+                                                                        item
+                                                                            .details[
+                                                                            i
+                                                                        ]
+                                                                            .rolls ||
+                                                                        ""
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        dispatch(
+                                                                            update(
+                                                                                {
+                                                                                    color_id:
+                                                                                        item.color_id,
+                                                                                    dia: d,
+                                                                                    roll: +e
+                                                                                        .target
+                                                                                        .value,
+                                                                                    weight: undefined,
+                                                                                }
+                                                                            )
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </td>
+                                                        </tr>
+                                                        <tr className="table-input">
+                                                            <td>
+                                                                <Form.Control
+                                                                    size="sm"
+                                                                    disabled={
+                                                                        item.color_id ===
+                                                                        0
+                                                                    }
+                                                                    value={
+                                                                        item
+                                                                            .details[
+                                                                            i
+                                                                        ]
+                                                                            .weight ||
+                                                                        ""
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        dispatch(
+                                                                            update(
+                                                                                {
+                                                                                    color_id:
+                                                                                        item.color_id,
+                                                                                    dia: d,
+                                                                                    roll: undefined,
+                                                                                    weight: e
+                                                                                        .target
+                                                                                        .value,
+                                                                                }
+                                                                            )
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </Table>
+                                            </td>
+                                        ))}
+                                        <td>
+                                            <Table
+                                                borderless
+                                                className="inner-table"
+                                            >
+                                                <tbody>
+                                                    <tr className="table-input">
+                                                        <td>
+                                                            <Form.Control
+                                                                size="sm"
+                                                                disabled
+                                                                value={receiptItems
+                                                                    .filter(
+                                                                        (i) =>
+                                                                            i.color_id ===
+                                                                            item.color_id
+                                                                    )
+                                                                    .reduce(
+                                                                        (
+                                                                            acc,
+                                                                            curr
+                                                                        ) =>
+                                                                            acc +
+                                                                            curr.details.reduce(
+                                                                                (
+                                                                                    acc,
+                                                                                    curr
+                                                                                ) =>
+                                                                                    acc +
+                                                                                    curr.rolls,
+                                                                                0
+                                                                            ),
+                                                                        0
+                                                                    )}
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                    <tr className="table-input">
+                                                        <td>
+                                                            <Form.Control
+                                                                size="sm"
+                                                                disabled
+                                                                value={receiptItems
+                                                                    .filter(
+                                                                        (i) =>
+                                                                            i.color_id ===
+                                                                            item.color_id
+                                                                    )
+                                                                    .reduce(
+                                                                        (
+                                                                            acc,
+                                                                            curr
+                                                                        ) =>
+                                                                            acc +
+                                                                            +curr.details.reduce(
+                                                                                (
+                                                                                    acc,
+                                                                                    curr
+                                                                                ) =>
+                                                                                    acc +
+                                                                                    +curr.weight,
+                                                                                0
+                                                                            ),
+                                                                        0
+                                                                    )}
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </Table>
+                                        </td>
+                                        <td className="text-center">
                                             <Button
                                                 variant="danger"
                                                 onClick={() =>
-                                                    dispatch(remove(item))
+                                                    dispatch(remove(index))
                                                 }
+                                                className="p-0 b-0 d-flex"
                                             >
                                                 <box-icon
                                                     name="x"
                                                     color="white"
-                                                    size="xs"
+                                                    size="md"
                                                 ></box-icon>
                                             </Button>
                                         </td>
@@ -638,31 +873,38 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                             })
                         )}
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th>
-                                {receiptItems.reduce(
-                                    (acc, item) => acc + item.rolls,
-                                    0
-                                )}
-                            </th>
-                            <th>
-                                {receiptItems.reduce(
-                                    (acc, item) => acc + +item.weight,
-                                    0
-                                )}
-                            </th>
-                        </tr>
-                    </tfoot>
                 </Table>
             </Modal.Body>
             <Modal.Footer>
-                <Button size="lg" onClick={saveReceipt}>
-                    {`${edit ? "Update" : "Save"}`}
-                </Button>
+                <div className="d-flex justify-content-between w-100">
+                    <div className="d-flex flex-column w-50">
+                        <Row className="fw-bold font-monospace">
+                            <Col
+                                className="col-3"
+                                style={{ whiteSpace: "nowrap" }}
+                            >
+                                TOTAL ROLLS
+                            </Col>
+                            <Col className="col-auto"> : </Col>
+                            <Col className="col-2">{summary.rolls}</Col>
+                        </Row>
+                        <Row className="fw-bold font-monospace">
+                            <Col
+                                className="col-3"
+                                style={{ whiteSpace: "nowrap" }}
+                            >
+                                TOTAL WEIGHT
+                            </Col>
+                            <Col className="col-auto"> : </Col>
+                            <Col className="col-2">
+                                {summary.weight.toFixed(2)}
+                            </Col>
+                        </Row>
+                    </div>
+                    <Button size="lg" onClick={saveReceipt}>
+                        {`${edit ? "Update" : "Save"}`}
+                    </Button>
+                </div>
             </Modal.Footer>
         </Modal>
     );

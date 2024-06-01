@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
         //     'user_id' => 1
         // ]);
 
-        // Color::factory(50)->create();
+        // Color::factory(60)->create();
 
         // Store::factory(50)->create();
 

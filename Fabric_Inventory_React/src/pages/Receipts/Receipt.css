@@ -9,3 +9,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.table-input {
+    max-width: 300px;
+}
+
+.table .inner-table {
+    margin-bottom: 0;
+}

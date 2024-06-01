@@ -1,58 +1,82 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-interface ReceiptItem {
-    color_id: number;
+interface Detail {
     dia: number;
     rolls: number;
     weight: string;
 }
 
-const initialState: ReceiptItem[] = [];
+interface ReceiptItem2 {
+    color_id: number;
+    details: Detail[];
+}
+
+interface UpdateData {
+    color_id: number;
+    dia: number;
+    roll?: number;
+    weight?: string;
+}
+
+interface UpdateColor {
+    index: number;
+    color_id: number;
+}
+
+const initialState: ReceiptItem2[] = [];
 
 export const ReceiptItemsSlice = createSlice({
     name: "ReceiptItemsSlice",
     initialState: initialState,
     reducers: {
-        add(state, action: PayloadAction<ReceiptItem>) {
-            const index = state.findIndex(
-                (s) =>
-                    s.color_id === action.payload.color_id &&
-                    s.dia === action.payload.dia
-            );
-            if (index === -1) {
-                state.push(action.payload);
-            } else {
-                return state.map((s) => {
-                    if (s.color_id === action.payload.color_id) {
-                        return {
-                            color_id: s.color_id,
-                            dia: s.dia,
-                            rolls: s.rolls + action.payload.rolls,
-                            weight: (
-                                parseFloat(s.weight) +
-                                parseFloat(action.payload.weight)
-                            ).toString(),
-                        };
-                    } else {
-                        return s;
-                    }
-                });
-            }
+        add(state, action: PayloadAction<ReceiptItem2>) {
+            state.push(action.payload);
         },
-        remove(state, action: PayloadAction<ReceiptItem>) {
+        remove(state, action: PayloadAction<number>) {
             return state.filter(
-                (s) =>
-                    !(
-                        s.color_id === action.payload.color_id &&
-                        s.dia === action.payload.dia
-                    )
+                (_,index) => !(index === action.payload)
             );
         },
-        clear(){
+        clear() {
             return [];
-        }
+        },
+        update(state, action: PayloadAction<UpdateData>) {
+            return state.map((s) => {
+                if (s.color_id === action.payload.color_id) {
+                    const updatedDetails = s.details.map((detail) => {
+                        if (detail.dia === action.payload.dia) {
+                            return {
+                                ...detail,
+                                rolls:
+                                    action.payload.roll !== undefined
+                                        ? action.payload.roll
+                                        : detail.rolls,
+                                weight:
+                                    action.payload.weight !== undefined
+                                        ? action.payload.weight
+                                        : detail.weight,
+                            };
+                        }
+                        return detail;
+                    });
+                    return { ...s, details: updatedDetails };
+                }
+                return s;
+            });
+        },
+        updateColor(state, action: PayloadAction<UpdateColor>) {
+            return state.map((s, index) => {
+                if (index === action.payload.index) {
+                    return {
+                        ...s,
+                        color_id: action.payload.color_id,
+                    };
+                }
+                return s;
+            });
+        },
     },
 });
 
-export const { add, remove, clear } = ReceiptItemsSlice.actions;
+export const { add, remove, clear, update, updateColor } = ReceiptItemsSlice.actions;
 export default ReceiptItemsSlice.reducer;

@@ -16,7 +16,7 @@ class ColorController extends Controller
     public function index(Request $request)
     {
         if($request->has('all') &&  $request->all == 'true'){
-            return ColorResource::collection(Color::where('active',1)->get());
+            return ColorResource::collection(Color::where('active',1)->orderBy('name')->get());
         }
         $colors = Color::with('user')->paginate(10);
         return ColorResource::collection($colors);
