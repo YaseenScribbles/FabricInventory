@@ -129,7 +129,10 @@ const Colors: React.FC = () => {
                             let serialNo = (currentPage - 1) * 10 + index + 1;
 
                             return (
-                                <tr key={index}>
+                                <tr
+                                    style={{ verticalAlign: "middle" }}
+                                    key={index}
+                                >
                                     <td>{serialNo}</td>
                                     <td>{color.name.toUpperCase()}</td>
                                     <td>{color.user.name.toUpperCase()}</td>

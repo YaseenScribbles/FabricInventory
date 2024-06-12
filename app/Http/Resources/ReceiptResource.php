@@ -25,7 +25,8 @@ class ReceiptResource extends JsonResource
             'remarks' => $this->remarks,
             'rolls' => $this->rolls,
             'weight' => $this->weight,
-            'user' => $this->user
+            'user' => $this->user,
+            'date' => $this->created_at
         ];
     }
 }

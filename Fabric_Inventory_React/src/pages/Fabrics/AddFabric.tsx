@@ -91,7 +91,7 @@ const AddFabric: React.FC<AddFabricProps> = ({ show, onClose, onAdded }) => {
                             className="mb-3 text-secondary"
                         >
                             <Form.Control
-                                type="name"
+                                type="text"
                                 placeholder="name"
                                 value={fabric.name}
                                 onChange={(e) => {

@@ -138,7 +138,7 @@ const Stores: React.FC = () => {
                             let serialNo = (currentPage - 1) * 10 + index + 1;
 
                             return (
-                                <tr key={index}>
+                                <tr style={{ verticalAlign:"middle" }} key={index}>
                                     <td>{serialNo}</td>
                                     <td>{store.code.toUpperCase()}</td>
                                     <td>{store.name.toUpperCase()}</td>

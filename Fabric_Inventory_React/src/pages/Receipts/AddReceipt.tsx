@@ -24,6 +24,8 @@ import {
 } from "../../store/ReceiptItemsSlice";
 import "./Receipt.css";
 import Select from "react-select";
+// import CustomAlert from "../../components/Alert";
+import AlertModal from "../../components/AlertModal";
 
 type AddReceiptProps = {
     show: boolean;
@@ -36,6 +38,8 @@ type AddReceiptProps = {
 interface Receipt {
     lot_no: string;
     brand: string;
+    company_id: number;
+    store_id: number;
     contact_id: number;
     fabric_id: number;
     remarks: string;
@@ -57,6 +61,17 @@ interface Fabric {
 interface Color {
     id: number;
     name: string;
+}
+
+interface Store {
+    id: number;
+    name: string;
+}
+
+interface Company {
+    id: number;
+    name: string;
+    address: string;
 }
 
 interface Error {
@@ -90,6 +105,8 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
     const { user } = useUserContext();
     const [fabrics, setFabrics] = useState<Fabric[]>([]);
     const [colors, setColors] = useState<Color[]>([]);
+    const [companies, setCompanies] = useState<Company[]>([]);
+    const [stores, setStores] = useState<Store[]>([]);
     const dispatch = useDispatch();
     const receiptItems = useTypedSelector((s) => s.receiptItems);
     const [errors, setErrors] = useState<Error[]>([]);
@@ -98,10 +115,14 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
     const [dias, setDias] = useState<number[]>([]);
     const [selectedColors, setSelectedColors] = useState<number[]>([]);
     const [summary, setSummary] = useState<Summary>({ rolls: 0, weight: 0 });
+    const [showAlert, setShowAlert] = useState(false);
+    const [removeIndex, setRemoveIndex] = useState(0);
 
     const [receipt, setReceipt] = useState<Receipt>({
         lot_no: "",
         brand: "",
+        company_id: 0,
+        store_id: 0,
         contact_id: 0,
         fabric_id: 0,
         remarks: "",
@@ -143,9 +164,44 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
             }
         };
 
+        const getStores = async () => {
+            try {
+                const response = await axios.get(
+                    `${LOCAL_URL}/userstores/${user!.id}`
+                );
+                const { data } = response;
+                setStores(data.stores);
+            } catch (error: any) {
+                const { response } = error;
+                setErrors((p) => [
+                    ...p,
+                    { message: response.data.message, type: "failure" },
+                ]);
+                clearErrors();
+            }
+        };
+
+        const getCompanies = async () => {
+            try {
+                const response = await axios.get(
+                    `${LOCAL_URL}/companies?all=true`
+                );
+                const { data } = response;
+                setCompanies(data.companies);
+            } catch (error: any) {
+                const { response } = error;
+                setErrors((p) => [
+                    ...p,
+                    { message: response.data.message, type: "failure" },
+                ]);
+                clearErrors();
+            }
+        };
+
         getFabrics();
         getColors();
-
+        getStores();
+        getCompanies();
         setLoading(false);
     }, []);
 
@@ -164,6 +220,8 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                 setReceipt({
                     lot_no: data.lot_no,
                     brand: data.brand,
+                    company_id: data.company_id,
+                    store_id: data.store_id,
                     contact_id: data.contact_id,
                     fabric_id: data.fabric_id,
                     remarks: data.remarks,
@@ -252,16 +310,31 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
         }
 
         const diasArray = diasString.split(",").map((d) => parseInt(d));
-        let details: Detail[] = [];
-        diasArray.forEach((dia) => {
-            details.push({ dia: dia, rolls: 0, weight: "" });
-        });
-        setDias(diasArray);
-        const newReceiptItem: ReceiptItem2 = {
-            color_id: 0,
-            details: details,
-        };
-        dispatch(add(newReceiptItem));
+        if (
+            dias.length === 0 ||
+            (dias.length === diasArray.length &&
+                diasArray.every((d) => dias.includes(d)))
+        ) {
+            let details: Detail[] = [];
+            diasArray.forEach((dia) => {
+                details.push({ dia: dia, rolls: 0, weight: "" });
+            });
+
+            setDias(diasArray);
+            const newReceiptItem: ReceiptItem2 = {
+                color_id: 0,
+                details: details,
+            };
+            dispatch(add(newReceiptItem));
+        } else {
+            let error: Error = {
+                message: "Selected dias cannot be changed",
+                type: "failure",
+            };
+
+            setErrors((p) => [...p, error]);
+            clearErrors();
+        }
     };
 
     const saveReceipt = async () => {
@@ -277,6 +350,24 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
         } else if (receipt.brand === "") {
             let error: Error = {
                 message: "Please enter brand",
+                type: "failure",
+            };
+
+            setErrors((p) => [...p, error]);
+            clearErrors();
+            return;
+        } else if (receipt.company_id === 0) {
+            let error: Error = {
+                message: "Please select company",
+                type: "failure",
+            };
+
+            setErrors((p) => [...p, error]);
+            clearErrors();
+            return;
+        } else if (receipt.store_id === 0) {
+            let error: Error = {
+                message: "Please select store",
                 type: "failure",
             };
 
@@ -303,7 +394,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
             return;
         } else if (receiptItems.length === 0) {
             let error: Error = {
-                message: "No data",
+                message: "No data to save",
                 type: "failure",
             };
 
@@ -349,6 +440,8 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
             setReceipt({
                 lot_no: "",
                 brand: "",
+                company_id: 0,
+                store_id: 0,
                 contact_id: 0,
                 fabric_id: 0,
                 remarks: "",
@@ -359,6 +452,8 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
 
             dispatch(clear());
             onAdded();
+            closeModal();
+            window.open(`/receipt-report/${data.id}`, "_blank");
         } catch (error: any) {
             const { response } = error;
             setErrors((p) => [
@@ -389,34 +484,40 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
     }, [receiptItems]);
 
     const validateInput = (input: string) => {
-        const pattern = /^\d{2}(,\d{2})*$/;
+        // const pattern = /^\d{2}(,\d{2})*$/;
+        // const pattern = /^\d{2}(,\s*\d{2})*$/;
+        const pattern = /^\d{2}(\s*,\s*\d{2})*$/;
         return pattern.test(input);
+    };
+
+    const closeModal = () => {
+        onClose();
+        if (edit) {
+            setReceipt({
+                lot_no: "",
+                brand: "",
+                company_id: 0,
+                store_id: 0,
+                contact_id: 0,
+                fabric_id: 0,
+                remarks: "",
+                user_id: user!.id,
+            });
+        }
+        dispatch(clear());
+        setDiasString("");
+        setDias([]);
+        setSelectedColors([]);
+        setSummary({
+            rolls: 0,
+            weight: 0,
+        });
     };
 
     return (
         <Modal
             show={show}
-            onHide={() => {
-                onClose();
-                if (edit) {
-                    setReceipt({
-                        lot_no: "",
-                        brand: "",
-                        contact_id: 0,
-                        fabric_id: 0,
-                        remarks: "",
-                        user_id: user!.id,
-                    });
-                }
-                dispatch(clear());
-                setDiasString("");
-                setDias([]);
-                setSelectedColors([]);
-                setSummary({
-                    rolls: 0,
-                    weight: 0,
-                });
-            }}
+            onHide={closeModal}
             backdrop="static"
             keyboard={false}
             aria-labelledby="contained-modal-title-vcenter"
@@ -432,7 +533,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
             <Modal.Body>
                 <ToastContainer
                     position="bottom-end"
-                    className="p-3"
+                    className="p-3 font-monospace"
                     style={{ zIndex: 1 }}
                 >
                     {errors.map((e, i) => {
@@ -461,7 +562,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                         );
                     })}
                 </ToastContainer>
-                <Row>
+                <Row className="mb-3">
                     <Col xs={1}>
                         <FloatingLabel
                             controlId="lot_no"
@@ -499,6 +600,58 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                     }))
                                 }
                             />
+                        </FloatingLabel>
+                    </Col>
+                    <Col xs={2}>
+                        <FloatingLabel
+                            controlId="company_id"
+                            label="Company"
+                            className="text-secondary"
+                        >
+                            <Form.Select
+                                value={receipt.company_id}
+                                onChange={(e) =>
+                                    setReceipt((prev) => ({
+                                        ...prev,
+                                        company_id: Number(e.target.value),
+                                    }))
+                                }
+                            >
+                                <option value="0">Select Company</option>
+                                {companies.map((c) => {
+                                    return (
+                                        <option key={c.id} value={c.id}>
+                                            {c.name.toUpperCase()}
+                                        </option>
+                                    );
+                                })}
+                            </Form.Select>
+                        </FloatingLabel>
+                    </Col>
+                    <Col xs={3}>
+                        <FloatingLabel
+                            controlId="store_id"
+                            label="Store"
+                            className="text-secondary"
+                        >
+                            <Form.Select
+                                value={receipt.store_id}
+                                onChange={(e) =>
+                                    setReceipt((prev) => ({
+                                        ...prev,
+                                        store_id: Number(e.target.value),
+                                    }))
+                                }
+                            >
+                                <option value="0">Select Store</option>
+                                {stores.map((s) => {
+                                    return (
+                                        <option key={s.id} value={s.id}>
+                                            {s.name.toUpperCase()}
+                                        </option>
+                                    );
+                                })}
+                            </Form.Select>
                         </FloatingLabel>
                     </Col>
                     <Col xs={2}>
@@ -547,7 +700,9 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                             </Form.Select>
                         </FloatingLabel>
                     </Col>
-                    <Col xs={2}>
+                </Row>
+                <Row>
+                    <Col xs={9}>
                         <FloatingLabel
                             controlId="remarks"
                             label="Remarks"
@@ -584,7 +739,10 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                         </FloatingLabel>
                     </Col>
                     <Col xs={1} className="mt-1">
-                        <Button onClick={addEntry} className="p-0 b-0 d-flex">
+                        <Button
+                            onClick={addEntry}
+                            className="p-0 b-0 d-flex w-100 justify-content-center"
+                        >
                             <box-icon
                                 name="plus"
                                 color="white"
@@ -601,10 +759,14 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                             <th style={{ minWidth: "250px" }}>Color</th>
                             <th>Type</th>
                             {dias.map((dia, index) => {
-                                return <th key={index}>{dia}</th>;
+                                return (
+                                    <th className="text-center" key={index}>
+                                        {dia}
+                                    </th>
+                                );
                             })}
-                            <th>Total</th>
-                            <th>Actions</th>
+                            <th className="text-end">Total</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -633,8 +795,10 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                 }));
                                 return (
                                     <tr key={index}>
-                                        <td>{index + 1}</td>
-                                        <td>
+                                        <td style={{ verticalAlign: "middle" }}>
+                                            {index + 1}
+                                        </td>
+                                        <td style={{ verticalAlign: "middle" }}>
                                             <Select
                                                 value={
                                                     availableColors.find(
@@ -644,8 +808,9 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                                     ) || null
                                                 }
                                                 onChange={(e) => {
-                                                    const colorId = e ?
-                                                        +e.value : 0;
+                                                    const colorId = e
+                                                        ? +e.value
+                                                        : 0;
                                                     let newSelectedColors = [
                                                         ...selectedColors,
                                                     ];
@@ -656,8 +821,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                                     );
                                                     dispatch(
                                                         updateColor({
-                                                            color_id:
-                                                                colorId,
+                                                            color_id: colorId,
                                                             index: index,
                                                         })
                                                     );
@@ -709,6 +873,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                                         <tr className="table-input">
                                                             <td>
                                                                 <Form.Control
+                                                                    className="text-center"
                                                                     size="sm"
                                                                     disabled={
                                                                         item.color_id ===
@@ -745,6 +910,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                                         <tr className="table-input">
                                                             <td>
                                                                 <Form.Control
+                                                                    className="text-center"
                                                                     size="sm"
                                                                     disabled={
                                                                         item.color_id ===
@@ -791,6 +957,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                                     <tr className="table-input">
                                                         <td>
                                                             <Form.Control
+                                                                className="text-end"
                                                                 size="sm"
                                                                 disabled
                                                                 value={receiptItems
@@ -822,6 +989,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                                     <tr className="table-input">
                                                         <td>
                                                             <Form.Control
+                                                                className="text-end"
                                                                 size="sm"
                                                                 disabled
                                                                 value={receiptItems
@@ -846,27 +1014,64 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                                                                 0
                                                                             ),
                                                                         0
-                                                                    )}
+                                                                    )
+                                                                    .toFixed(2)}
                                                             />
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                             </Table>
                                         </td>
-                                        <td className="text-center">
-                                            <Button
-                                                variant="danger"
-                                                onClick={() =>
-                                                    dispatch(remove(index))
-                                                }
-                                                className="p-0 b-0 d-flex"
+                                        <td style={{ verticalAlign: "middle" }}>
+                                            <Table
+                                                className="inner-table"
+                                                borderless
                                             >
-                                                <box-icon
-                                                    name="x"
-                                                    color="white"
-                                                    size="md"
-                                                ></box-icon>
-                                            </Button>
+                                                <tbody>
+                                                    {receiptItems.length - 1 ===
+                                                        index && (
+                                                        <tr>
+                                                            <td>
+                                                                <Button
+                                                                    variant="primary"
+                                                                    onClick={() => {
+                                                                        addEntry();
+                                                                    }}
+                                                                    className="d-flex p-0"
+                                                                >
+                                                                    <box-icon
+                                                                        name="plus"
+                                                                        color="white"
+                                                                        size="sm"
+                                                                    ></box-icon>
+                                                                </Button>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                    <tr>
+                                                        <td>
+                                                            <Button
+                                                                variant="danger"
+                                                                onClick={() => {
+                                                                    setRemoveIndex(
+                                                                        index
+                                                                    );
+                                                                    setShowAlert(
+                                                                        true
+                                                                    );
+                                                                }}
+                                                                className="d-flex p-0"
+                                                            >
+                                                                <box-icon
+                                                                    name="x"
+                                                                    color="white"
+                                                                    size="sm"
+                                                                ></box-icon>
+                                                            </Button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </Table>
                                         </td>
                                     </tr>
                                 );
@@ -874,6 +1079,26 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                         )}
                     </tbody>
                 </Table>
+                {/* <CustomAlert
+                    show={showAlert}
+                    onProceed={() => {
+                        setShowAlert(false);
+                        dispatch(remove(removeIndex));
+                    }}
+                    onCancel={() => {
+                        setShowAlert(false);
+                    }}
+                /> */}
+                <AlertModal
+                    show={showAlert}
+                    onProceed={() => {
+                        setShowAlert(false);
+                        dispatch(remove(removeIndex));
+                    }}
+                    onCancel={() => {
+                        setShowAlert(false);
+                    }}
+                />
             </Modal.Body>
             <Modal.Footer>
                 <div className="d-flex justify-content-between w-100">

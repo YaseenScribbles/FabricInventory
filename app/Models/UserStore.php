@@ -18,11 +18,11 @@ class UserStore extends Model
 
     public function store()
     {
-        return $this->hasMany(Store::class);
+        return $this->hasMany(Store::class,'store_id');
     }
 
     public function user()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class,'user_id');
     }
 }

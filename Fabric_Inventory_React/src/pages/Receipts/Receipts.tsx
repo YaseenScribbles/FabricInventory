@@ -1,7 +1,9 @@
 import {
     Button,
+    Col,
     Container,
     OverlayTrigger,
+    Row,
     Table,
     Tooltip,
 } from "react-bootstrap";
@@ -13,6 +15,8 @@ import axios from "axios";
 import { LOCAL_URL } from "../../assets/common";
 import MyPagination from "../../components/Pagination";
 import "./Receipt.css";
+import { useUserContext } from "../../contexts/UserContext";
+import Select from "react-select";
 
 interface Receipt {
     id: number;
@@ -26,11 +30,22 @@ interface Receipt {
     rolls: number;
     weight: number;
     user: string;
+    date: string;
 }
 
 interface Meta {
     currentPage: number;
     lastPage: number;
+}
+
+interface Store {
+    id: number;
+    name: string;
+}
+
+interface StoreOptions {
+    value: number;
+    label: string;
 }
 
 const Receipts: React.FC = () => {
@@ -45,12 +60,17 @@ const Receipts: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [edit, setEdit] = useState(false);
     const [editId, setEditId] = useState(0);
+    const { user } = useUserContext();
+    const [stores, setStores] = useState<StoreOptions[]>([]);
+    const [selectedStore, setSelectedStore] = useState<StoreOptions | null>(
+        null
+    );
 
     const getReceipts = async (page: number = 1) => {
         setLoading(true);
         try {
             const response = await axios.get(
-                `${LOCAL_URL}/receipts?page=${page}`,
+                `${LOCAL_URL}/receipts?page=${page}&userId=${user?.id}&storeId=${selectedStore?.value}`,
                 {
                     headers: { Accept: "application/json" },
                 }
@@ -98,9 +118,38 @@ const Receipts: React.FC = () => {
         }
     };
 
+    const getStores = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.get(
+                `${LOCAL_URL}/userstores/${user!.id}`
+            );
+            const { data } = response;
+            const storeOptions = data.stores.map((store: Store) => ({
+                label: store.name,
+                value: store.id,
+            }));
+            setStores(storeOptions);
+        } catch (error: any) {
+            const { response } = error;
+            setNotifications({
+                message: response.data.message,
+                result: "failure",
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        getReceipts();
+        getStores();
     }, []);
+
+    useEffect(() => {
+        if (selectedStore) {
+            getReceipts();
+        }
+    }, [selectedStore]);
 
     return (
         <Container className="p-2" id="receipts">
@@ -109,10 +158,27 @@ const Receipts: React.FC = () => {
                 buttonText="Add Receipt"
                 onClick={() => setShowAddReceipt(true)}
             />
+            <Row>
+                <Col xs={4}>
+                    <Select
+                        value={selectedStore}
+                        onChange={(e) => {
+                            if (e) {
+                                setSelectedStore(e);
+                            }
+                        }}
+                        options={stores}
+                        placeholder="Select Store"
+                    />
+                </Col>
+            </Row>
+            <hr />
             <Table striped bordered hover>
                 <thead>
-                    <tr>
-                        <th>#</th>
+                    <tr style={{ verticalAlign: "middle" }}>
+                        {/* <th>#</th> */}
+                        <th>R. No</th>
+                        <th>Date</th>
                         <th>Lot No</th>
                         <th>Brand</th>
                         <th>Contact</th>
@@ -126,17 +192,28 @@ const Receipts: React.FC = () => {
                 <tbody>
                     {loading ? (
                         <tr>
-                            <td className="text-center" colSpan={9}>
+                            <td className="text-center" colSpan={11}>
                                 Loading...
                             </td>
                         </tr>
                     ) : (
                         receipts.map((receipt, index) => {
-                            let serialNo = (currentPage - 1) * 10 + index + 1;
+                            // let serialNo = (currentPage - 1) * 10 + index + 1;
 
                             return (
-                                <tr key={index}>
-                                    <td>{serialNo}</td>
+                                <tr
+                                    style={{ verticalAlign: "middle" }}
+                                    key={index}
+                                >
+                                    {/* <td>{serialNo}</td> */}
+                                    <td className="text-center">
+                                        {receipt.id}
+                                    </td>
+                                    <td>
+                                        {new Date(
+                                            receipt.date
+                                        ).toLocaleDateString()}
+                                    </td>
                                     <td>{receipt.lotNo.toUpperCase()}</td>
                                     <td>{receipt.brand.toUpperCase()}</td>
                                     <td>{receipt.contact.toUpperCase()}</td>
@@ -158,7 +235,7 @@ const Receipts: React.FC = () => {
                                     </OverlayTrigger>
                                     <td>{receipt.rolls}</td>
                                     <td>{(+receipt.weight).toFixed(2)}</td>
-                                    <td>
+                                    <td className="d-flex flex-nowrap">
                                         <Button
                                             variant="primary"
                                             onClick={() => {
@@ -168,11 +245,16 @@ const Receipts: React.FC = () => {
                                                 setEditId(receipt.id);
                                                 setShowAddReceipt(true);
                                             }}
+                                            style={{
+                                                display: "flex",
+                                                height: "40px",
+                                                width: "45px",
+                                            }}
                                         >
                                             <box-icon
                                                 name="edit-alt"
                                                 color="white"
-                                                size="xs"
+                                                size="sm"
                                             ></box-icon>
                                         </Button>
                                         &nbsp;
@@ -181,11 +263,34 @@ const Receipts: React.FC = () => {
                                             onClick={() =>
                                                 deleteReceipt(receipt.id)
                                             }
+                                            style={{
+                                                display: "flex",
+                                                height: "40px",
+                                                width: "45px",
+                                            }}
                                         >
                                             <box-icon
                                                 name="x"
                                                 color="white"
-                                                size="xs"
+                                                size="sm"
+                                            ></box-icon>
+                                        </Button>
+                                        &nbsp;
+                                        <Button
+                                            variant="success"
+                                            href={`/receipt-report/${receipt.id}`}
+                                            target="_blank"
+                                            style={{
+                                                display: "flex",
+                                                height: "40px",
+                                                width: "45px",
+                                            }}
+                                        >
+                                            <box-icon
+                                                type="solid"
+                                                name="file-pdf"
+                                                color="white"
+                                                size="sm"
                                             ></box-icon>
                                         </Button>
                                     </td>

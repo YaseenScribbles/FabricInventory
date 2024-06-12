@@ -159,7 +159,7 @@ export const Users: React.FC = () => {
                             let serialNumber: number =
                                 (currentPage - 1) * 10 + i + 1;
                             return (
-                                <tr key={i}>
+                                <tr style={{ verticalAlign:"middle" }} key={i}>
                                     <td className="col-1 text-center">
                                         {serialNumber}
                                     </td>

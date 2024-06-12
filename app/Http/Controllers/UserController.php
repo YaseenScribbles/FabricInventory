@@ -6,9 +6,11 @@ use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Store;
 use App\Models\UserStore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Stmt\TryCatch;
 
 class UserController extends Controller
 {
@@ -110,6 +112,30 @@ class UserController extends Controller
             return response()->json(['message' => 'user stores updated']);
         } catch (\Throwable $th) {
 
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function userStores(int $id)
+    {
+        try {
+            $user = User::find($id);
+            if ($user->role === 'user') {
+                $store_ids = UserStore::select('store_id')->where('user_id', $id)->pluck('store_id');
+                $stores = Store::select('id', 'name')
+                    ->whereIn('id', $store_ids)
+                    ->where('active', 1)
+                    ->orderBy('name')
+                    ->get();
+            } else {
+                $stores = Store::select('id', 'name')
+                    ->where('active', 1)
+                    ->orderBy('name')
+                    ->get();
+            }
+
+            return response()->json(['stores' => $stores]);
+        } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

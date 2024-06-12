@@ -20,8 +20,8 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 425px;
-    height: 50%;
+    width: 375px;
+    height: 60%;
     border: 1px solid grey;
     border-radius: 10%;
     box-shadow: 5px 8px 1px grey;
@@ -54,4 +54,13 @@ h1.logo.line-2 {
     100% {
         opacity: 100%;
     }
+}
+
+@media screen and (width > 1366px) {
+
+    #login-form {
+        width: 428px;
+        height: 50%;
+    }
+
 }

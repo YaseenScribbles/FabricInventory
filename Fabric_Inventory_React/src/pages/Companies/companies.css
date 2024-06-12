@@ -1,0 +1,11 @@
+#companies {
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.address {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+}

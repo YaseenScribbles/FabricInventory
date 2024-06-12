@@ -60,6 +60,14 @@ export const Layout = () => {
                         )}
                         {user.role === "admin" && (
                             <Nav.Link
+                                href="/companies"
+                                active={location.pathname === "/companies"}
+                            >
+                                Companies
+                            </Nav.Link>
+                        )}
+                        {user.role === "admin" && (
+                            <Nav.Link
                                 href="/stores"
                                 active={location.pathname === "/stores"}
                             >
@@ -101,7 +109,7 @@ export const Layout = () => {
             )}
             <ToastContainer
                 position="top-end"
-                className="p-3"
+                className="p-3 font-monospace"
                 style={{ zIndex: 1 }}
             >
                 {notifications.map((n, i) => {
@@ -112,7 +120,7 @@ export const Layout = () => {
                                 n.result === "success" ? "success" : "warning"
                             }`}
                         >
-                            <Toast.Header>
+                            <Toast.Header closeButton={false}>
                                 <strong className="me-auto">
                                     Fabric Inventory
                                 </strong>

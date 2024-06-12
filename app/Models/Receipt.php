@@ -12,6 +12,8 @@ class Receipt extends Model
     protected $fillable = [
         'lot_no',
         'brand',
+        'company_id',
+        'store_id',
         'contact_id',
         'fabric_id',
         'remarks',

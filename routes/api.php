@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ColorController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\FabricController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\StoreController;
@@ -30,5 +31,8 @@ Route::apiResource('users', UserController::class);
 Route::apiResource('stores', StoreController::class);
 Route::apiResource('colors', ColorController::class);
 Route::apiResource('fabrics', FabricController::class);
+Route::apiResource('companies', CompanyController::class);
 Route::post('/storeassign',[UserController::class,'storeAssign']);
 Route::apiResource('receipts',ReceiptController::class);
+Route::get('/receipt-report/{receipt}',[ReceiptController::class,'report']);
+Route::get('/userstores/{id}',[UserController::class,'userStores']);

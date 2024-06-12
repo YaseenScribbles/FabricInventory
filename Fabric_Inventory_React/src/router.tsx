@@ -6,6 +6,8 @@ import Fabrics from "./pages/Fabrics/Fabrics";
 import Colors from "./pages/Colors/Colors";
 import { Users } from "./pages/Users/Users";
 import Receipts from "./pages/Receipts/Receipts";
+import ReceiptDocument from "./assets/ReceiptDocument";
+import Companies from "./pages/Companies/Companies";
 
 const router = createBrowserRouter([
     {
@@ -16,6 +18,10 @@ const router = createBrowserRouter([
         path: "/",
         element: <Layout />,
         children: [
+            {
+                path: "/companies",
+                element: <Companies />,
+            },
             {
                 path: "/stores",
                 element: <Stores />,
@@ -33,10 +39,14 @@ const router = createBrowserRouter([
                 element: <Users />,
             },
             {
-                path:"/receipts",
-                element: <Receipts />
-            }
+                path: "/receipts",
+                element: <Receipts />,
+            },
         ],
+    },
+    {
+        path: "/receipt-report/:id",
+        element: <ReceiptDocument />,
     },
 ]);
 
