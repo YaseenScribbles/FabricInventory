@@ -10,6 +10,7 @@ use App\Models\Store;
 use App\Models\UserStore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use PhpParser\Node\Stmt\TryCatch;
 
 class UserController extends Controller
@@ -133,7 +134,6 @@ class UserController extends Controller
                     ->orderBy('name')
                     ->get();
             }
-
             return response()->json(['stores' => $stores]);
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage()], 500);

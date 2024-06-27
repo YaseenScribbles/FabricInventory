@@ -92,6 +92,18 @@ export const Layout = () => {
                         >
                             Receipts
                         </Nav.Link>
+                        <Nav.Link
+                            href="/deliveries"
+                            active={location.pathname === "/deliveries"}
+                        >
+                            Deliveries
+                        </Nav.Link>
+                        <Nav.Link
+                            href="/stock"
+                            active={location.pathname === "/stock"}
+                        >
+                            Stock
+                        </Nav.Link>
                     </Nav>
                     <Nav>
                         <NavDropdown title={`${user.name.toUpperCase()}`}>

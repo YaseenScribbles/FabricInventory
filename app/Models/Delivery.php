@@ -5,31 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Receipt extends Model
+class Delivery extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'lot_no',
-        'brand',
-        'company_id',
+        'receipt_id',
         'store_id',
         'contact_id',
-        'fabric_id',
         'remarks',
-        'is_closed',
-        'is_locked',
-        'user_id'
+        'user_id',
     ];
 
-    public function receipt_items()
+    public function delivery_items()
     {
-        return $this->hasMany(ReceiptItem::class,'receipt_id');
+        return $this->hasMany(DeliveryItem::class, 'delivery_id');
     }
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
 }

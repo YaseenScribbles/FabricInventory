@@ -8,6 +8,10 @@ import { Users } from "./pages/Users/Users";
 import Receipts from "./pages/Receipts/Receipts";
 import ReceiptDocument from "./assets/ReceiptDocument";
 import Companies from "./pages/Companies/Companies";
+import Deliveries from "./pages/Deliveries/Deliveries";
+import DeliveryDocument from "./assets/DeliveryDocument";
+import Stock from "./pages/Reports/Stock";
+import StockDocument from "./assets/StockDocument";
 
 const router = createBrowserRouter([
     {
@@ -42,12 +46,28 @@ const router = createBrowserRouter([
                 path: "/receipts",
                 element: <Receipts />,
             },
+            {
+                path: "/deliveries",
+                element: <Deliveries />,
+            },
+            {
+                path:"/stock",
+                element: <Stock />
+            }
         ],
     },
     {
         path: "/receipt-report/:id",
         element: <ReceiptDocument />,
     },
+    {
+        path: "/delivery-report/:id",
+        element: <DeliveryDocument />,
+    },
+    {
+        path:"/stock-report/:id",
+        element: <StockDocument />
+    }
 ]);
 
 export default router;

@@ -1,0 +1,6 @@
+td.company, td.store {
+    white-space: nowrap;
+    overflow-x: hidden;
+    max-width: 150px;
+    text-overflow: ellipsis;
+}

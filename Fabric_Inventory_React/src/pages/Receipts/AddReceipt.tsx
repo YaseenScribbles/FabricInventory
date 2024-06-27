@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     Button,
     Col,
@@ -117,6 +117,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
     const [summary, setSummary] = useState<Summary>({ rolls: 0, weight: 0 });
     const [showAlert, setShowAlert] = useState(false);
     const [removeIndex, setRemoveIndex] = useState(0);
+    const hasFetchedData = useRef(false);
 
     const [receipt, setReceipt] = useState<Receipt>({
         lot_no: "",
@@ -130,79 +131,90 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
     });
 
     useEffect(() => {
-        setLoading(true);
-        const getFabrics = async () => {
-            try {
-                const response = await axios.get(
-                    `${LOCAL_URL}/fabrics?all=true`
-                );
-                const { data } = response;
-                setFabrics(data.data);
-            } catch (error: any) {
-                const { response } = error;
-                setErrors((p) => [
-                    ...p,
-                    { message: response.data.message, type: "failure" },
-                ]);
-                clearErrors();
-            }
-        };
-        const getColors = async () => {
-            try {
-                const response = await axios.get(
-                    `${LOCAL_URL}/colors?all=true`
-                );
-                const { data } = response;
-                setColors(data.data);
-            } catch (error: any) {
-                const { response } = error;
-                setErrors((p) => [
-                    ...p,
-                    { message: response.data.message, type: "failure" },
-                ]);
-                clearErrors();
-            }
+        const loadInitialData = async () => {
+            if (hasFetchedData.current) return;
+            setLoading(true);
+
+            const getFabrics = async () => {
+                try {
+                    const response = await axios.get(
+                        `${LOCAL_URL}/fabrics?all=true`
+                    );
+                    const { data } = response;
+                    setFabrics(data.data);
+                } catch (error: any) {
+                    const { response } = error;
+                    setErrors((p) => [
+                        ...p,
+                        { message: response.data.message, type: "failure" },
+                    ]);
+                    clearErrors();
+                }
+            };
+
+            const getColors = async () => {
+                try {
+                    const response = await axios.get(
+                        `${LOCAL_URL}/colors?all=true`
+                    );
+                    const { data } = response;
+                    setColors(data.data);
+                } catch (error: any) {
+                    const { response } = error;
+                    setErrors((p) => [
+                        ...p,
+                        { message: response.data.message, type: "failure" },
+                    ]);
+                    clearErrors();
+                }
+            };
+
+            const getStores = async () => {
+                try {
+                    const response = await axios.get(
+                        `${LOCAL_URL}/userstores/${user!.id}`
+                    );
+                    const { data } = response;
+                    setStores(data.stores);
+                } catch (error: any) {
+                    const { response } = error;
+                    setErrors((p) => [
+                        ...p,
+                        { message: response.data.message, type: "failure" },
+                    ]);
+                    clearErrors();
+                }
+            };
+
+            const getCompanies = async () => {
+                try {
+                    const response = await axios.get(
+                        `${LOCAL_URL}/companies?all=true`
+                    );
+                    const { data } = response;
+                    setCompanies(data.companies);
+                } catch (error: any) {
+                    const { response } = error;
+                    setErrors((p) => [
+                        ...p,
+                        { message: response.data.message, type: "failure" },
+                    ]);
+                    clearErrors();
+                }
+            };
+
+            await Promise.all([
+                getFabrics(),
+                getColors(),
+                getStores(),
+                getCompanies(),
+            ]);
+
+            hasFetchedData.current = true;
+            setLoading(false);
         };
 
-        const getStores = async () => {
-            try {
-                const response = await axios.get(
-                    `${LOCAL_URL}/userstores/${user!.id}`
-                );
-                const { data } = response;
-                setStores(data.stores);
-            } catch (error: any) {
-                const { response } = error;
-                setErrors((p) => [
-                    ...p,
-                    { message: response.data.message, type: "failure" },
-                ]);
-                clearErrors();
-            }
-        };
-
-        const getCompanies = async () => {
-            try {
-                const response = await axios.get(
-                    `${LOCAL_URL}/companies?all=true`
-                );
-                const { data } = response;
-                setCompanies(data.companies);
-            } catch (error: any) {
-                const { response } = error;
-                setErrors((p) => [
-                    ...p,
-                    { message: response.data.message, type: "failure" },
-                ]);
-                clearErrors();
-            }
-        };
-
-        getFabrics();
-        getColors();
-        getStores();
-        getCompanies();
-        setLoading(false);
+        loadInitialData();
     }, []);
 
     const getAvailableColors = (colorId: number) => {

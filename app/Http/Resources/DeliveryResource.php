@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ReceiptResource extends JsonResource
+class DeliveryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -25,13 +25,9 @@ class ReceiptResource extends JsonResource
             'remarks' => $this->remarks,
             'rolls' => $this->rolls,
             'weight' => $this->weight,
-            'deliveredRolls' => $this->delivered_rolls,
-            'deliveredWeight' => $this->delivered_weight,
-            'stockRolls' => $this->stock_rolls,
-            'stockWeight' => $this->stock_weight,
             'user' => $this->user,
             'date' => $this->created_at,
-            'isLocked' => $this->is_locked
+            'receiptNo' => $this->receipt_id
         ];
     }
 }
