@@ -83,7 +83,11 @@ class ReportController extends Controller
                 $stockQuery->where('f.id', $request->fabric_id);
             }
 
-            if ($request->has('all') && $request->all == 'true'){
+            if ($request->has('is_closed')) {
+                $stockQuery->where('r.is_closed', $request->is_closed == 'true' ? true : false);
+            }
+
+            if ($request->has('all') && $request->all == 'true') {
                 $stock = $stockQuery->get();
             } else {
                 $stock = $stockQuery->paginate(10);

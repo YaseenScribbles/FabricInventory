@@ -143,13 +143,13 @@ const Deliveries: React.FC = () => {
                     ) : (
                         deliveries.map((delivery, index) => (
                             <tr key={index} style={{ verticalAlign: "middle" }}>
-                                <td>{delivery.id}</td>
-                                <td>
+                                <td className="text-center">{delivery.id}</td>
+                                <td className="text-center">
                                     {new Date(
                                         delivery.date
                                     ).toLocaleDateString()}
                                 </td>
-                                <td>{delivery.receiptNo}</td>
+                                <td className="text-center">{delivery.receiptNo}</td>
                                 <td>{delivery.lotNo}</td>
                                 <td>{delivery.brand.toUpperCase()}</td>
                                 <td>{delivery.contact.toUpperCase()}</td>
@@ -159,8 +159,8 @@ const Deliveries: React.FC = () => {
                                         ? delivery.remarks.toUpperCase()
                                         : ""}
                                 </td>
-                                <td>{delivery.rolls}</td>
-                                <td>{(+delivery.weight).toFixed(2)}</td>
+                                <td className="text-end">{delivery.rolls}</td>
+                                <td className="text-end">{(+delivery.weight).toFixed(2)}</td>
                                 <td className="d-flex flex-nowrap">
                                     <Button
                                         variant="primary"

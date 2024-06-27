@@ -12,7 +12,6 @@ use App\Models\User;
 use App\Models\UserStore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ReceiptController extends Controller
 {

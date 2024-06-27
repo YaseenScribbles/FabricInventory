@@ -6,6 +6,7 @@ import {
     Row,
     Table,
     Tooltip,
+    Form,
 } from "react-bootstrap";
 import Heading from "../../components/Heading";
 import Select from "react-select";
@@ -91,6 +92,7 @@ const Stock: React.FC = () => {
         currentPage: 1,
         lastPage: 1,
     });
+    const [isClosed, setIsClosed] = useState(false);
 
     const getStock = async (page: number = 1) => {
         try {
@@ -100,7 +102,8 @@ const Stock: React.FC = () => {
                 &lot_no=${selectedLot ? selectedLot.value : ""}
                 &brand=${selectedBrand ? selectedBrand.value : ""}
                 &store_id=${selectedStore ? selectedStore.value : ""}
-                &fabric_id=${selectedFabric ? selectedFabric.value : ""}`,
+                &fabric_id=${selectedFabric ? selectedFabric.value : ""}
+                &is_closed=${isClosed}`,
                 {
                     headers: {
                         Accept: "application/json",
@@ -226,7 +229,7 @@ const Stock: React.FC = () => {
             setLoading(false);
         };
         getFilteredData();
-    }, [selectedStore, selectedLot, selectedBrand, selectedFabric]);
+    }, [selectedStore, selectedLot, selectedBrand, selectedFabric, isClosed]);
 
     const downloadExcel = async () => {
         try {
@@ -366,7 +369,7 @@ const Stock: React.FC = () => {
                         isClearable
                     />
                 </Col>
-                <Col xs={3}>
+                <Col xs={2}>
                     <Select
                         value={selectedLot}
                         onChange={(e) => {
@@ -388,11 +391,28 @@ const Stock: React.FC = () => {
                         isClearable
                     />
                 </Col>
+                <Col
+                    xs={1}
+                    className="d-flex justify-content-start align-items-center"
+                >
+                    <Form.Check
+                        type="switch"
+                        label="Closed"
+                        id="is_closed"
+                        className="text-secondary"
+                        onClick={(
+                            e: React.MouseEvent<HTMLInputElement, MouseEvent>
+                        ) => {
+                            const target = e.target as HTMLInputElement;
+                            setIsClosed(target.checked);
+                        }}
+                    />
+                </Col>
                 <Col xs={1}>
                     <Button
                         variant="success"
                         onClick={downloadExcel}
-                        className="d-flex w-100 justify-content-center"
+                        className="d-flex w-75 justify-content-center ms-auto"
                     >
                         <box-icon
                             name="download"
@@ -429,7 +449,7 @@ const Stock: React.FC = () => {
                     ) : (
                         reportRows.map((row, index) => (
                             <tr style={{ verticalAlign: "middle" }} key={index}>
-                                <td>{row.receiptNo}</td>
+                                <td className="text-center">{row.receiptNo}</td>
                                 <td>{row.lotNo.toUpperCase()}</td>
                                 <td>{row.brand.toUpperCase()}</td>
                                 {
@@ -460,9 +480,11 @@ const Stock: React.FC = () => {
                                 }
                                 <td>{row.fabric.toUpperCase()}</td>
                                 <td>{row.contact.toUpperCase()}</td>
-                                <td>{row.rolls}</td>
-                                <td>{(+row.weight).toFixed(2)}</td>
-                                <td>{row.days}</td>
+                                <td className="text-end">{row.rolls}</td>
+                                <td className="text-end">
+                                    {(+row.weight).toFixed(2)}
+                                </td>
+                                <td className="text-center">{row.days}</td>
                                 <td>
                                     <Button
                                         variant="secondary"
