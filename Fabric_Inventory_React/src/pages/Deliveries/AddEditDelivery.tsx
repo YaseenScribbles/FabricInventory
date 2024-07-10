@@ -16,6 +16,8 @@ import { LOCAL_URL } from "../../assets/common";
 import { useTypedSelector } from "../../store/Store";
 import { useDispatch } from "react-redux";
 import { add, clear, update } from "../../store/DeliveryItemsSlice";
+import { OptionsOrGroups, GroupBase } from "react-select";
+import SelectAsync from "react-select/async";
 
 type AddEditDeliveryProps = {
     show: boolean;
@@ -84,6 +86,16 @@ interface Detail {
     dia: number;
     rolls: number;
     weight: string;
+}
+
+interface Options {
+    label: string;
+    value: string;
+}
+
+interface Supplier {
+    id: number;
+    name: string;
 }
 
 const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
@@ -447,6 +459,29 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
         }
     };
 
+    const loadSuppliers = async (
+        inputValue: string,
+        callback: (
+            options: OptionsOrGroups<Options, GroupBase<Options>>
+        ) => void
+    ): Promise<OptionsOrGroups<Options, GroupBase<Options>>> => {
+        try {
+            const response = await axios.get(`${LOCAL_URL}/suppliers`, {
+                params: { query: inputValue },
+            });
+            const options = response.data.suppliers.map((item: Supplier) => ({
+                label: item.name,
+                value: item.id,
+            }));
+            callback(options);
+            return options;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            callback([]);
+            return [];
+        }
+    };
+
     useEffect(() => {
         let details = deliveryItems.map((i) => i.details);
 
@@ -693,7 +728,7 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                     <Col xs={2}>
                         <FloatingLabel
                             controlId="fabric_id"
-                            label="Fabric"
+                            label="Cloth Type"
                             className="text-secondary"
                         >
                             <Form.Select
@@ -774,24 +809,24 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                 </Row>
                 <Row>
                     <Col xs={2}>
-                        <FloatingLabel
-                            controlId="contact_id"
-                            label="Contact"
-                            className="text-secondary"
-                        >
-                            <Form.Select
-                                value={delivery.contact_id}
-                                onChange={(e) =>
-                                    setDelivery((prev) => ({
-                                        ...prev,
-                                        contact_id: Number(e.target.value),
-                                    }))
-                                }
-                            >
-                                <option value="0"></option>
-                                <option value={1}>Demo</option>
-                            </Form.Select>
-                        </FloatingLabel>
+                    <SelectAsync
+                            placeholder="Select Contact"
+                            cacheOptions
+                            loadOptions={loadSuppliers}
+                            styles={{
+                                control: (baseStyles, _) => ({
+                                    ...baseStyles,
+                                    minHeight: "58px",
+                                }),
+                            }}
+                            onChange={(e) => {
+                                setDelivery((prev) => ({
+                                    ...prev,
+                                    contact_id: Number(e ? e.value : 0),
+                                }));
+                            }}
+                            isClearable
+                        />
                     </Col>
                     <Col xs={10}>
                         <FloatingLabel

@@ -18,6 +18,7 @@ class ReceiptResource extends JsonResource
             'id' => $this->id,
             'lotNo' => $this->lot_no,
             'brand' => $this->brand,
+            'cloth' => $this->cloth,
             'contactId' => $this->contact_id,
             'contact' => $this->contact,
             'fabricId' => $this->fabric_id,

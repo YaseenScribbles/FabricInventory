@@ -97,7 +97,7 @@ const EditFabric: React.FC<EditFabricProps> = ({
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Edit Fabric
+                    Edit Cloth Type
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>

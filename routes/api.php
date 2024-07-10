@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DeliveryController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\FabricController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -46,4 +48,8 @@ Route::get('/delivery-report/{delivery}',[DeliveryController::class,'report']);
 Route::get('/lotsandbrands/{user}',[ReportController::class,'lotsAndBrands']);
 Route::get('/stock',[ReportController::class,'stock']);
 Route::get('/stock-report/{receipt}',[ReportController::class,'stockReport']);
+Route::get('/suppliers',[SupplierController::class,'index']);
+Route::get('/brands',[BrandController::class,'index']);
+Route::put('/brand-update/{id}',[BrandController::class,'brandUpdate']);
+
 

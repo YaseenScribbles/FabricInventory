@@ -103,8 +103,8 @@ const Fabrics: React.FC = () => {
     return (
         <Container id="fabrics" className="p-2">
             <Heading
-                title="Fabrics"
-                buttonText="Add Fabric"
+                title="Cloth Types"
+                buttonText="Add Cloth Type"
                 onClick={() => setShowAddFabricModal(true)}
             />
             <Table striped bordered hover>

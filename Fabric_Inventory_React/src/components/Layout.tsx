@@ -78,7 +78,7 @@ export const Layout = () => {
                             href="/fabrics"
                             active={location.pathname === "/fabrics"}
                         >
-                            Fabrics
+                            Cloth Types
                         </Nav.Link>
                         <Nav.Link
                             href="/colors"

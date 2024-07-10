@@ -79,7 +79,7 @@ const AddFabric: React.FC<AddFabricProps> = ({ show, onClose, onAdded }) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Add Fabric
+                    Add Cloth Type
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>

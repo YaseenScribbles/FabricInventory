@@ -1,6 +1,8 @@
-td.company, td.store {
+td.company, td.store, td.cloth, td.brand, td.contact {
     white-space: nowrap;
     overflow-x: hidden;
     max-width: 150px;
     text-overflow: ellipsis;
 }
+
+

@@ -23,7 +23,8 @@ class UpdateReceiptRequest extends FormRequest
     {
         return [
             'lot_no' => 'required|string',
-            'brand' => 'required|string',
+            'brand' => 'nullable|string',
+            'cloth' => 'required|string',
             'contact_id' => 'required|integer',
             'fabric_id' => 'required|integer|exists:fabrics,id',
             'remarks' => 'nullable|string',

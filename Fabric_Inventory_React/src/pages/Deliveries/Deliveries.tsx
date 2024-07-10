@@ -1,18 +1,26 @@
-import { Button, Container, Table } from "react-bootstrap";
+import {
+    Button,
+    Container,
+    OverlayTrigger,
+    Spinner,
+    Table,
+    Tooltip,
+} from "react-bootstrap";
 import Heading from "../../components/Heading";
-import { useEffect, useRef, useState } from "react";
-import AddEditDelivery from "./AddEditDelivery";
+import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import { useNotificationContext } from "../../contexts/NotificationsContext";
 import { useUserContext } from "../../contexts/UserContext";
 import axios from "axios";
 import { LOCAL_URL } from "../../assets/common";
 import MyPagination from "../../components/Pagination";
 import AlertModal from "../../components/AlertModal";
+const AddEditDelivery = lazy(() => import("./AddEditDelivery"));
 
 interface Delivery {
     id: number;
     lotNo: string;
     brand: string;
+    cloth: string;
     contactId: number;
     contact: string;
     fabricId: number;
@@ -120,13 +128,14 @@ const Deliveries: React.FC = () => {
             <Table striped bordered hover>
                 <thead>
                     <tr style={{ verticalAlign: "middle" }}>
-                        <th>D. No</th>
+                        <th className="eightypixels">D. No</th>
                         <th>Date</th>
-                        <th>R. No</th>
-                        <th>Lot No</th>
-                        <th>Brand</th>
-                        <th>Contact</th>
-                        <th>Fabric</th>
+                        <th className="eightypixels">R. No</th>
+                        <th className="eightypixels">Lot No</th>
+                        <th className="hundredpixels">Brand</th>
+                        <th className="hundredpixels">Contact</th>
+                        <th className="hundredpixels">Cloth</th>
+                        <th>Type</th>
                         <th className="remarks">Remarks</th>
                         <th>Rolls</th>
                         <th>Weight</th>
@@ -136,31 +145,95 @@ const Deliveries: React.FC = () => {
                 <tbody>
                     {loading ? (
                         <tr>
-                            <td className="text-center " colSpan={11}>
+                            <td className="text-center " colSpan={12}>
                                 Loading...
                             </td>
                         </tr>
                     ) : (
                         deliveries.map((delivery, index) => (
                             <tr key={index} style={{ verticalAlign: "middle" }}>
-                                <td className="text-center">{delivery.id}</td>
+                                <td className="text-center eightypixels">
+                                    {delivery.id}
+                                </td>
                                 <td className="text-center">
                                     {new Date(
                                         delivery.date
                                     ).toLocaleDateString()}
                                 </td>
-                                <td className="text-center">{delivery.receiptNo}</td>
-                                <td>{delivery.lotNo}</td>
-                                <td>{delivery.brand.toUpperCase()}</td>
-                                <td>{delivery.contact.toUpperCase()}</td>
-                                <td>{delivery.fabric.toUpperCase()}</td>
-                                <td className="remarks">
-                                    {delivery.remarks
-                                        ? delivery.remarks.toUpperCase()
-                                        : ""}
+                                <td className="text-center eightypixels">
+                                    {delivery.receiptNo}
                                 </td>
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={
+                                        <Tooltip>{delivery.lotNo}</Tooltip>
+                                    }
+                                >
+                                    <td className="eightypixels">
+                                        {delivery.lotNo}
+                                    </td>
+                                </OverlayTrigger>
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={
+                                        <Tooltip>
+                                            {delivery.brand
+                                                ? delivery.brand.toUpperCase()
+                                                : "NOT GIVEN"}
+                                        </Tooltip>
+                                    }
+                                >
+                                    <td className="hundredpixels">
+                                        {delivery.brand
+                                            ? delivery.brand.toUpperCase()
+                                            : "NOT GIVEN"}
+                                    </td>
+                                </OverlayTrigger>
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={
+                                        <Tooltip>
+                                            {delivery.contact.toUpperCase()}
+                                        </Tooltip>
+                                    }
+                                >
+                                    <td className="hundredpixels">
+                                        {delivery.contact.toUpperCase()}
+                                    </td>
+                                </OverlayTrigger>
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={
+                                        <Tooltip>
+                                            {delivery.cloth.toUpperCase()}
+                                        </Tooltip>
+                                    }
+                                >
+                                    <td className="hundredpixels">
+                                        {delivery.cloth.toUpperCase()}
+                                    </td>
+                                </OverlayTrigger>
+                                <td>{delivery.fabric.toUpperCase()}</td>
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={
+                                        <Tooltip>
+                                            {delivery.remarks
+                                                ? delivery.remarks.toUpperCase()
+                                                : ""}
+                                        </Tooltip>
+                                    }
+                                >
+                                    <td className="remarks">
+                                        {delivery.remarks
+                                            ? delivery.remarks.toUpperCase()
+                                            : ""}
+                                    </td>
+                                </OverlayTrigger>
                                 <td className="text-end">{delivery.rolls}</td>
-                                <td className="text-end">{(+delivery.weight).toFixed(2)}</td>
+                                <td className="text-end">
+                                    {(+delivery.weight).toFixed(2)}
+                                </td>
                                 <td className="d-flex flex-nowrap">
                                     <Button
                                         variant="primary"
@@ -224,23 +297,33 @@ const Deliveries: React.FC = () => {
                     )}
                 </tbody>
             </Table>
-            <AddEditDelivery
-                edit={edit}
-                editId={editId}
-                show={showAddEditModal}
-                onAdd={() => {
-                    let page = edit ? currentPage : meta.lastPage;
-                    setCurrentPage(page);
-                    getDeliveries(page);
-                    setEdit(false);
-                    setEditId(0);
-                }}
-                onClose={() => {
-                    setShowAddEditModal(false);
-                    setEdit(false);
-                    setEditId(0);
-                }}
-            />
+            <Suspense
+                fallback={
+                    <div className="d-flex justify-content-center align-items-center">
+                        <Spinner animation="border" />
+                    </div>
+                }
+            >
+                {showAddEditModal && (
+                    <AddEditDelivery
+                        edit={edit}
+                        editId={editId}
+                        show={showAddEditModal}
+                        onAdd={() => {
+                            let page = edit ? currentPage : meta.lastPage;
+                            setCurrentPage(page);
+                            getDeliveries(page);
+                            setEdit(false);
+                            setEditId(0);
+                        }}
+                        onClose={() => {
+                            setShowAddEditModal(false);
+                            setEdit(false);
+                            setEditId(0);
+                        }}
+                    />
+                )}
+            </Suspense>
             <AlertModal
                 show={showAlert}
                 onCancel={() => setShowAlert(false)}

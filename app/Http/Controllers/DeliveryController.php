@@ -40,14 +40,16 @@ class DeliveryController extends Controller
                 ->join('fabrics', 'fabrics.id', '=', 'receipts.fabric_id')
                 ->join('users', 'users.id', '=', 'deliveries.user_id')
                 ->join('stores', 'stores.id', '=', 'deliveries.store_id')
+                ->join('suppliers', 'suppliers.id', '=', 'deliveries.contact_id')
                 ->select(
                     'deliveries.id',
                     'deliveries.created_at',
                     'deliveries.receipt_id',
                     'receipts.lot_no',
                     'receipts.brand',
+                    'receipts.cloth',
                     'deliveries.contact_id',
-                    DB::raw("'Demo' as [contact]"),
+                    DB::raw("suppliers.name as [contact]"),
                     'receipts.fabric_id',
                     DB::raw('fabrics.name as fabric'),
                     'deliveries.remarks',
@@ -56,7 +58,7 @@ class DeliveryController extends Controller
                     DB::raw('sum(delivery_items.weight) as weight'),
                 )
                 ->whereIn('deliveries.store_id', $store_ids)
-                ->groupBy('deliveries.id', 'deliveries.created_at', 'deliveries.receipt_id', 'receipts.lot_no', 'receipts.brand', 'deliveries.contact_id', 'receipts.fabric_id', 'fabrics.name', 'deliveries.remarks', 'users.name')
+                ->groupBy('deliveries.id', 'deliveries.created_at', 'deliveries.receipt_id', 'receipts.lot_no', 'receipts.brand', 'deliveries.contact_id', 'receipts.fabric_id', 'fabrics.name', 'deliveries.remarks', 'users.name','suppliers.name','receipts.cloth')
                 ->paginate(10);
 
             return DeliveryResource::collection($deliveries);
@@ -183,13 +185,14 @@ class DeliveryController extends Controller
 
         try {
 
-            $masterSql  = "select d.id, d.created_at date, c.name company_name, c.address company_address, r.lot_no, r.brand, s.name store, 'demo' contact, f.name fabric,d.remarks, u.name [user]
+            $masterSql  = "select d.id, d.created_at date, c.name company_name, c.address company_address, r.lot_no, r.brand,r.cloth, s.name store, su.name contact, f.name fabric,d.remarks, u.name [user]
                 from deliveries d
                 inner join receipts r on r.id = d.receipt_id
                 inner join fabrics f on r.fabric_id = f.id
                 inner join stores s on s.id = d.store_id
                 inner join users u on d.user_id = u.id
                 inner join companies c on c.id = r.company_id
+                inner join suppliers su on su.id = d.contact_id
                 where d.id = $delivery->id";
 
             $detailsSql = "select c.name color,dia,rolls,weight

@@ -52,20 +52,23 @@ class ReportController extends Controller
                 ->join('companies as c', 'c.id', '=', 'r.company_id')
                 ->join('stores as st', 'st.id', '=', 'r.store_id')
                 ->join('fabrics as f', 'f.id', '=', 'r.fabric_id')
+                ->join('suppliers as su', 'su.id', '=', 'r.contact_id')
                 ->select(
                     'r.id',
                     'r.lot_no',
                     'r.brand',
                     'c.name as company',
                     'st.name as store',
+                    'r.cloth',
                     'f.name as fabric',
-                    DB::raw("'Demo' as contact"),
+                    DB::raw("su.name as contact"),
                     DB::raw('SUM(stock.rolls) as rolls'),
                     DB::raw('SUM(stock.weight) as weight'),
                     DB::raw('DATEDIFF(day,r.created_at,GETDATE()) as days'),
                 )
                 ->whereIn('r.store_id', $store_ids)
-                ->groupBy('r.id', 'r.lot_no', 'r.brand', 'c.name', 'st.name', 'f.name', 'r.created_at');
+                ->groupBy('r.id', 'r.lot_no', 'r.brand', 'c.name', 'st.name', 'f.name', 'r.created_at','su.name','r.cloth')
+                ->orderByDesc('r.id');
 
             if ($request->has('lot_no') && isset($request->lot_no)) {
                 $stockQuery->where('r.lot_no', $request->lot_no);
@@ -104,12 +107,13 @@ class ReportController extends Controller
     {
         try {
             //code...
-            $masterSql  = "select r.id, r.created_at date, c.name company_name, c.address company_address, r.lot_no, r.brand, s.name store, 'demo' contact, f.name fabric,r.remarks, datediff(day,r.created_at,getdate()) days,r.is_closed as status
+            $masterSql  = "select r.id, r.created_at date, c.name company_name, c.address company_address, r.lot_no, r.brand, r.cloth, s.name store, su.name contact, f.name fabric,r.remarks, datediff(day,r.created_at,getdate()) days,r.is_closed as status
             from receipts r
             inner join fabrics f on r.fabric_id = f.id
             inner join stores s on s.id = r.store_id
             inner join users u on r.user_id = u.id
             inner join companies c on c.id = r.company_id
+            inner join suppliers su on su.id = r.contact_id
             where r.id = $receipt->id";
 
             $detailsSql = "select c.name color,s.dia,s.rolls,s.weight

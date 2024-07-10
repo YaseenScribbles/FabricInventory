@@ -5,27 +5,30 @@ import {
     Form,
     OverlayTrigger,
     Row,
+    Spinner,
     Table,
     Tooltip,
 } from "react-bootstrap";
 import Heading from "../../components/Heading";
 import { useNotificationContext } from "../../contexts/NotificationsContext";
-import React, { useEffect, useRef, useState } from "react";
-import AddReceipt from "./AddReceipt";
+import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
+const AddReceipt = lazy(() => import("./AddReceipt"));
 import axios from "axios";
 import { LOCAL_URL } from "../../assets/common";
 import MyPagination from "../../components/Pagination";
 import "./Receipt.css";
 import { useUserContext } from "../../contexts/UserContext";
 import Select from "react-select";
-import AddEditDelivery from "../Deliveries/AddEditDelivery";
+const AddEditDelivery = lazy(() => import("../Deliveries/AddEditDelivery"));
 import { Navigate } from "react-router";
 import AlertModal from "../../components/AlertModal";
+import Brand from "./Brand";
 
 interface Receipt {
     id: number;
     lotNo: string;
     brand: string;
+    cloth: string;
     contactId: number;
     contact: string;
     fabricId: number;
@@ -81,12 +84,19 @@ const Receipts: React.FC = () => {
     const [alertId, setAlertId] = useState<number>(0);
     const [showAlert, setShowAlert] = useState(false);
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+    const [showBrandModal, setShowBrandModal] = useState(false);
+    const [brandEditId, setBrandEditId] = useState(0);
+    const [ brandEdit, setBrandEdit ] = useState("");
 
     const getReceipts = async (page: number = 1) => {
         setLoading(true);
         try {
             const response = await axios.get(
-                `${LOCAL_URL}/receipts?page=${page}&userId=${user?.id}&storeId=${selectedStore?.value}&isClosed=${isClosed}`,
+                `${LOCAL_URL}/receipts?page=${page}&userId=${
+                    user?.id
+                }&storeId=${
+                    selectedStore ? selectedStore.value : 0
+                }&isClosed=${isClosed}`,
                 {
                     headers: { Accept: "application/json" },
                 }
@@ -209,14 +219,14 @@ const Receipts: React.FC = () => {
     }, [selectedStore, isClosed]);
 
     return (
-        <Container className="p-2" id="receipts">
+        <Container fluid className="p-3" id="receipts">
             <Heading
                 title="Receipts"
                 buttonText="Add Receipt"
                 onClick={() => setShowAddReceipt(true)}
             />
             <Row>
-                <Col xs={3}>
+                <Col xs={2}>
                     <Select
                         value={selectedStore}
                         onChange={(e) => {
@@ -251,12 +261,13 @@ const Receipts: React.FC = () => {
                 <thead>
                     <tr style={{ verticalAlign: "middle" }}>
                         {/* <th>#</th> */}
-                        <th>R. No</th>
+                        <th className="eightypixels">R. No</th>
                         <th>Date</th>
-                        <th>Lot No</th>
-                        <th>Brand</th>
-                        <th>Contact</th>
-                        <th>Fabric</th>
+                        <th className="eightypixels">Lot No</th>
+                        <th className="hundredpixels">Brand</th>
+                        <th className="hundredpixels">Contact</th>
+                        <th className="hundredpixels">Cloth</th>
+                        <th>Type</th>
                         <th className="remarks">Remarks</th>
                         <th colSpan={2} className="text-center">
                             Received
@@ -276,7 +287,7 @@ const Receipts: React.FC = () => {
                 <tbody>
                     {loading ? (
                         <tr>
-                            <td className="text-center" colSpan={15}>
+                            <td className="text-center" colSpan={16}>
                                 Loading...
                             </td>
                         </tr>
@@ -290,7 +301,7 @@ const Receipts: React.FC = () => {
                                     key={index}
                                 >
                                     {/* <td>{serialNo}</td> */}
-                                    <td className="text-center">
+                                    <td className="text-center eightypixels">
                                         {receipt.id}
                                     </td>
                                     <td>
@@ -298,9 +309,58 @@ const Receipts: React.FC = () => {
                                             receipt.date
                                         ).toLocaleDateString()}
                                     </td>
-                                    <td>{receipt.lotNo.toUpperCase()}</td>
-                                    <td>{receipt.brand.toUpperCase()}</td>
-                                    <td>{receipt.contact.toUpperCase()}</td>
+                                    <OverlayTrigger
+                                        placement="top"
+                                        overlay={
+                                            <Tooltip>
+                                                {receipt.lotNo.toUpperCase()}
+                                            </Tooltip>
+                                        }
+                                    >
+                                        <td className="eightypixels">
+                                            {receipt.lotNo.toUpperCase()}
+                                        </td>
+                                    </OverlayTrigger>
+                                    <OverlayTrigger
+                                        placement="top"
+                                        overlay={
+                                            <Tooltip>
+                                                {receipt.brand
+                                                    ? receipt.brand.toUpperCase()
+                                                    : "NOT GIVEN"}
+                                            </Tooltip>
+                                        }
+                                    >
+                                        <td className="hundredpixels">
+                                            {receipt.brand
+                                                ? receipt.brand.toUpperCase()
+                                                : "NOT GIVEN"}
+                                        </td>
+                                    </OverlayTrigger>
+                                    <OverlayTrigger
+                                        placement="top"
+                                        overlay={
+                                            <Tooltip>
+                                                {receipt.contact.toUpperCase()}
+                                            </Tooltip>
+                                        }
+                                    >
+                                        <td className="hundredpixels">
+                                            {receipt.contact.toUpperCase()}
+                                        </td>
+                                    </OverlayTrigger>
+                                    <OverlayTrigger
+                                        placement="top"
+                                        overlay={
+                                            <Tooltip>
+                                                {receipt.cloth.toUpperCase()}
+                                            </Tooltip>
+                                        }
+                                    >
+                                        <td className="hundredpixels">
+                                            {receipt.cloth.toUpperCase()}
+                                        </td>
+                                    </OverlayTrigger>
                                     <td>{receipt.fabric.toUpperCase()}</td>
                                     <OverlayTrigger
                                         placement="top"
@@ -437,6 +497,26 @@ const Receipts: React.FC = () => {
                                                 size="sm"
                                             ></box-icon>
                                         </Button>
+                                        &nbsp;
+                                        <Button
+                                            variant="success"
+                                            style={{
+                                                display: "flex",
+                                                height: "40px",
+                                                width: "45px",
+                                            }}
+                                            onClick={() => {
+                                                setBrandEditId(receipt.id)
+                                                setBrandEdit(receipt.brand)
+                                                setShowBrandModal(true)
+                                            }}
+                                        >
+                                            <box-icon
+                                                name="customize"
+                                                color="white"
+                                                size="sm"
+                                            ></box-icon>
+                                        </Button>
                                     </td>
                                 </tr>
                             );
@@ -454,36 +534,60 @@ const Receipts: React.FC = () => {
                     setState={setReceipts}
                 />
             )}
-            <AddReceipt
-                show={showAddReceipt}
-                onClose={() => {
-                    setShowAddReceipt(false);
-                    setEdit(false);
-                    setEditId(0);
-                }}
-                onAdded={() => {
-                    let page = edit ? currentPage : meta.lastPage;
-                    setCurrentPage(page);
-                    getReceipts(page);
-                    setEdit(false);
-                    setEditId(0);
-                }}
-                edit={edit}
-                editId={editId}
-            />
-            <AddEditDelivery
-                edit={false}
-                show={showDeliveryModal}
-                onAdd={() => {
-                    <Navigate to={"/deliveries"} />;
-                    getReceipts(currentPage);
-                }}
-                onClose={() => {
-                    setDeliveryReceipId(0);
-                    setShowDeliveryModal(false);
-                }}
-                rcptId={deliveryReceiptId}
-            />
+            {
+                <Suspense
+                    fallback={
+                        <div className="d-flex justify-content-center align-items-center">
+                            <Spinner animation="border" />
+                        </div>
+                    }
+                >
+                    {showAddReceipt && (
+                        <AddReceipt
+                            show={showAddReceipt}
+                            onClose={() => {
+                                setShowAddReceipt(false);
+                                setEdit(false);
+                                setEditId(0);
+                            }}
+                            onAdded={() => {
+                                let page = edit ? currentPage : meta.lastPage;
+                                setCurrentPage(page);
+                                getReceipts(page);
+                                setEdit(false);
+                                setEditId(0);
+                            }}
+                            edit={edit}
+                            editId={editId}
+                        />
+                    )}
+                </Suspense>
+            }
+            {
+                <Suspense
+                    fallback={
+                        <div className="d-flex justify-content-center align-items-center">
+                            <Spinner animation="border" />
+                        </div>
+                    }
+                >
+                    {showDeliveryModal && (
+                        <AddEditDelivery
+                            edit={false}
+                            show={showDeliveryModal}
+                            onAdd={() => {
+                                <Navigate to={"/deliveries"} />;
+                                getReceipts(currentPage);
+                            }}
+                            onClose={() => {
+                                setDeliveryReceipId(0);
+                                setShowDeliveryModal(false);
+                            }}
+                            rcptId={deliveryReceiptId}
+                        />
+                    )}
+                </Suspense>
+            }
             <AlertModal
                 show={showAlert}
                 onCancel={() => setShowAlert(false)}
@@ -499,6 +603,15 @@ const Receipts: React.FC = () => {
                     setShowDeleteAlert(false);
                     deleteReceipt(alertId);
                 }}
+            />
+            <Brand
+                show={showBrandModal}
+                receiptId={brandEditId}
+                onClose={() => {
+                    setShowBrandModal(false);
+                }}
+                editBrand={brandEdit}
+                onUpdate={() => getReceipts(currentPage)}
             />
         </Container>
     );

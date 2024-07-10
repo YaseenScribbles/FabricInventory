@@ -19,6 +19,7 @@ interface Receipt {
     companyAddress: string;
     lot_no: string;
     brand: string;
+    cloth: string;
     store: string;
     contact: string;
     fabric: string;
@@ -51,46 +52,46 @@ Font.register({
 
 const styles = StyleSheet.create({
     page: {
-        padding: "20",
+        padding: "15",
         fontFamily: "Oswald",
     },
-    companyName :{
-        fontSize: "30px",
+    companyName: {
+        fontSize: "15px",
         fontWeight: "bold",
         textAlign: "center",
-        marginBottom: "10",
+        marginBottom: "5",
     },
-    companyAddress : {
-        fontSize:"15",
-        textAlign:"center",
-        marginBottom:"10"
+    companyAddress: {
+        fontSize: "10",
+        textAlign: "center",
+        marginBottom: "5",
     },
     title: {
-        fontSize: "20px",
+        fontSize: "15px",
         fontWeight: "bold",
         textAlign: "center",
-        marginBottom: "10",
+        marginBottom: "5",
     },
     heading: {
-        fontSize: "15px",
+        fontSize: "10px",
         fontWeight: "bold",
         width: "75",
     },
     colon: {
-        fontSize: "15",
+        fontSize: "10",
         width: "20",
     },
     master: {
-        fontSize: "15px",
+        fontSize: "10px",
         fontWeight: "bold",
     },
     columns: {
         display: "flex",
         flexDirection: "row",
-        marginBottom: "10",
+        marginBottom: "5",
     },
     table: {
-        marginTop: "20",
+        marginTop: "10",
         display: "flex",
         width: "100%",
         borderStyle: "solid",
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
         borderTopColor: "#000",
     },
     summary: {
-        marginTop: "30",
+        marginTop: "15",
         display: "flex",
         borderWidth: "1",
         flexDirection: "column",
@@ -147,10 +148,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     signature: {
-        marginTop:"30",
+        marginTop: "10",
         display: "flex",
-        flexDirection:"row",
+        flexDirection: "row",
         justifyContent: "space-between",
+        fontSize:"15"
     },
 });
 
@@ -158,10 +160,11 @@ const ReceiptDocument: React.FC = () => {
     const [receipt, setReceipt] = useState<Receipt>({
         id: 0,
         date: "",
-        companyName:"",
-        companyAddress:"",
+        companyName: "",
+        companyAddress: "",
         lot_no: "",
         brand: "",
+        cloth: "",
         store: "",
         contact: "",
         fabric: "",
@@ -173,74 +176,76 @@ const ReceiptDocument: React.FC = () => {
     const { id } = useParams();
     const [dias, setDias] = useState<number[]>([]);
 
-    useEffect(() => {
-        const getReceipt = async () => {
-            try {
-                const response = await axios.get(
-                    `${LOCAL_URL}/receipt-report/${id}`,
-                    {
-                        headers: {
-                            Accept: "application/json",
-                        },
+    const getReceipt = async () => {
+        try {
+            const response = await axios.get(
+                `${LOCAL_URL}/receipt-report/${id}`,
+                {
+                    headers: {
+                        Accept: "application/json",
+                    },
+                }
+            );
+
+            const {
+                data: { master, details },
+            } = response;
+
+            setReceipt({
+                id: master.id,
+                date: master.date,
+                companyName: master.company_name,
+                companyAddress: master.company_address,
+                lot_no: master.lot_no,
+                brand: master.brand,
+                cloth: master.cloth,
+                store: master.store,
+                contact: master.contact,
+                fabric: master.fabric,
+                remarks: master.remarks,
+                user: master.user,
+            });
+
+            let receipt_items: ReceiptItem2[] = [];
+
+            const allColors = details.map(
+                (detail: ReceiptItem) => detail.color
+            );
+            const uniqueColors: string[] = Array.from(new Set(allColors));
+
+            const allDias = details.map((detail: ReceiptItem) => detail.dia);
+            const uniqueDias: number[] = Array.from(new Set(allDias));
+
+            setDias(uniqueDias);
+
+            uniqueColors.forEach((color) => {
+                let receipt_details: Detail[] = [];
+                details.forEach((detail: ReceiptItem) => {
+                    if (detail.color === color) {
+                        receipt_details.push({
+                            dia: +detail.dia,
+                            rolls: +detail.rolls,
+                            weight: (+detail.weight).toFixed(2),
+                        });
                     }
-                );
-
-                const {
-                    data: { master, details },
-                } = response;
-
-                setReceipt({
-                    id: master.id,
-                    date: master.date,
-                    companyName: master.company_name,
-                    companyAddress: master.company_address,
-                    lot_no: master.lot_no,
-                    brand: master.brand,
-                    store: master.store,
-                    contact: master.contact,
-                    fabric: master.fabric,
-                    remarks: master.remarks,
-                    user: master.user,
                 });
-
-                let receipt_items: ReceiptItem2[] = [];
-
-                const allColors = details.map(
-                    (detail: ReceiptItem) => detail.color
-                );
-                const uniqueColors: string[] = Array.from(new Set(allColors));
-
-                const allDias = details.map(
-                    (detail: ReceiptItem) => detail.dia
-                );
-                const uniqueDias: number[] = Array.from(new Set(allDias));
-
-                setDias(uniqueDias);
-
-                uniqueColors.forEach((color) => {
-                    let receipt_details: Detail[] = [];
-                    details.forEach((detail: ReceiptItem) => {
-                        if (detail.color === color) {
-                            receipt_details.push({
-                                dia: +detail.dia,
-                                rolls: +detail.rolls,
-                                weight: (+detail.weight).toFixed(2),
-                            });
-                        }
-                    });
-                    receipt_items.push({
-                        color: color,
-                        details: receipt_details,
-                    });
+                receipt_items.push({
+                    color: color,
+                    details: receipt_details,
                 });
+            });
 
-                setReceiptItems(receipt_items);
-            } catch (error: any) {
-                console.log(error);
-            }
+            setReceiptItems(receipt_items);
+        } catch (error: any) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        const loadInitialData = async () => {
+            await getReceipt();
         };
-
-        getReceipt();
+        loadInitialData();
     }, []);
 
     return (
@@ -262,7 +267,7 @@ const ReceiptDocument: React.FC = () => {
                             Receipt No
                         </Text>
                         <Text style={styles.colon}>:</Text>
-                        <Text style={[styles.master, { width: "65" }]}>
+                        <Text style={[styles.master, { width: "50" }]}>
                             {receipt.id}
                         </Text>
                     </View>
@@ -270,13 +275,13 @@ const ReceiptDocument: React.FC = () => {
                         <Text style={styles.heading}>Brand</Text>
                         <Text style={styles.colon}>:</Text>
                         <Text style={styles.master}>
-                            {receipt.brand.toUpperCase()}
+                            {receipt.brand ? receipt.brand.toUpperCase() : "NOT GIVEN"}
                         </Text>
                         <Text style={[styles.heading, { marginLeft: "auto" }]}>
                             Date
                         </Text>
                         <Text style={styles.colon}>:</Text>
-                        <Text style={[styles.master, { width: "65" }]}>
+                        <Text style={[styles.master, { width: "50" }]}>
                             {new Date(receipt.date).toLocaleDateString()}
                         </Text>
                     </View>
@@ -290,7 +295,7 @@ const ReceiptDocument: React.FC = () => {
                             User
                         </Text>
                         <Text style={styles.colon}>:</Text>
-                        <Text style={[styles.master, { width: "65" }]}>
+                        <Text style={[styles.master, { width: "50" }]}>
                             {receipt.user.toUpperCase()}
                         </Text>
                     </View>
@@ -302,10 +307,10 @@ const ReceiptDocument: React.FC = () => {
                         </Text>
                     </View>
                     <View style={styles.columns}>
-                        <Text style={styles.heading}>Fabric</Text>
+                        <Text style={styles.heading}>Cloth / Type</Text>
                         <Text style={styles.colon}>:</Text>
                         <Text style={styles.master}>
-                            {receipt.fabric.toUpperCase()}
+                            {`${receipt.cloth.toUpperCase()} / ${receipt.fabric.toUpperCase()}`}
                         </Text>
                     </View>
                     <View style={styles.columns}>

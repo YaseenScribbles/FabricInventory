@@ -36,7 +36,7 @@ class ReceiptController extends Controller
             }
 
             $receipts =  DB::table(DB::raw("(
-                SELECT r.id, r.created_at, r.lot_no, r.brand, r.contact_id, 'Demo' as contact,
+                SELECT r.id, r.created_at, r.lot_no, r.brand, r.cloth, r.contact_id, su.name as contact,
                 r.fabric_id, f.name as fabric, r.remarks, u.name as [user],
                 SUM(ri.rolls) as rolls, SUM(ri.weight) as weight, r.is_locked
                 FROM receipts r
@@ -44,8 +44,9 @@ class ReceiptController extends Controller
                 AND r.is_closed = $is_closed AND r.store_id = $request->storeId
                 INNER JOIN fabrics f ON f.id = r.fabric_id
                 INNER JOIN users u ON u.id = r.user_id
+                INNER JOIN suppliers su on su.id = r.contact_id
                 GROUP BY r.id, r.created_at, r.lot_no, r.brand, r.contact_id,
-                r.fabric_id, f.name, r.remarks, u.name, r.is_locked
+                r.fabric_id, f.name, r.remarks, u.name, r.is_locked,su.name,r.cloth
             ) as receipt"))
             ->leftJoin(DB::raw('(
                 SELECT d.receipt_id, SUM(di.rolls) as rolls, SUM(di.weight) as weight
@@ -164,12 +165,13 @@ class ReceiptController extends Controller
 
         try {
 
-            $masterSql  = "select r.id, r.created_at date, c.name company_name, c.address company_address, r.lot_no, r.brand, s.name store, 'demo' contact, f.name fabric,r.remarks, u.name [user]
+            $masterSql  = "select r.id, r.created_at date, c.name company_name, c.address company_address, r.lot_no, r.brand, r.cloth, s.name store, su.name contact, f.name fabric,r.remarks, u.name [user]
             from receipts r
             inner join fabrics f on r.fabric_id = f.id
             inner join stores s on s.id = r.store_id
             inner join users u on r.user_id = u.id
             inner join companies c on c.id = r.company_id
+            inner join suppliers su on su.id = r.contact_id
             where r.id = $receipt->id";
 
             $detailsSql = "select c.name color,dia,rolls,weight

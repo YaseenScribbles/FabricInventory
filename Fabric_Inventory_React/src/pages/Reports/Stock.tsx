@@ -45,6 +45,7 @@ interface ReportRow {
     receiptNo: number;
     lotNo: string;
     brand: string;
+    cloth: string;
     company: string;
     store: string;
     fabric: string;
@@ -215,7 +216,7 @@ const Stock: React.FC = () => {
                 }
             };
             await Promise.all([getLotsAndBrands(), getStores(), getFabrics()]);
-            await getStock();
+            // await getStock();
             setLoading(false);
         };
 
@@ -240,7 +241,8 @@ const Stock: React.FC = () => {
                 &lot_no=${selectedLot ? selectedLot.value : ""}
                 &brand=${selectedBrand ? selectedBrand.value : ""}
                 &store_id=${selectedStore ? selectedStore.value : ""}
-                &fabric_id=${selectedFabric ? selectedFabric.value : ""}`,
+                &fabric_id=${selectedFabric ? selectedFabric.value : ""}
+                &is_closed=${isClosed ? "true" : "false"}`,
                 {
                     headers: {
                         Accept: "application/json",
@@ -254,9 +256,15 @@ const Stock: React.FC = () => {
             const worksheet = workbook.addWorksheet("Sheet1");
 
             // Add header row
-            const headers = Object.keys(data[0]).map((key) =>
-                key.toUpperCase()
-            );
+            const headers = Object.keys(data[0]).map((key) => {
+                if (key === "cloth") {
+                    return "CLOTH";
+                } else if (key === "fabric") {
+                    return "CLOTH TYPE";
+                } else {
+                    return key.toUpperCase();
+                }
+            });
             const headerRow = worksheet.addRow(headers);
             headerRow.font = { bold: true };
 
@@ -265,7 +273,7 @@ const Stock: React.FC = () => {
                 worksheet.addRow(
                     Object.values(item).map((value, index) => {
                         // Ensure the 9th column (weight) is a number
-                        if (index === 8) {
+                        if (index === 9) {
                             return parseFloat(value as string).toFixed(2);
                         }
                         return value;
@@ -289,10 +297,10 @@ const Stock: React.FC = () => {
             });
 
             // Format the 9th column (index 8) as decimal with two digits
-            worksheet.getColumn(9).numFmt = "0.00"; // 9th column (index 8) formatted as decimal
+            worksheet.getColumn(10).numFmt = "0.00"; // 9th column (index 8) formatted as decimal
 
-            const centerAlignedColumns = [1, 10];
-            const rightAlignedColumns = [8, 9];
+            const centerAlignedColumns = [1, 11];
+            const rightAlignedColumns = [9, 10];
             rightAlignedColumns.forEach((column) => {
                 worksheet.getColumn(column).alignment = { horizontal: "right" };
             });
@@ -387,7 +395,7 @@ const Stock: React.FC = () => {
                             setSelectedFabric(e);
                         }}
                         options={fabrics}
-                        placeholder="Select Fabric"
+                        placeholder="Select Cloth Type"
                         isClearable
                     />
                 </Col>
@@ -428,11 +436,12 @@ const Stock: React.FC = () => {
                     <tr style={{ verticalAlign: "middle" }}>
                         <th>R. No</th>
                         <th>Lot No</th>
-                        <th>Brand</th>
+                        <th className="brand">Brand</th>
                         <th className="company">Company</th>
                         <th className="store">Store</th>
-                        <th>Fabric</th>
-                        <th>Contact</th>
+                        <th className="cloth">Cloth</th>
+                        <th>Type</th>
+                        <th className="contact">Contact</th>
                         <th>Rolls</th>
                         <th>Weight</th>
                         <th>Days</th>
@@ -442,7 +451,7 @@ const Stock: React.FC = () => {
                 <tbody>
                     {loading ? (
                         <tr>
-                            <td className="text-center" colSpan={11}>
+                            <td className="text-center" colSpan={12}>
                                 Loading...
                             </td>
                         </tr>
@@ -451,7 +460,22 @@ const Stock: React.FC = () => {
                             <tr style={{ verticalAlign: "middle" }} key={index}>
                                 <td className="text-center">{row.receiptNo}</td>
                                 <td>{row.lotNo.toUpperCase()}</td>
-                                <td>{row.brand.toUpperCase()}</td>
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={
+                                        <Tooltip>
+                                            {row.brand
+                                                ? row.brand.toUpperCase()
+                                                : "NOT GIVEN"}
+                                        </Tooltip>
+                                    }
+                                >
+                                    <td className="brand">
+                                        {row.brand
+                                            ? row.brand.toUpperCase()
+                                            : "NOT GIVEN"}
+                                    </td>
+                                </OverlayTrigger>
                                 {
                                     <OverlayTrigger
                                         overlay={
@@ -478,8 +502,31 @@ const Stock: React.FC = () => {
                                         </td>
                                     </OverlayTrigger>
                                 }
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={
+                                        <Tooltip>
+                                            {row.cloth.toUpperCase()}
+                                        </Tooltip>
+                                    }
+                                >
+                                    <td className="cloth">
+                                        {row.cloth.toUpperCase()}
+                                    </td>
+                                </OverlayTrigger>
                                 <td>{row.fabric.toUpperCase()}</td>
-                                <td>{row.contact.toUpperCase()}</td>
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={
+                                        <Tooltip>
+                                            {row.contact.toUpperCase()}
+                                        </Tooltip>
+                                    }
+                                >
+                                    <td className="contact">
+                                        {row.contact.toUpperCase()}
+                                    </td>
+                                </OverlayTrigger>
                                 <td className="text-end">{row.rolls}</td>
                                 <td className="text-end">
                                     {(+row.weight).toFixed(2)}

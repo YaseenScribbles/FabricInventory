@@ -23,9 +23,10 @@ import {
     updateColor,
 } from "../../store/ReceiptItemsSlice";
 import "./Receipt.css";
-import Select from "react-select";
+import Select, { GroupBase, OptionsOrGroups } from "react-select";
 // import CustomAlert from "../../components/Alert";
 import AlertModal from "../../components/AlertModal";
+import SelectAsync from "react-select/async";
 
 type AddReceiptProps = {
     show: boolean;
@@ -38,6 +39,7 @@ type AddReceiptProps = {
 interface Receipt {
     lot_no: string;
     brand: string;
+    cloth: string;
     company_id: number;
     store_id: number;
     contact_id: number;
@@ -95,6 +97,16 @@ interface Summary {
     weight: number;
 }
 
+interface Options {
+    label: string;
+    value: string;
+}
+
+interface Supplier {
+    id: number;
+    name: string;
+}
+
 const AddReceipt: React.FC<AddReceiptProps> = ({
     show,
     onClose,
@@ -103,10 +115,15 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
     editId,
 }) => {
     const { user } = useUserContext();
-    const [fabrics, setFabrics] = useState<Fabric[]>([]);
+    const [fabricOptions, setFabricOptions] = useState<Options[]>([]);
+    const [selectedFabric, setSelectedFabric] = useState<Options | null>(null);
     const [colors, setColors] = useState<Color[]>([]);
-    const [companies, setCompanies] = useState<Company[]>([]);
-    const [stores, setStores] = useState<Store[]>([]);
+    const [companyOptions, setCompanyOptions] = useState<Options[]>([]);
+    const [selectedCompany, setSelectedCompany] = useState<Options | null>(
+        null
+    );
+    const [storeOptions, setStoreOptions] = useState<Options[]>([]);
+    const [selectedStore, setSelectedStore] = useState<Options | null>(null);
     const dispatch = useDispatch();
     const receiptItems = useTypedSelector((s) => s.receiptItems);
     const [errors, setErrors] = useState<Error[]>([]);
@@ -122,6 +139,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
     const [receipt, setReceipt] = useState<Receipt>({
         lot_no: "",
         brand: "",
+        cloth: "",
         company_id: 0,
         store_id: 0,
         contact_id: 0,
@@ -141,7 +159,16 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                         `${LOCAL_URL}/fabrics?all=true`
                     );
                     const { data } = response;
-                    setFabrics(data.data);
+                    // setFabrics(data.data);
+
+                    const fabric_options: Options[] = data.data.map(
+                        (fabric: Fabric) => ({
+                            label: fabric.name.toUpperCase(),
+                            value: fabric.id,
+                        })
+                    );
+
+                    setFabricOptions(fabric_options);
                 } catch (error: any) {
                     const { response } = error;
                     setErrors((p) => [
@@ -159,6 +186,15 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                     );
                     const { data } = response;
                     setColors(data.data);
+
+                    // const color_options: Options[] = data.data.map(
+                    //     (color: Color) => ({
+                    //         label: color.name,
+                    //         value: color.id,
+                    //     })
+                    // );
+
+                    // setColorOptions(color_options);
                 } catch (error: any) {
                     const { response } = error;
                     setErrors((p) => [
@@ -175,7 +211,16 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                         `${LOCAL_URL}/userstores/${user!.id}`
                     );
                     const { data } = response;
-                    setStores(data.stores);
+                    // setStores(data.stores);
+
+                    const store_options: Options[] = data.stores.map(
+                        (store: Store) => ({
+                            label: store.name.toUpperCase(),
+                            value: store.id,
+                        })
+                    );
+
+                    setStoreOptions(store_options);
                 } catch (error: any) {
                     const { response } = error;
                     setErrors((p) => [
@@ -192,7 +237,15 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                         `${LOCAL_URL}/companies?all=true`
                     );
                     const { data } = response;
-                    setCompanies(data.companies);
+                    // setCompanies(data.companies);
+                    const company_options: Options[] = data.companies.map(
+                        (company: Company) => ({
+                            label: company.name.toUpperCase(),
+                            value: company.id,
+                        })
+                    );
+
+                    setCompanyOptions(company_options);
                 } catch (error: any) {
                     const { response } = error;
                     setErrors((p) => [
@@ -217,6 +270,29 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
         loadInitialData();
     }, []);
 
+    const loadSuppliers = async (
+        inputValue: string,
+        callback: (
+            options: OptionsOrGroups<Options, GroupBase<Options>>
+        ) => void
+    ): Promise<OptionsOrGroups<Options, GroupBase<Options>>> => {
+        try {
+            const response = await axios.get(`${LOCAL_URL}/suppliers`, {
+                params: { query: inputValue },
+            });
+            const options = response.data.suppliers.map((item: Supplier) => ({
+                label: item.name,
+                value: item.id,
+            }));
+            callback(options);
+            return options;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            callback([]);
+            return [];
+        }
+    };
+
     const getAvailableColors = (colorId: number) => {
         return colors.filter(
             (c) => c.id === colorId || !selectedColors.includes(c.id)
@@ -232,6 +308,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                 setReceipt({
                     lot_no: data.lot_no,
                     brand: data.brand,
+                    cloth: data.cloth,
                     company_id: data.company_id,
                     store_id: data.store_id,
                     contact_id: data.contact_id,
@@ -359,9 +436,9 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
             setErrors((p) => [...p, error]);
             clearErrors();
             return;
-        } else if (receipt.brand === "") {
+        } else if (receipt.cloth === "") {
             let error: Error = {
-                message: "Please enter brand",
+                message: "Please enter cloth name",
                 type: "failure",
             };
 
@@ -452,6 +529,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
             setReceipt({
                 lot_no: "",
                 brand: "",
+                cloth: "",
                 company_id: 0,
                 store_id: 0,
                 contact_id: 0,
@@ -508,6 +586,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
             setReceipt({
                 lot_no: "",
                 brand: "",
+                cloth: "",
                 company_id: 0,
                 store_id: 0,
                 contact_id: 0,
@@ -615,106 +694,107 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                         </FloatingLabel>
                     </Col>
                     <Col xs={2}>
-                        <FloatingLabel
-                            controlId="company_id"
-                            label="Company"
-                            className="text-secondary"
-                        >
-                            <Form.Select
-                                value={receipt.company_id}
-                                onChange={(e) =>
-                                    setReceipt((prev) => ({
-                                        ...prev,
-                                        company_id: Number(e.target.value),
-                                    }))
-                                }
-                            >
-                                <option value="0">Select Company</option>
-                                {companies.map((c) => {
-                                    return (
-                                        <option key={c.id} value={c.id}>
-                                            {c.name.toUpperCase()}
-                                        </option>
-                                    );
-                                })}
-                            </Form.Select>
-                        </FloatingLabel>
+                        <Select
+                            placeholder="Select Company"
+                            value={selectedCompany}
+                            options={companyOptions}
+                            onChange={(e) => {
+                                setSelectedCompany(e);
+                                setReceipt((prev) => ({
+                                    ...prev,
+                                    company_id: Number(e ? e.value : 0),
+                                }));
+                            }}
+                            styles={{
+                                control: (baseStyles, _) => ({
+                                    ...baseStyles,
+                                    minHeight: "58px",
+                                }),
+                            }}
+                        />
+                    </Col>
+                    <Col xs={2}>
+                        <Select
+                            placeholder="Select Store"
+                            value={selectedStore}
+                            options={storeOptions}
+                            onChange={(e) => {
+                                setSelectedStore(e);
+                                setReceipt((prev) => ({
+                                    ...prev,
+                                    store_id: Number(e ? e.value : 0),
+                                }));
+                            }}
+                            styles={{
+                                control: (baseStyles, _) => ({
+                                    ...baseStyles,
+                                    minHeight: "58px",
+                                }),
+                            }}
+                        />
                     </Col>
                     <Col xs={3}>
-                        <FloatingLabel
-                            controlId="store_id"
-                            label="Store"
-                            className="text-secondary"
-                        >
-                            <Form.Select
-                                value={receipt.store_id}
-                                onChange={(e) =>
-                                    setReceipt((prev) => ({
-                                        ...prev,
-                                        store_id: Number(e.target.value),
-                                    }))
-                                }
-                            >
-                                <option value="0">Select Store</option>
-                                {stores.map((s) => {
-                                    return (
-                                        <option key={s.id} value={s.id}>
-                                            {s.name.toUpperCase()}
-                                        </option>
-                                    );
-                                })}
-                            </Form.Select>
-                        </FloatingLabel>
+                        <SelectAsync
+                            placeholder="Select Contact"
+                            cacheOptions
+                            loadOptions={loadSuppliers}
+                            styles={{
+                                control: (baseStyles, _) => ({
+                                    ...baseStyles,
+                                    minHeight: "58px",
+                                }),
+                            }}
+                            onChange={(e) => {
+                                setReceipt((prev) => ({
+                                    ...prev,
+                                    contact_id: Number(e ? e.value : 0),
+                                }));
+                            }}
+                            isClearable
+                        />
                     </Col>
                     <Col xs={2}>
-                        <FloatingLabel
-                            controlId="contact_id"
-                            label="Contact"
-                            className="text-secondary"
-                        >
-                            <Form.Select
-                                value={receipt.contact_id}
-                                onChange={(e) =>
-                                    setReceipt((prev) => ({
-                                        ...prev,
-                                        contact_id: Number(e.target.value),
-                                    }))
-                                }
-                            >
-                                <option value="0">Select Contact</option>
-                                <option value={1}>Demo</option>
-                            </Form.Select>
-                        </FloatingLabel>
-                    </Col>
-                    <Col xs={2}>
-                        <FloatingLabel
-                            controlId="fabric_id"
-                            label="Fabric"
-                            className="text-secondary"
-                        >
-                            <Form.Select
-                                value={receipt.fabric_id}
-                                onChange={(e) =>
-                                    setReceipt((prev) => ({
-                                        ...prev,
-                                        fabric_id: Number(e.target.value),
-                                    }))
-                                }
-                            >
-                                <option value="0">Select Fabric</option>
-                                {fabrics.map((f) => {
-                                    return (
-                                        <option key={f.id} value={f.id}>
-                                            {f.name.toUpperCase()}
-                                        </option>
-                                    );
-                                })}
-                            </Form.Select>
-                        </FloatingLabel>
+                        <Select
+                            placeholder="Select Cloth Type"
+                            value={selectedFabric}
+                            options={fabricOptions}
+                            onChange={(e) => {
+                                setSelectedFabric(e);
+                                setReceipt((prev) => ({
+                                    ...prev,
+                                    fabric_id: Number(e ? e.value : 0),
+                                }));
+                            }}
+                            styles={{
+                                control: (baseStyles, _) => ({
+                                    ...baseStyles,
+                                    minHeight: "58px",
+                                }),
+                            }}
+                        />
                     </Col>
                 </Row>
                 <Row>
-                    <Col xs={9}>
+                    <Col xs={3}>
+                        <FloatingLabel
+                            controlId="cloth"
+                            label="Cloth"
+                            className="text-secondary"
+                        >
+                            <Form.Control
+                                type="text"
+                                placeholder="***"
+                                value={receipt.cloth}
+                                onChange={(e) =>
+                                    setReceipt((prev) => ({
+                                        ...prev,
+                                        cloth: e.target.value,
+                                    }))
+                                }
+                            />
+                        </FloatingLabel>
+                    </Col>
+                    <Col xs={6}>
                         <FloatingLabel
                             controlId="remarks"
                             label="Remarks"

@@ -30,7 +30,7 @@ class FabricController extends Controller
         $data = $request->validated();
         try {
             Fabric::create($data);
-            return response()->json(['message' => 'Fabric created']);
+            return response()->json(['message' => 'Cloth type created']);
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
@@ -52,7 +52,7 @@ class FabricController extends Controller
         $data = $request->validated();
         try {
             $fabric->update($data);
-            return response()->json(['message' =>  'Fabric updated']);
+            return response()->json(['message' =>  'Cloth type updated']);
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
@@ -66,7 +66,7 @@ class FabricController extends Controller
         try {
             $message = $fabric->active ? 'suspended' :  'activated';
             $fabric->update(['active' => !$fabric->active]);
-            return response()->json(['message' => 'Fabric ' . $message]);
+            return response()->json(['message' => 'Cloth type ' . $message]);
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
