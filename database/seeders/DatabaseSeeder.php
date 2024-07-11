@@ -19,22 +19,22 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Admin',
-        //     'email' => 'admin@essa.com',
-        //     'password' => 'password',
-        //     'role' => 'admin'
-        // ]);
+        \App\Models\User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin@essa.com',
+            'password' => 'essa@7777',
+            'role' => 'admin'
+        ]);
 
-        // Fabric::create([
-        //     'name' => 'FINE',
-        //     'user_id' => 1
-        // ]);
+        Fabric::create([
+            'name' => 'FINE',
+            'user_id' => 1
+        ]);
 
-        // Fabric::create([
-        //     'name' => 'RIB',
-        //     'user_id' => 1
-        // ]);
+        Fabric::create([
+            'name' => 'RIB',
+            'user_id' => 1
+        ]);
 
         // Color::factory(60)->create();
 

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { Pagination } from "react-bootstrap";
 
 type PaginationProps = {
@@ -8,6 +8,7 @@ type PaginationProps = {
     setState: (type: any) => void;
     setCurrentPage: (page: number) => void;
     setLoading: (loading: boolean) => void;
+    hasOtherParams?: boolean;
 };
 
 const MyPagination: React.FC<PaginationProps> = ({
@@ -17,15 +18,25 @@ const MyPagination: React.FC<PaginationProps> = ({
     setState,
     setCurrentPage,
     setLoading,
+    hasOtherParams
 }) => {
     const getData = async (page: number) => {
         if (currentPage !== page && page > 0 && page <= lastPage) {
             setLoading(true);
-            const response = await axios.get(`${paginationURL}?page=${page}`, {
-                headers: {
-                    Accept: "application/json",
-                },
-            });
+            let response : AxiosResponse<any,any>;
+            if (hasOtherParams){
+                 response = await axios.get(`${paginationURL}&page=${page}`, {
+                    headers: {
+                        Accept: "application/json",
+                    },
+                });
+            } else {
+                response = await axios.get(`${paginationURL}?page=${page}`, {
+                    headers: {
+                        Accept: "application/json",
+                    },
+                });
+            }
             const {
                 data: { data },
             } = response;

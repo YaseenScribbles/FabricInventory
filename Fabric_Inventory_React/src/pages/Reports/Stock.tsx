@@ -561,9 +561,15 @@ const Stock: React.FC = () => {
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     lastPage={meta.lastPage}
-                    paginationURL={`${LOCAL_URL}/receipts`}
+                    paginationURL={`${LOCAL_URL}/stock?userId=${user!.id}
+                    &lot_no=${selectedLot ? selectedLot.value : ""}
+                    &brand=${selectedBrand ? selectedBrand.value : ""}
+                    &store_id=${selectedStore ? selectedStore.value : ""}
+                    &fabric_id=${selectedFabric ? selectedFabric.value : ""}
+                    &is_closed=${isClosed}`}
                     setLoading={setLoading}
                     setState={setReportRows}
+                    hasOtherParams={true}
                 />
             )}
         </Container>

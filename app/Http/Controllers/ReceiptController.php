@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\UserStore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ReceiptController extends Controller
 {
@@ -27,46 +28,60 @@ class ReceiptController extends Controller
             $userId = $request->userId;
             $user = User::find($userId);
             $is_closed = $request->isClosed == 'true' ? '1' : '0';
+            $store_id = $request->storeId == 'undefined' ? 0 : intval($request->storeId);
 
             if ($user->role === 'admin') {
-                $store_ids = Store::where('active', true)->pluck('id');
+                $store_ids = Store::where('active', true)->pluck('id')->toArray();
             } else {
-                $user_store_ids = UserStore::where('user_id', $userId)->pluck('store_id');
-                $store_ids = Store::where('active', 1)->whereIn('id', $user_store_ids)->pluck('id');
+                $user_store_ids = UserStore::where('user_id', $userId)->pluck('store_id')->toArray();
+                $store_ids = Store::where('active', 1)->whereIn('id', $user_store_ids)->pluck('id')->toArray();
             }
 
-            $receipts =  DB::table(DB::raw("(
+            // Handle empty store_ids case
+            if (empty($store_ids)) {
+                // No active stores, return an empty collection
+                return ReceiptResource::collection(collect());
+            }
+
+            $store_ids_str = implode(',', $store_ids);
+
+            $receiptsQuery =  DB::table(DB::raw("(
                 SELECT r.id, r.created_at, r.lot_no, r.brand, r.cloth, r.contact_id, su.name as contact,
                 r.fabric_id, f.name as fabric, r.remarks, u.name as [user],
-                SUM(ri.rolls) as rolls, SUM(ri.weight) as weight, r.is_locked
+                SUM(ri.rolls) as rolls, SUM(ri.weight) as weight, r.is_locked,r.store_id
                 FROM receipts r
                 INNER JOIN receipt_items ri ON ri.receipt_id = r.id
-                AND r.is_closed = $is_closed AND r.store_id = $request->storeId
+                AND r.is_closed = $is_closed AND r.store_id in ($store_ids_str)
                 INNER JOIN fabrics f ON f.id = r.fabric_id
                 INNER JOIN users u ON u.id = r.user_id
                 INNER JOIN suppliers su on su.id = r.contact_id
                 GROUP BY r.id, r.created_at, r.lot_no, r.brand, r.contact_id,
-                r.fabric_id, f.name, r.remarks, u.name, r.is_locked,su.name,r.cloth
+                r.fabric_id, f.name, r.remarks, u.name, r.is_locked,su.name,r.cloth,r.store_id
             ) as receipt"))
-            ->leftJoin(DB::raw('(
+                ->leftJoin(DB::raw('(
                 SELECT d.receipt_id, SUM(di.rolls) as rolls, SUM(di.weight) as weight
                 FROM deliveries d
                 INNER JOIN delivery_items di ON d.id = di.delivery_id
                 GROUP BY d.receipt_id
             ) as d'), 'd.receipt_id', '=', 'receipt.id')
-            ->leftJoin(DB::raw('(
+                ->leftJoin(DB::raw('(
                 SELECT id, SUM(rolls) as stock_rolls, SUM(weight) as stock_weight
                 FROM stock
                 GROUP BY id
             ) as s'), 's.id', '=', 'receipt.id')
-            ->select(
-                'receipt.*',
-                DB::raw('COALESCE(d.rolls, 0) as delivered_rolls'),
-                DB::raw('COALESCE(d.weight, 0) as delivered_weight'),
-                's.stock_rolls',
-                's.stock_weight'
-            )
-            ->paginate(10);
+                ->select(
+                    'receipt.*',
+                    DB::raw('COALESCE(d.rolls, 0) as delivered_rolls'),
+                    DB::raw('COALESCE(d.weight, 0) as delivered_weight'),
+                    's.stock_rolls',
+                    's.stock_weight'
+                );
+
+            if ($store_id) {
+                $receiptsQuery->where('receipt.store_id', '=', $store_id);
+            }
+            $receiptsQuery->orderBy('receipt.id');
+            $receipts = $receiptsQuery->paginate(10);
         }
 
         return ReceiptResource::collection($receipts);
@@ -212,12 +227,12 @@ class ReceiptController extends Controller
         return response()->json(['receiptIds' => $receipt_ids]);
     }
 
-    public function updateCloseStatus(int $id) {
+    public function updateCloseStatus(int $id)
+    {
         $receipt = Receipt::find($id);
         $receipt->update([
             'is_closed' => !($receipt->is_closed)
         ]);
         return response()->json(['message' => 'status updated']);
     }
-
 }

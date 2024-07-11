@@ -235,45 +235,49 @@ const Deliveries: React.FC = () => {
                                     {(+delivery.weight).toFixed(2)}
                                 </td>
                                 <td className="d-flex flex-nowrap">
-                                    <Button
-                                        variant="primary"
-                                        onClick={() => {
-                                            setEdit(true);
-                                            setEditId(delivery.id);
-                                            setShowAddEditModal(true);
-                                        }}
-                                        style={{
-                                            display: "flex",
-                                            height: "40px",
-                                            width: "45px",
-                                        }}
-                                    >
-                                        <box-icon
-                                            name="edit-alt"
-                                            color="white"
-                                            size="sm"
-                                        ></box-icon>
-                                    </Button>
-                                    &nbsp;
-                                    <Button
-                                        variant="danger"
-                                        onClick={() => {
-                                            setAlertId(delivery.id);
-                                            setShowAlert(true);
-                                        }}
-                                        style={{
-                                            display: "flex",
-                                            height: "40px",
-                                            width: "45px",
-                                        }}
-                                    >
-                                        <box-icon
-                                            name="x"
-                                            color="white"
-                                            size="sm"
-                                        ></box-icon>
-                                    </Button>
-                                    &nbsp;
+                                    {user!.role === "admin" && (
+                                        <Button
+                                            variant="primary"
+                                            onClick={() => {
+                                                setEdit(true);
+                                                setEditId(delivery.id);
+                                                setShowAddEditModal(true);
+                                            }}
+                                            style={{
+                                                display: "flex",
+                                                height: "40px",
+                                                width: "45px",
+                                                marginRight: "5px",
+                                            }}
+                                        >
+                                            <box-icon
+                                                name="edit-alt"
+                                                color="white"
+                                                size="sm"
+                                            ></box-icon>
+                                        </Button>
+                                    )}
+                                    {user!.role === "admin" && (
+                                        <Button
+                                            variant="danger"
+                                            onClick={() => {
+                                                setAlertId(delivery.id);
+                                                setShowAlert(true);
+                                            }}
+                                            style={{
+                                                display: "flex",
+                                                height: "40px",
+                                                width: "45px",
+                                                marginRight: "5px",
+                                            }}
+                                        >
+                                            <box-icon
+                                                name="x"
+                                                color="white"
+                                                size="sm"
+                                            ></box-icon>
+                                        </Button>
+                                    )}
                                     <Button
                                         variant="secondary"
                                         href={`/delivery-report/${delivery.id}`}
@@ -282,6 +286,7 @@ const Deliveries: React.FC = () => {
                                             display: "flex",
                                             height: "40px",
                                             width: "45px",
+                                            marginRight: "5px",
                                         }}
                                     >
                                         <box-icon
@@ -337,9 +342,10 @@ const Deliveries: React.FC = () => {
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     lastPage={meta.lastPage}
-                    paginationURL={`${LOCAL_URL}/deliveries`}
+                    paginationURL={`${LOCAL_URL}/deliveries?userId=${user?.id}`}
                     setLoading={setLoading}
                     setState={setDeliveries}
+                    hasOtherParams={true}
                 />
             )}
         </Container>

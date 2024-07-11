@@ -213,9 +213,7 @@ const Receipts: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (selectedStore) {
-            getReceipts();
-        }
+        getReceipts();
     }, [selectedStore, isClosed]);
 
     return (
@@ -230,12 +228,11 @@ const Receipts: React.FC = () => {
                     <Select
                         value={selectedStore}
                         onChange={(e) => {
-                            if (e) {
-                                setSelectedStore(e);
-                            }
+                            setSelectedStore(e);
                         }}
                         options={stores}
                         placeholder="Select Store"
+                        isClearable
                     />
                 </Col>
                 <Col
@@ -243,7 +240,6 @@ const Receipts: React.FC = () => {
                     className="d-flex justify-content-start align-items-center"
                 >
                     <Form.Check
-                        disabled={selectedStore === null}
                         type="switch"
                         label="CLOSED"
                         id="is_closed"
@@ -257,7 +253,7 @@ const Receipts: React.FC = () => {
                 </Col>
             </Row>
             <hr />
-            <Table striped bordered hover>
+            <Table striped bordered hover className="receipts-table">
                 <thead>
                     <tr style={{ verticalAlign: "middle" }}>
                         {/* <th>#</th> */}
@@ -410,6 +406,7 @@ const Receipts: React.FC = () => {
                                                 display: "flex",
                                                 height: "40px",
                                                 width: "45px",
+                                                marginRight:"5px"
                                             }}
                                         >
                                             <box-icon
@@ -418,7 +415,7 @@ const Receipts: React.FC = () => {
                                                 size="sm"
                                             ></box-icon>
                                         </Button>
-                                        &nbsp;
+
                                         <Button
                                             hidden={receipt.isLocked === "1"}
                                             variant="danger"
@@ -430,6 +427,7 @@ const Receipts: React.FC = () => {
                                                 display: "flex",
                                                 height: "40px",
                                                 width: "45px",
+                                                marginRight:"5px"
                                             }}
                                         >
                                             <box-icon
@@ -438,7 +436,7 @@ const Receipts: React.FC = () => {
                                                 size="sm"
                                             ></box-icon>
                                         </Button>
-                                        &nbsp;
+
                                         <Button
                                             hidden={isClosed}
                                             variant="dark"
@@ -446,6 +444,7 @@ const Receipts: React.FC = () => {
                                                 display: "flex",
                                                 height: "40px",
                                                 width: "45px",
+                                                marginRight:"5px"
                                             }}
                                             onClick={() => {
                                                 setDeliveryReceipId(receipt.id);
@@ -459,7 +458,7 @@ const Receipts: React.FC = () => {
                                                 size="sm"
                                             ></box-icon>
                                         </Button>
-                                        &nbsp;
+
                                         <Button
                                             variant="secondary"
                                             href={`/receipt-report/${receipt.id}`}
@@ -468,6 +467,7 @@ const Receipts: React.FC = () => {
                                                 display: "flex",
                                                 height: "40px",
                                                 width: "45px",
+                                                marginRight:"5px"
                                             }}
                                         >
                                             <box-icon
@@ -477,7 +477,7 @@ const Receipts: React.FC = () => {
                                                 size="sm"
                                             ></box-icon>
                                         </Button>
-                                        &nbsp;
+
                                         <Button
                                             hidden={isClosed}
                                             variant="info"
@@ -485,6 +485,7 @@ const Receipts: React.FC = () => {
                                                 display: "flex",
                                                 height: "40px",
                                                 width: "45px",
+                                                marginRight:"5px"
                                             }}
                                             onClick={() => {
                                                 setAlertId(receipt.id);
@@ -497,13 +498,14 @@ const Receipts: React.FC = () => {
                                                 size="sm"
                                             ></box-icon>
                                         </Button>
-                                        &nbsp;
+
                                         <Button
                                             variant="success"
                                             style={{
                                                 display: "flex",
                                                 height: "40px",
                                                 width: "45px",
+                                                marginRight:"5px"
                                             }}
                                             onClick={() => {
                                                 setBrandEditId(receipt.id)
@@ -529,9 +531,10 @@ const Receipts: React.FC = () => {
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     lastPage={meta.lastPage}
-                    paginationURL={`${LOCAL_URL}/receipts`}
+                    paginationURL={`${LOCAL_URL}/receipts?userId=${user?.id}&storeId=${selectedStore ? selectedStore.value : 0}&isClosed=${isClosed}`}
                     setLoading={setLoading}
                     setState={setReceipts}
+                    hasOtherParams={true}
                 />
             )}
             {

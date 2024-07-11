@@ -59,6 +59,7 @@ class DeliveryController extends Controller
                 )
                 ->whereIn('deliveries.store_id', $store_ids)
                 ->groupBy('deliveries.id', 'deliveries.created_at', 'deliveries.receipt_id', 'receipts.lot_no', 'receipts.brand', 'deliveries.contact_id', 'receipts.fabric_id', 'fabrics.name', 'deliveries.remarks', 'users.name','suppliers.name','receipts.cloth')
+                ->orderBy('deliveries.id')
                 ->paginate(10);
 
             return DeliveryResource::collection($deliveries);

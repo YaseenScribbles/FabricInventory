@@ -32,7 +32,8 @@ class ReceiptResource extends JsonResource
             'stockWeight' => $this->stock_weight,
             'user' => $this->user,
             'date' => $this->created_at,
-            'isLocked' => $this->is_locked
+            'isLocked' => $this->is_locked,
+            'storeId' => $this->store_id
         ];
     }
 }
