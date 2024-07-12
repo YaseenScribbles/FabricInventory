@@ -86,7 +86,7 @@ const Receipts: React.FC = () => {
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
     const [showBrandModal, setShowBrandModal] = useState(false);
     const [brandEditId, setBrandEditId] = useState(0);
-    const [ brandEdit, setBrandEdit ] = useState("");
+    const [brandEdit, setBrandEdit] = useState("");
 
     const getReceipts = async (page: number = 1) => {
         setLoading(true);
@@ -392,51 +392,57 @@ const Receipts: React.FC = () => {
                                         {(+receipt.stockWeight).toFixed(2)}
                                     </td>
                                     <td className="d-flex flex-nowrap">
-                                        <Button
-                                            hidden={receipt.isLocked === "1"}
-                                            variant="primary"
-                                            onClick={() => {
-                                                // setEditReceipt(receipt.id);
-                                                // setShowEditReceipt(true);
-                                                setEdit(true);
-                                                setEditId(receipt.id);
-                                                setShowAddReceipt(true);
-                                            }}
-                                            style={{
-                                                display: "flex",
-                                                height: "40px",
-                                                width: "45px",
-                                                marginRight:"5px"
-                                            }}
-                                        >
-                                            <box-icon
-                                                name="edit-alt"
-                                                color="white"
-                                                size="sm"
-                                            ></box-icon>
-                                        </Button>
-
-                                        <Button
-                                            hidden={receipt.isLocked === "1"}
-                                            variant="danger"
-                                            onClick={() => {
-                                                setAlertId(receipt.id);
-                                                setShowDeleteAlert(true);
-                                            }}
-                                            style={{
-                                                display: "flex",
-                                                height: "40px",
-                                                width: "45px",
-                                                marginRight:"5px"
-                                            }}
-                                        >
-                                            <box-icon
-                                                name="x"
-                                                color="white"
-                                                size="sm"
-                                            ></box-icon>
-                                        </Button>
-
+                                        {user?.role === "admin" && (
+                                            <Button
+                                                hidden={
+                                                    receipt.isLocked === "1"
+                                                }
+                                                variant="primary"
+                                                onClick={() => {
+                                                    // setEditReceipt(receipt.id);
+                                                    // setShowEditReceipt(true);
+                                                    setEdit(true);
+                                                    setEditId(receipt.id);
+                                                    setShowAddReceipt(true);
+                                                }}
+                                                style={{
+                                                    display: "flex",
+                                                    height: "40px",
+                                                    width: "45px",
+                                                    marginRight: "5px",
+                                                }}
+                                            >
+                                                <box-icon
+                                                    name="edit-alt"
+                                                    color="white"
+                                                    size="sm"
+                                                ></box-icon>
+                                            </Button>
+                                        )}
+                                        {user?.role === "admin" && (
+                                            <Button
+                                                hidden={
+                                                    receipt.isLocked === "1"
+                                                }
+                                                variant="danger"
+                                                onClick={() => {
+                                                    setAlertId(receipt.id);
+                                                    setShowDeleteAlert(true);
+                                                }}
+                                                style={{
+                                                    display: "flex",
+                                                    height: "40px",
+                                                    width: "45px",
+                                                    marginRight: "5px",
+                                                }}
+                                            >
+                                                <box-icon
+                                                    name="x"
+                                                    color="white"
+                                                    size="sm"
+                                                ></box-icon>
+                                            </Button>
+                                        )}
                                         <Button
                                             hidden={isClosed}
                                             variant="dark"
@@ -444,7 +450,7 @@ const Receipts: React.FC = () => {
                                                 display: "flex",
                                                 height: "40px",
                                                 width: "45px",
-                                                marginRight:"5px"
+                                                marginRight: "5px",
                                             }}
                                             onClick={() => {
                                                 setDeliveryReceipId(receipt.id);
@@ -458,7 +464,6 @@ const Receipts: React.FC = () => {
                                                 size="sm"
                                             ></box-icon>
                                         </Button>
-
                                         <Button
                                             variant="secondary"
                                             href={`/receipt-report/${receipt.id}`}
@@ -467,7 +472,7 @@ const Receipts: React.FC = () => {
                                                 display: "flex",
                                                 height: "40px",
                                                 width: "45px",
-                                                marginRight:"5px"
+                                                marginRight: "5px",
                                             }}
                                         >
                                             <box-icon
@@ -477,7 +482,6 @@ const Receipts: React.FC = () => {
                                                 size="sm"
                                             ></box-icon>
                                         </Button>
-
                                         <Button
                                             hidden={isClosed}
                                             variant="info"
@@ -485,7 +489,7 @@ const Receipts: React.FC = () => {
                                                 display: "flex",
                                                 height: "40px",
                                                 width: "45px",
-                                                marginRight:"5px"
+                                                marginRight: "5px",
                                             }}
                                             onClick={() => {
                                                 setAlertId(receipt.id);
@@ -498,19 +502,18 @@ const Receipts: React.FC = () => {
                                                 size="sm"
                                             ></box-icon>
                                         </Button>
-
                                         <Button
                                             variant="success"
                                             style={{
                                                 display: "flex",
                                                 height: "40px",
                                                 width: "45px",
-                                                marginRight:"5px"
+                                                marginRight: "5px",
                                             }}
                                             onClick={() => {
-                                                setBrandEditId(receipt.id)
-                                                setBrandEdit(receipt.brand)
-                                                setShowBrandModal(true)
+                                                setBrandEditId(receipt.id);
+                                                setBrandEdit(receipt.brand);
+                                                setShowBrandModal(true);
                                             }}
                                         >
                                             <box-icon
@@ -531,7 +534,11 @@ const Receipts: React.FC = () => {
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
                     lastPage={meta.lastPage}
-                    paginationURL={`${LOCAL_URL}/receipts?userId=${user?.id}&storeId=${selectedStore ? selectedStore.value : 0}&isClosed=${isClosed}`}
+                    paginationURL={`${LOCAL_URL}/receipts?userId=${
+                        user?.id
+                    }&storeId=${
+                        selectedStore ? selectedStore.value : 0
+                    }&isClosed=${isClosed}`}
                     setLoading={setLoading}
                     setState={setReceipts}
                     hasOtherParams={true}

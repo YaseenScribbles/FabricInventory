@@ -142,40 +142,44 @@ const Colors: React.FC = () => {
                                             : "INACTIVE"}
                                     </td>
                                     <td>
-                                        <Button
-                                            variant="primary"
-                                            onClick={() => {
-                                                setEditColor(color);
-                                                setShowEditColorModal(true);
-                                            }}
-                                        >
-                                            <box-icon
-                                                name="edit-alt"
-                                                color="white"
-                                                size="xs"
-                                            ></box-icon>
-                                        </Button>
-                                        &nbsp;
-                                        <Button
-                                            variant="danger"
-                                            onClick={() =>
-                                                suspendColor(color.id)
-                                            }
-                                        >
-                                            {color.active === "1" ? (
+                                        {user?.role === "admin" && (
+                                            <Button
+                                                variant="primary"
+                                                onClick={() => {
+                                                    setEditColor(color);
+                                                    setShowEditColorModal(true);
+                                                }}
+                                                className="me-1"
+                                            >
                                                 <box-icon
-                                                    name="minus"
+                                                    name="edit-alt"
                                                     color="white"
                                                     size="xs"
                                                 ></box-icon>
-                                            ) : (
-                                                <box-icon
-                                                    name="plus"
-                                                    color="white"
-                                                    size="xs"
-                                                ></box-icon>
-                                            )}
-                                        </Button>
+                                            </Button>
+                                        )}
+                                        {user?.role === "admin" && (
+                                            <Button
+                                                variant="danger"
+                                                onClick={() =>
+                                                    suspendColor(color.id)
+                                                }
+                                            >
+                                                {color.active === "1" ? (
+                                                    <box-icon
+                                                        name="minus"
+                                                        color="white"
+                                                        size="xs"
+                                                    ></box-icon>
+                                                ) : (
+                                                    <box-icon
+                                                        name="plus"
+                                                        color="white"
+                                                        size="xs"
+                                                    ></box-icon>
+                                                )}
+                                            </Button>
+                                        )}
                                     </td>
                                 </tr>
                             );

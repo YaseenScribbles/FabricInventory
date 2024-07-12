@@ -129,7 +129,10 @@ const Fabrics: React.FC = () => {
                             let serialNo = (currentPage - 1) * 10 + index + 1;
 
                             return (
-                                <tr style={{ verticalAlign:"middle" }} key={index}>
+                                <tr
+                                    style={{ verticalAlign: "middle" }}
+                                    key={index}
+                                >
                                     <td>{serialNo}</td>
                                     <td>{fabric.name.toUpperCase()}</td>
                                     <td>{fabric.user.name.toUpperCase()}</td>
@@ -139,40 +142,46 @@ const Fabrics: React.FC = () => {
                                             : "INACTIVE"}
                                     </td>
                                     <td>
-                                        <Button
-                                            variant="primary"
-                                            onClick={() => {
-                                                setEditFabric(fabric);
-                                                setShowEditFabricModal(true);
-                                            }}
-                                        >
-                                            <box-icon
-                                                name="edit-alt"
-                                                color="white"
-                                                size="xs"
-                                            ></box-icon>
-                                        </Button>
-                                        &nbsp;
-                                        <Button
-                                            variant="danger"
-                                            onClick={() =>
-                                                suspendFabric(fabric.id)
-                                            }
-                                        >
-                                            {fabric.active === "1" ? (
+                                        {user?.role === "admin" && (
+                                            <Button
+                                                variant="primary"
+                                                onClick={() => {
+                                                    setEditFabric(fabric);
+                                                    setShowEditFabricModal(
+                                                        true
+                                                    );
+                                                }}
+                                                className="me-1"
+                                            >
                                                 <box-icon
-                                                    name="minus"
+                                                    name="edit-alt"
                                                     color="white"
                                                     size="xs"
                                                 ></box-icon>
-                                            ) : (
-                                                <box-icon
-                                                    name="plus"
-                                                    color="white"
-                                                    size="xs"
-                                                ></box-icon>
-                                            )}
-                                        </Button>
+                                            </Button>
+                                        )}
+                                        {user?.role === "admin" && (
+                                            <Button
+                                                variant="danger"
+                                                onClick={() =>
+                                                    suspendFabric(fabric.id)
+                                                }
+                                            >
+                                                {fabric.active === "1" ? (
+                                                    <box-icon
+                                                        name="minus"
+                                                        color="white"
+                                                        size="xs"
+                                                    ></box-icon>
+                                                ) : (
+                                                    <box-icon
+                                                        name="plus"
+                                                        color="white"
+                                                        size="xs"
+                                                    ></box-icon>
+                                                )}
+                                            </Button>
+                                        )}
                                     </td>
                                 </tr>
                             );
