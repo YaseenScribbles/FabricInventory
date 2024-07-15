@@ -19,7 +19,7 @@ import "./Receipt.css";
 import { useUserContext } from "../../contexts/UserContext";
 import Select from "react-select";
 const AddEditDelivery = lazy(() => import("../Deliveries/AddEditDelivery"));
-import { Navigate, useNavigate } from "react-router";
+import { Navigate } from "react-router";
 import AlertModal from "../../components/AlertModal";
 import Brand from "./Brand";
 
@@ -86,7 +86,6 @@ const Receipts: React.FC = () => {
     const [showBrandModal, setShowBrandModal] = useState(false);
     const [brandEditId, setBrandEditId] = useState(0);
     const [brandEdit, setBrandEdit] = useState("");
-    const navigate = useNavigate();
 
     const getReceipts = async (page: number = 1) => {
         setLoading(true);
