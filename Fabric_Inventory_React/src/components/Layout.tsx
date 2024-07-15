@@ -13,6 +13,7 @@ import { useNotificationContext } from "../contexts/NotificationsContext";
 import axios from "axios";
 import { LOCAL_URL } from "../assets/common";
 import { useState } from "react";
+import "./Layout.css";
 
 export const Layout = () => {
     const { user, removeUser } = useUserContext();
@@ -119,35 +120,41 @@ export const Layout = () => {
                     <Spinner animation="grow" variant="secondary" />
                 </div>
             )}
-            <ToastContainer
-                position="top-end"
-                className="p-3 font-monospace"
-                style={{ zIndex: 1 }}
-            >
-                {notifications.map((n, i) => {
-                    return (
-                        <Toast
-                            key={i}
-                            bg={`${
-                                n.result === "success" ? "success" : "warning"
-                            }`}
-                        >
-                            <Toast.Header closeButton={false}>
-                                <strong className="me-auto">
-                                    Fabric Inventory
-                                </strong>
-                            </Toast.Header>
-                            <Toast.Body>
-                                <b
-                                    className={`${
-                                        n.result === "success" && "text-light"
-                                    }`}
-                                >{`${n.message.toUpperCase()}`}</b>
-                            </Toast.Body>
-                        </Toast>
-                    );
-                })}
-            </ToastContainer>
+            <Container className="position-relative">
+                <ToastContainer
+                    position="top-end"
+                    className="font-monospace"
+                    style={{ zIndex: 1 }}
+                >
+                    {notifications.map((n, i) => {
+                        return (
+                            <Toast
+                                className="ms-auto"
+                                key={i}
+                                bg={`${
+                                    n.result === "success"
+                                        ? "success"
+                                        : "warning"
+                                }`}
+                            >
+                                <Toast.Header closeButton={false}>
+                                    <strong className="me-auto">
+                                        Fabric Inventory
+                                    </strong>
+                                </Toast.Header>
+                                <Toast.Body>
+                                    <b
+                                        className={`${
+                                            n.result === "success" &&
+                                            "text-light"
+                                        }`}
+                                    >{`${n.message.toUpperCase()}`}</b>
+                                </Toast.Body>
+                            </Toast>
+                        );
+                    })}
+                </ToastContainer>
+            </Container>
             <Outlet />
         </div>
     );

@@ -1,4 +1,4 @@
-import { Button, Container, Table } from "react-bootstrap";
+import { Container, Table } from "react-bootstrap";
 import Heading from "../../components/Heading";
 import { useEffect, useState } from "react";
 import AddFabric from "./AddFabric";
@@ -107,10 +107,10 @@ const Fabrics: React.FC = () => {
                 buttonText="Add Cloth Type"
                 onClick={() => setShowAddFabricModal(true)}
             />
-            <Table striped bordered hover>
+            <Table striped bordered hover size="sm">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th className="text-center">#</th>
                         <th>Name</th>
                         <th>Created By</th>
                         <th>Status</th>
@@ -133,7 +133,7 @@ const Fabrics: React.FC = () => {
                                     style={{ verticalAlign: "middle" }}
                                     key={index}
                                 >
-                                    <td>{serialNo}</td>
+                                    <td className="text-center">{serialNo}</td>
                                     <td>{fabric.name.toUpperCase()}</td>
                                     <td>{fabric.user.name.toUpperCase()}</td>
                                     <td>
@@ -142,46 +142,47 @@ const Fabrics: React.FC = () => {
                                             : "INACTIVE"}
                                     </td>
                                     <td>
-                                        {user?.role === "admin" && (
-                                            <Button
-                                                variant="primary"
-                                                onClick={() => {
-                                                    setEditFabric(fabric);
-                                                    setShowEditFabricModal(
-                                                        true
-                                                    );
-                                                }}
-                                                className="me-1"
-                                            >
-                                                <box-icon
-                                                    name="edit-alt"
-                                                    color="white"
-                                                    size="xs"
-                                                ></box-icon>
-                                            </Button>
-                                        )}
-                                        {user?.role === "admin" && (
-                                            <Button
-                                                variant="danger"
-                                                onClick={() =>
-                                                    suspendFabric(fabric.id)
-                                                }
-                                            >
-                                                {fabric.active === "1" ? (
+                                        <div className="d-flex">
+                                            {user?.role === "admin" && (
+                                                <div
+                                                    onClick={() => {
+                                                        setEditFabric(fabric);
+                                                        setShowEditFabricModal(
+                                                            true
+                                                        );
+                                                    }}
+                                                    className="d-flex me-1"
+                                                >
                                                     <box-icon
-                                                        name="minus"
-                                                        color="white"
-                                                        size="xs"
+                                                        name="edit-alt"
+                                                        color="green"
+                                                        size="sm"
                                                     ></box-icon>
-                                                ) : (
-                                                    <box-icon
-                                                        name="plus"
-                                                        color="white"
-                                                        size="xs"
-                                                    ></box-icon>
-                                                )}
-                                            </Button>
-                                        )}
+                                                </div>
+                                            )}
+                                            {user?.role === "admin" && (
+                                                <div
+                                                    onClick={() =>
+                                                        suspendFabric(fabric.id)
+                                                    }
+                                                    className="d-flex"
+                                                >
+                                                    {fabric.active === "1" ? (
+                                                        <box-icon
+                                                            name="x"
+                                                            color="red"
+                                                            size="sm"
+                                                        ></box-icon>
+                                                    ) : (
+                                                        <box-icon
+                                                            name="check"
+                                                            color="red"
+                                                            size="sm"
+                                                        ></box-icon>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                     </td>
                                 </tr>
                             );

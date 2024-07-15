@@ -1,5 +1,4 @@
 import {
-    Button,
     Container,
     OverlayTrigger,
     Table,
@@ -15,6 +14,7 @@ import AddUser from "./AddUserModal";
 import EditUser from "./EditUserModal";
 import MyPagination from "../../components/Pagination";
 import StoreAssign from "./StoreAssignModal";
+import Heading from "../../components/Heading";
 declare global {
     namespace JSX {
         interface IntrinsicElements {
@@ -122,19 +122,12 @@ export const Users: React.FC = () => {
 
     return (
         <Container id="users" className="p-2">
-            <div className="d-flex justify-content-between align-items-center mt-2">
-                <h4 className="me-auto">Users</h4>
-                <div
-                    className="border border-1 p-2 d-flex justify-content-around text-bg-success"
-                    onClick={() => setShowAddUser(true)}
-                    style={{ cursor: "pointer" }}
-                >
-                    <box-icon name="plus" color="white"></box-icon>
-                    &nbsp; Add User
-                </div>
-            </div>
-            <hr />
-            <Table striped bordered hover>
+            <Heading
+                title="Users"
+                onClick={() => setShowAddUser(true)}
+                buttonText="Add User"
+            />
+            <Table striped bordered hover size="sm">
                 <thead>
                     <tr>
                         <th className="text-center">#</th>
@@ -159,7 +152,7 @@ export const Users: React.FC = () => {
                             let serialNumber: number =
                                 (currentPage - 1) * 10 + i + 1;
                             return (
-                                <tr style={{ verticalAlign:"middle" }} key={i}>
+                                <tr style={{ verticalAlign: "middle" }} key={i}>
                                     <td className="col-1 text-center">
                                         {serialNumber}
                                     </td>
@@ -197,51 +190,54 @@ export const Users: React.FC = () => {
                                             : "INACTIVE"}
                                     </td>
                                     <td className="col-2">
-                                        <Button
-                                            variant="primary"
-                                            onClick={() => {
-                                                setEditUser(user);
-                                                setShowEditUser(true);
-                                            }}
-                                        >
-                                            <box-icon
-                                                name="edit-alt"
-                                                color="white"
-                                                size="xs"
-                                            ></box-icon>
-                                        </Button>
-                                        &nbsp;
-                                        <Button
-                                            onClick={() => {
-                                                setUserInfo(user);
-                                                setShowAssignModal(true);
-                                            }}
-                                        >
-                                            <box-icon
-                                                name="store-alt"
-                                                color="white"
-                                                size="xs"
-                                            ></box-icon>
-                                        </Button>
-                                        &nbsp;
-                                        <Button
-                                            variant="danger"
-                                            onClick={() => suspendUser(user.id)}
-                                        >
-                                            {user.active === "1" ? (
+                                        <div className="d-flex">
+                                            <div
+                                                className="d-flex me-1"
+                                                onClick={() => {
+                                                    setEditUser(user);
+                                                    setShowEditUser(true);
+                                                }}
+                                            >
                                                 <box-icon
-                                                    name="minus"
-                                                    color="white"
-                                                    size="xs"
+                                                    name="edit-alt"
+                                                    color="green"
+                                                    size="sm"
                                                 ></box-icon>
-                                            ) : (
+                                            </div>
+                                            <div
+                                                onClick={() => {
+                                                    setUserInfo(user);
+                                                    setShowAssignModal(true);
+                                                }}
+                                                className="d-flex me-1"
+                                            >
                                                 <box-icon
-                                                    name="plus"
-                                                    color="white"
-                                                    size="xs"
+                                                    name="store-alt"
+                                                    color="green"
+                                                    size="sm"
                                                 ></box-icon>
-                                            )}
-                                        </Button>
+                                            </div>
+                                            <div
+                                                className="d-flex"
+                                                onClick={() =>
+                                                    suspendUser(user.id)
+                                                }
+                                            >
+                                                {user.active === "1" ? (
+                                                    <box-icon
+                                                        name="x"
+                                                        color="red"
+                                                        size="sm"
+                                                    ></box-icon>
+                                                ) : (
+                                                    <box-icon
+                                                        name="check"
+                                                        color="red"
+                                                        size="sm"
+                                                    ></box-icon>
+                                                )}
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             );

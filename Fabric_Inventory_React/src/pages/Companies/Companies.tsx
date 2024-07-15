@@ -1,5 +1,4 @@
 import {
-    Button,
     Container,
     OverlayTrigger,
     Table,
@@ -129,10 +128,10 @@ const Companies: React.FC<CompaniesProps> = () => {
                 buttonText="Add Company"
                 onClick={() => setShowFormModal(true)}
             />
-            <Table striped bordered hover>
+            <Table striped bordered hover size="sm">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th className="text-center">#</th>
                         <th>Name</th>
                         <th className="address">Address</th>
                         <th>Created By</th>
@@ -156,7 +155,7 @@ const Companies: React.FC<CompaniesProps> = () => {
                                     style={{ verticalAlign: "middle" }}
                                     key={index}
                                 >
-                                    <td>{serialNo}</td>
+                                    <td className="text-center">{serialNo}</td>
                                     <td>{company.name.toUpperCase()}</td>
                                     <OverlayTrigger
                                         placement="top"
@@ -177,45 +176,48 @@ const Companies: React.FC<CompaniesProps> = () => {
                                             : "INACTIVE"}
                                     </td>
                                     <td>
-                                        <Button
-                                            onClick={() => {
-                                                setEditCompany({
-                                                    id: company.id,
-                                                    name: company.name,
-                                                    address: company.address,
-                                                    user_id: user!.id,
-                                                });
-                                                setEdit(true);
-                                                setShowFormModal(true);
-                                            }}
-                                        >
-                                            <box-icon
-                                                name="edit-alt"
-                                                color="white"
-                                                size="xs"
-                                            />
-                                        </Button>
-                                        &nbsp;
-                                        <Button
-                                            variant="danger"
-                                            onClick={() => {
-                                                suspendCompany(company.id);
-                                            }}
-                                        >
-                                            {company.active === "1" ? (
+                                        <div className="d-flex">
+                                            <div
+                                                className="d-flex me-1"
+                                                onClick={() => {
+                                                    setEditCompany({
+                                                        id: company.id,
+                                                        name: company.name,
+                                                        address:
+                                                            company.address,
+                                                        user_id: user!.id,
+                                                    });
+                                                    setEdit(true);
+                                                    setShowFormModal(true);
+                                                }}
+                                            >
                                                 <box-icon
-                                                    name="minus"
-                                                    color="white"
-                                                    size="xs"
+                                                    name="edit-alt"
+                                                    color="green"
+                                                    size="sm"
                                                 />
-                                            ) : (
-                                                <box-icon
-                                                    name="plus"
-                                                    color="white"
-                                                    size="xs"
-                                                />
-                                            )}
-                                        </Button>
+                                            </div>
+                                            <div
+                                                className="d-flex"
+                                                onClick={() => {
+                                                    suspendCompany(company.id);
+                                                }}
+                                            >
+                                                {company.active === "1" ? (
+                                                    <box-icon
+                                                        name="x"
+                                                        color="red"
+                                                        size="sm"
+                                                    />
+                                                ) : (
+                                                    <box-icon
+                                                        name="check"
+                                                        color="red"
+                                                        size="sm"
+                                                    />
+                                                )}
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             );

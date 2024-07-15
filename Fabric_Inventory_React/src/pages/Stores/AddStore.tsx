@@ -1,18 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
-import {
-    Button,
-    Col,
-    FloatingLabel,
-    Form,
-    Modal,
-    Row,
-    Spinner,
-} from "react-bootstrap";
+import { Button, Col, Form, Modal, Row, Spinner } from "react-bootstrap";
 import { LOCAL_URL } from "../../assets/common";
 import { useNotificationContext } from "../../contexts/NotificationsContext";
 import { useUserContext } from "../../contexts/UserContext";
-import '../../assets/modal.css'
+import "../../assets/modal.css";
 
 type AddStoreProps = {
     show: boolean;
@@ -21,20 +13,20 @@ type AddStoreProps = {
 };
 
 interface Store {
-    code:string;
+    code: string;
     name: string;
-    supervisor:string;
-    phone:string;
+    supervisor: string;
+    phone: string;
     user_id: number;
 }
 
 const AddStore: React.FC<AddStoreProps> = ({ show, onClose, onAdded }) => {
     const { user } = useUserContext();
     const [store, setStore] = useState<Store>({
-        code:"",
+        code: "",
         name: "",
-        supervisor:"",
-        phone:"",
+        supervisor: "",
+        phone: "",
         user_id: user!.id,
     });
     const [loading, setLoading] = useState(false);
@@ -55,10 +47,10 @@ const AddStore: React.FC<AddStoreProps> = ({ show, onClose, onAdded }) => {
             onClose();
             onAdded();
             setStore({
-                code:"",
+                code: "",
                 name: "",
-                supervisor:"",
-                phone:"",
+                supervisor: "",
+                phone: "",
                 user_id: user!.id,
             });
         } catch (error: any) {
@@ -92,90 +84,66 @@ const AddStore: React.FC<AddStoreProps> = ({ show, onClose, onAdded }) => {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Row>
-                <Col xs={4}>
-                        <FloatingLabel
-                            controlId="code"
-                            label="Code"
-                            className="mb-3 text-secondary"
-                        >
-                            <Form.Control
-                                type="code"
-                                placeholder="code"
-                                value={store.code}
-                                onChange={(e) => {
-                                    setStore((prev) => ({
-                                        ...prev,
-                                        code: e.target.value,
-                                    }));
-                                }}
-                                autoFocus
-                            />
-                        </FloatingLabel>
+                <Row className="mb-3">
+                    <Col xs={4}>
+                        <Form.Label>Code</Form.Label>
+                        <Form.Control
+                            type="code"
+                            value={store.code}
+                            onChange={(e) => {
+                                setStore((prev) => ({
+                                    ...prev,
+                                    code: e.target.value,
+                                }));
+                            }}
+                            autoFocus
+                        />
                     </Col>
                     <Col xs={8}>
-                        <FloatingLabel
-                            controlId="name"
-                            label="Name"
-                            className="mb-3 text-secondary"
-                        >
-                            <Form.Control
-                                type="name"
-                                placeholder="name"
-                                value={store.name}
-                                onChange={(e) => {
-                                    setStore((prev) => ({
-                                        ...prev,
-                                        name: e.target.value,
-                                    }));
-                                }}
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Name</Form.Label>
+                        <Form.Control
+                            type="name"
+                            value={store.name}
+                            onChange={(e) => {
+                                setStore((prev) => ({
+                                    ...prev,
+                                    name: e.target.value,
+                                }));
+                            }}
+                        />
                     </Col>
                 </Row>
                 <Row>
-                <Col xs={6}>
-                        <FloatingLabel
-                            controlId="supervisor"
-                            label="Supervisor"
-                            className="mb-3 text-secondary"
-                        >
-                            <Form.Control
-                                type="supervisor"
-                                placeholder="supervisor"
-                                value={store.supervisor}
-                                onChange={(e) => {
-                                    setStore((prev) => ({
-                                        ...prev,
-                                        supervisor: e.target.value,
-                                    }));
-                                }}
-                            />
-                        </FloatingLabel>
+                    <Col xs={6}>
+                        <Form.Label>Supervisor</Form.Label>
+                        <Form.Control
+                            type="supervisor"
+                            value={store.supervisor}
+                            onChange={(e) => {
+                                setStore((prev) => ({
+                                    ...prev,
+                                    supervisor: e.target.value,
+                                }));
+                            }}
+                        />
                     </Col>
                     <Col xs={6}>
-                        <FloatingLabel
-                            controlId="phone"
-                            label="Phone"
-                            className="mb-3 text-secondary"
-                        >
-                            <Form.Control
-                                type="phone"
-                                placeholder="phone"
-                                value={store.phone}
-                                onChange={(e) => {
-                                    setStore((prev) => ({
-                                        ...prev,
-                                        phone: e.target.value,
-                                    }));
-                                }}
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Phone</Form.Label>
+                        <Form.Control
+                            type="phone"
+                            value={store.phone}
+                            onChange={(e) => {
+                                setStore((prev) => ({
+                                    ...prev,
+                                    phone: e.target.value,
+                                }));
+                            }}
+                        />
                     </Col>
                 </Row>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="success" size="lg" onClick={addStore}>
+                <Button variant="success" size="sm" onClick={addStore}>
                     {loading && (
                         <Spinner
                             as="span"
@@ -193,4 +161,3 @@ const AddStore: React.FC<AddStoreProps> = ({ show, onClose, onAdded }) => {
 };
 
 export default AddStore;
-

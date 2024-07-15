@@ -168,7 +168,7 @@ const StoreAssign: React.FC<StoreAssignProps> = ({
                 </Row>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="success" size="lg" onClick={assignStores}>
+                <Button variant="success" size="sm" onClick={assignStores}>
                     {loading && (
                         <Spinner
                             as="span"

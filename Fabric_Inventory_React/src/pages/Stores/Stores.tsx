@@ -1,4 +1,4 @@
-import { Button, Container, Table } from "react-bootstrap";
+import { Container, Table } from "react-bootstrap";
 import Heading from "../../components/Heading";
 import { useEffect, useState } from "react";
 import AddStore from "./AddStore";
@@ -113,10 +113,10 @@ const Stores: React.FC = () => {
                 buttonText="Add Store"
                 onClick={() => setShowAddStoreModal(true)}
             />
-            <Table striped bordered hover>
+            <Table striped bordered hover size="sm">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th className="text-center">#</th>
                         <th>Code</th>
                         <th>Name</th>
                         <th>Supervisor</th>
@@ -138,8 +138,11 @@ const Stores: React.FC = () => {
                             let serialNo = (currentPage - 1) * 10 + index + 1;
 
                             return (
-                                <tr style={{ verticalAlign:"middle" }} key={index}>
-                                    <td>{serialNo}</td>
+                                <tr
+                                    style={{ verticalAlign: "middle" }}
+                                    key={index}
+                                >
+                                    <td className="text-center">{serialNo}</td>
                                     <td>{store.code.toUpperCase()}</td>
                                     <td>{store.name.toUpperCase()}</td>
                                     <td>{store.supervisor?.toUpperCase()}</td>
@@ -151,39 +154,41 @@ const Stores: React.FC = () => {
                                             : "INACTIVE"}
                                     </td>
                                     <td>
-                                        <Button
-                                            onClick={() => {
-                                                setEditStore(store);
-                                                setShowEditStoreModal(true);
-                                            }}
-                                        >
-                                            <box-icon
-                                                name="edit-alt"
-                                                color="white"
-                                                size="xs"
-                                            ></box-icon>
-                                        </Button>
-                                        &nbsp;
-                                        <Button
-                                            variant="danger"
-                                            onClick={() =>
-                                                suspendStore(store.id)
-                                            }
-                                        >
-                                            {store.active === "1" ? (
+                                        <div className="d-flex">
+                                            <div
+                                                className="d-flex me-1"
+                                                onClick={() => {
+                                                    setEditStore(store);
+                                                    setShowEditStoreModal(true);
+                                                }}
+                                            >
                                                 <box-icon
-                                                    name="minus"
-                                                    color="white"
-                                                    size="xs"
+                                                    name="edit-alt"
+                                                    color="green"
+                                                    size="sm"
                                                 ></box-icon>
-                                            ) : (
-                                                <box-icon
-                                                    name="plus"
-                                                    color="white"
-                                                    size="xs"
-                                                ></box-icon>
-                                            )}
-                                        </Button>
+                                            </div>
+                                            <div
+                                                className="d-flex"
+                                                onClick={() =>
+                                                    suspendStore(store.id)
+                                                }
+                                            >
+                                                {store.active === "1" ? (
+                                                    <box-icon
+                                                        name="x"
+                                                        color="red"
+                                                        size="sm"
+                                                    ></box-icon>
+                                                ) : (
+                                                    <box-icon
+                                                        name="check"
+                                                        color="red"
+                                                        size="sm"
+                                                    ></box-icon>
+                                                )}
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             );

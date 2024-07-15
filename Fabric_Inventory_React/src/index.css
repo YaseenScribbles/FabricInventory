@@ -7,6 +7,23 @@ body {
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
+    overflow: hidden;
 }
+
+hr {
+    margin: 0.5rem 0;
+}
+
+.navbar {
+    padding: 0.25rem;
+}
+
+@media screen and (max-width:1366px) {
+    /* td {
+        font-size: 0.75rem;
+    } */
+}
+
+
 
 

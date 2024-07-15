@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import {
     Button,
     Col,
-    FloatingLabel,
     Form,
     Modal,
     Row,
@@ -103,14 +102,9 @@ const EditFabric: React.FC<EditFabricProps> = ({
             <Modal.Body>
                 <Row>
                     <Col xs={12}>
-                        <FloatingLabel
-                            controlId="name"
-                            label="Name"
-                            className="mb-3 text-secondary"
-                        >
+                            <Form.Label>Name</Form.Label>
                             <Form.Control
                                 type="name"
-                                placeholder="name"
                                 value={fabric.name}
                                 onChange={(e) => {
                                     setFabric((prev) => ({
@@ -120,12 +114,11 @@ const EditFabric: React.FC<EditFabricProps> = ({
                                 }}
                                 autoFocus
                             />
-                        </FloatingLabel>
                     </Col>
                 </Row>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="success" size="lg" onClick={updateFabric}>
+                <Button variant="success" size="sm" onClick={updateFabric}>
                     {loading && (
                         <Spinner
                             as="span"

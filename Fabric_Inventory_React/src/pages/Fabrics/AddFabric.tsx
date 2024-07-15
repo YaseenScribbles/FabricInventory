@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
     Button,
     Col,
-    FloatingLabel,
     Form,
     Modal,
     Row,
@@ -85,14 +84,9 @@ const AddFabric: React.FC<AddFabricProps> = ({ show, onClose, onAdded }) => {
             <Modal.Body>
                 <Row>
                     <Col xs={12}>
-                        <FloatingLabel
-                            controlId="name"
-                            label="Name"
-                            className="mb-3 text-secondary"
-                        >
+                            <Form.Label>Name</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="name"
                                 value={fabric.name}
                                 onChange={(e) => {
                                     setFabric((prev) => ({
@@ -102,12 +96,11 @@ const AddFabric: React.FC<AddFabricProps> = ({ show, onClose, onAdded }) => {
                                 }}
                                 autoFocus
                             />
-                        </FloatingLabel>
                     </Col>
                 </Row>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="success" size="lg" onClick={addFabric}>
+                <Button variant="success" size="sm" onClick={addFabric}>
                     {loading && (
                         <Spinner
                             as="span"

@@ -18,8 +18,8 @@
     white-space: nowrap;
 }
 
-@media screen and (width < 1370px) {
+/* @media screen and (width < 1370px) {
     #users {
         font-size: 0.75rem;
     }
-}
+} */

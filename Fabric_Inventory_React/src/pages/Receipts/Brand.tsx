@@ -128,12 +128,6 @@ const Brand: React.FC<BrandProps> = ({
                             value={defaultValue}
                             cacheOptions
                             loadOptions={loadBrands}
-                            styles={{
-                                control: (baseStyles, _) => ({
-                                    ...baseStyles,
-                                    minHeight: "58px",
-                                }),
-                            }}
                             onChange={(e) => {
                                 const brand = e ? e.value : "";
                                 setBrand(brand);

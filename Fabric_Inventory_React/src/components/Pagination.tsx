@@ -47,7 +47,7 @@ const MyPagination: React.FC<PaginationProps> = ({
     };
 
     return (
-        <Pagination className="d-flex justify-content-end">
+        <Pagination className="d-flex justify-content-end" size="sm">
             <Pagination.First onClick={() => getData(1)} />
             <Pagination.Prev onClick={() => getData(currentPage - 1)} />
             {currentPage - 2 > 0 && (

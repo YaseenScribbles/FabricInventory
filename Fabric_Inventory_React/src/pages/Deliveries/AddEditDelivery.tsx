@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import {
     Button,
     Col,
-    FloatingLabel,
     Form,
     Modal,
     Row,
@@ -658,133 +657,99 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                 </ToastContainer>
                 <Row className="mb-3">
                     <Col xs={1}>
-                        <FloatingLabel
-                            controlId="receipt_id"
-                            label="Receipt"
-                            className="text-secondary"
+                        <Form.Label>Receipt No</Form.Label>
+                        <Form.Select
+                            value={receiptId}
+                            onChange={(e) => {
+                                setReceiptId(+e.target.value);
+                            }}
+                            disabled={edit}
                         >
-                            <Form.Select
-                                value={receiptId}
-                                onChange={(e) => {
-                                    setReceiptId(+e.target.value);
-                                }}
-                                disabled={edit}
-                            >
-                                <option value="0"></option>
-                                {receiptIds.map((receiptId, index) => {
-                                    return (
-                                        <option
-                                            key={index}
-                                            value={receiptId.id}
-                                        >
-                                            {receiptId.id}
-                                        </option>
-                                    );
-                                })}
-                            </Form.Select>
-                        </FloatingLabel>
+                            <option value="0"></option>
+                            {receiptIds.map((receiptId, index) => {
+                                return (
+                                    <option key={index} value={receiptId.id}>
+                                        {receiptId.id}
+                                    </option>
+                                );
+                            })}
+                        </Form.Select>
                     </Col>
                     <Col xs={1}>
-                        <FloatingLabel
-                            controlId="lot_no"
-                            label="Lot No"
-                            className="text-secondary"
-                        >
-                            <Form.Control
-                                disabled
-                                type="text"
-                                placeholder="***"
-                                value={delivery.lot_no}
-                                onChange={(e) =>
-                                    setDelivery((prev) => ({
-                                        ...prev,
-                                        lot_no: e.target.value,
-                                    }))
-                                }
-                                autoFocus
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Lot No</Form.Label>
+                        <Form.Control
+                            disabled
+                            type="text"
+                            value={delivery.lot_no}
+                            onChange={(e) =>
+                                setDelivery((prev) => ({
+                                    ...prev,
+                                    lot_no: e.target.value,
+                                }))
+                            }
+                            autoFocus
+                        />
                     </Col>
                     <Col xs={2}>
-                        <FloatingLabel
-                            controlId="brand"
-                            label="Brand"
-                            className="text-secondary"
-                        >
-                            <Form.Control
-                                disabled
-                                type="text"
-                                placeholder="***"
-                                value={delivery.brand}
-                                onChange={(e) =>
-                                    setDelivery((prev) => ({
-                                        ...prev,
-                                        brand: e.target.value,
-                                    }))
-                                }
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Brand</Form.Label>
+                        <Form.Control
+                            disabled
+                            type="text"
+                            value={delivery.brand}
+                            onChange={(e) =>
+                                setDelivery((prev) => ({
+                                    ...prev,
+                                    brand: e.target.value,
+                                }))
+                            }
+                        />
                     </Col>
                     <Col xs={2}>
-                        <FloatingLabel
-                            controlId="fabric_id"
-                            label="Cloth Type"
-                            className="text-secondary"
+                        <Form.Label>Cloth Type</Form.Label>
+                        <Form.Select
+                            disabled
+                            value={delivery.fabric_id}
+                            onChange={(e) =>
+                                setDelivery((prev) => ({
+                                    ...prev,
+                                    fabric_id: Number(e.target.value),
+                                }))
+                            }
                         >
-                            <Form.Select
-                                disabled
-                                value={delivery.fabric_id}
-                                onChange={(e) =>
-                                    setDelivery((prev) => ({
-                                        ...prev,
-                                        fabric_id: Number(e.target.value),
-                                    }))
-                                }
-                            >
-                                <option value="0"></option>
-                                {fabrics.map((f) => {
-                                    return (
-                                        <option key={f.id} value={f.id}>
-                                            {f.name.toUpperCase()}
-                                        </option>
-                                    );
-                                })}
-                            </Form.Select>
-                        </FloatingLabel>
+                            <option value="0"></option>
+                            {fabrics.map((f) => {
+                                return (
+                                    <option key={f.id} value={f.id}>
+                                        {f.name.toUpperCase()}
+                                    </option>
+                                );
+                            })}
+                        </Form.Select>
                     </Col>
                     <Col xs={3}>
-                        <FloatingLabel
-                            controlId="company_id"
-                            label="Company"
-                            className="text-secondary"
+                        <Form.Label>Company</Form.Label>
+                        <Form.Select
+                            disabled
+                            value={delivery.company_id}
+                            onChange={(e) =>
+                                setDelivery((prev) => ({
+                                    ...prev,
+                                    company_id: Number(e.target.value),
+                                }))
+                            }
                         >
-                            <Form.Select
-                                disabled
-                                value={delivery.company_id}
-                                onChange={(e) =>
-                                    setDelivery((prev) => ({
-                                        ...prev,
-                                        company_id: Number(e.target.value),
-                                    }))
-                                }
-                            >
-                                <option value="0"></option>
-                                {companies.map((c) => {
-                                    return (
-                                        <option key={c.id} value={c.id}>
-                                            {c.name.toUpperCase()}
-                                        </option>
-                                    );
-                                })}
-                            </Form.Select>
-                        </FloatingLabel>
+                            <option value="0"></option>
+                            {companies.map((c) => {
+                                return (
+                                    <option key={c.id} value={c.id}>
+                                        {c.name.toUpperCase()}
+                                    </option>
+                                );
+                            })}
+                        </Form.Select>
                     </Col>
                     <Col xs={3}>
-                        <FloatingLabel
-                            controlId="store_id"
-                            label="Store"
-                            className="text-secondary"
-                        >
+                            <Form.Label>Store</Form.Label>
                             <Form.Select
                                 disabled
                                 value={delivery.store_id}
@@ -804,21 +769,15 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                                     );
                                 })}
                             </Form.Select>
-                        </FloatingLabel>
                     </Col>
                 </Row>
                 <Row>
                     <Col xs={2}>
-                    <SelectAsync
+                        <Form.Label>Supplier</Form.Label>
+                        <SelectAsync
                             placeholder="Select Contact"
                             cacheOptions
                             loadOptions={loadSuppliers}
-                            styles={{
-                                control: (baseStyles, _) => ({
-                                    ...baseStyles,
-                                    minHeight: "58px",
-                                }),
-                            }}
                             onChange={(e) => {
                                 setDelivery((prev) => ({
                                     ...prev,
@@ -829,14 +788,9 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                         />
                     </Col>
                     <Col xs={10}>
-                        <FloatingLabel
-                            controlId="remarks"
-                            label="Remarks"
-                            className="text-secondary"
-                        >
+                            <Form.Label>Remarks</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="***"
                                 value={delivery.remarks ?? ""}
                                 onChange={(e) =>
                                     setDelivery((prev) => ({
@@ -845,11 +799,10 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                                     }))
                                 }
                             />
-                        </FloatingLabel>
                     </Col>
                 </Row>
                 <hr />
-                <Table bordered hover>
+                <Table bordered hover size="sm">
                     <thead>
                         <tr>
                             <th>#</th>

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import {
     Button,
     Col,
-    FloatingLabel,
     Form,
     Modal,
     Row,
@@ -108,120 +107,83 @@ const EditUser: React.FC<EditUserProps> = ({
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Row>
+                <Row className="mb-3">
                     <Col xs={4}>
-                        <FloatingLabel
-                            controlId="name"
-                            label="Name"
-                            className="mb-3 text-secondary"
-                        >
-                            <Form.Control
-                                type="name"
-                                placeholder="name"
-                                value={user.name}
-                                onChange={(e) =>
-                                    setUser((prev) => ({
-                                        ...prev,
-                                        name: e.target.value,
-                                    }))
-                                }
-                                autoFocus
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Name</Form.Label>
+                        <Form.Control
+                            type="name"
+                            value={user.name}
+                            onChange={(e) =>
+                                setUser((prev) => ({
+                                    ...prev,
+                                    name: e.target.value,
+                                }))
+                            }
+                            autoFocus
+                        />
                     </Col>
                     <Col xs={4}>
-                        <FloatingLabel
-                            controlId="email"
-                            label="Email"
-                            className="mb-3 text-secondary"
-                        >
-                            <Form.Control
-                                type="email"
-                                placeholder="name@example.com"
-                                value={user.email}
-                                onChange={(e) =>
-                                    setUser((prev) => ({
-                                        ...prev,
-                                        email: e.target.value,
-                                    }))
-                                }
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Email</Form.Label>
+                        <Form.Control
+                            type="email"
+                            value={user.email}
+                            onChange={(e) =>
+                                setUser((prev) => ({
+                                    ...prev,
+                                    email: e.target.value,
+                                }))
+                            }
+                        />
                     </Col>
                     <Col xs={4}>
-                        <FloatingLabel
-                            controlId="role"
-                            label="Role"
-                            className="text-secondary"
+                        <Form.Label>Role</Form.Label>
+                        <Form.Select
+                            aria-label="Role selection"
+                            value={user.role}
+                            onChange={(e) =>
+                                setUser((prev) => ({
+                                    ...prev,
+                                    role: e.target.value,
+                                }))
+                            }
                         >
-                            <Form.Select
-                                aria-label="Role selection"
-                                value={user.role}
-                                onChange={(e) =>
-                                    setUser((prev) => ({
-                                        ...prev,
-                                        role: e.target.value,
-                                    }))
-                                }
-                            >
-                                <option
-                                    value="user"
-                                >
-                                    User
-                                </option>
-                                <option
-                                    value="admin"
-                                >
-                                    Admin
-                                </option>
-                            </Form.Select>
-                        </FloatingLabel>
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </Form.Select>
                     </Col>
                 </Row>
                 <hr />
                 <Row>
                     <Col xs={4}>
-                        <FloatingLabel
-                            controlId="password"
-                            label="Password"
-                            className="text-secondary"
-                        >
-                            <Form.Control
-                                type="password"
-                                placeholder="Password"
-                                value={user.password}
-                                onChange={(e) =>
-                                    setUser((prev) => ({
-                                        ...prev,
-                                        password: e.target.value,
-                                    }))
-                                }
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control
+                            type="password"
+                            value={user.password}
+                            onChange={(e) =>
+                                setUser((prev) => ({
+                                    ...prev,
+                                    password: e.target.value,
+                                }))
+                            }
+                        />
                     </Col>
                     <Col xs={4}>
-                        <FloatingLabel
-                            controlId="repassword"
-                            label="Repeat Password"
-                            className="text-secondary"
-                        >
-                            <Form.Control
-                                type="password"
-                                placeholder="Password"
-                                value={user.password_confirmation}
-                                onChange={(e) =>
-                                    setUser((prev) => ({
-                                        ...prev,
-                                        password_confirmation: e.target.value,
-                                    }))
-                                }
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Repeat Password</Form.Label>
+                        <Form.Control
+                            type="password"
+                            value={user.password_confirmation}
+                            onChange={(e) =>
+                                setUser((prev) => ({
+                                    ...prev,
+                                    password_confirmation: e.target.value,
+                                }))
+                            }
+                        />
                     </Col>
                 </Row>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="success" size="lg" onClick={editUser}>
+                <Button variant="success" size="sm" onClick={editUser}>
                     {loading && (
                         <Spinner
                             as="span"

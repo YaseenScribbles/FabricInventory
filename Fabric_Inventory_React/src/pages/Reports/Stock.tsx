@@ -395,7 +395,7 @@ const Stock: React.FC = () => {
                             setSelectedFabric(e);
                         }}
                         options={fabrics}
-                        placeholder="Select Cloth Type"
+                        placeholder="Cloth Type"
                         isClearable
                     />
                 </Col>
@@ -431,7 +431,7 @@ const Stock: React.FC = () => {
                 </Col>
             </Row>
             <hr />
-            <Table striped bordered hover>
+            <Table striped bordered hover size="sm">
                 <thead>
                     <tr style={{ verticalAlign: "middle" }}>
                         <th>R. No</th>
@@ -533,23 +533,24 @@ const Stock: React.FC = () => {
                                 </td>
                                 <td className="text-center">{row.days}</td>
                                 <td>
-                                    <Button
-                                        variant="secondary"
-                                        href={`/stock-report/${row.receiptNo}`}
-                                        target="_blank"
-                                        style={{
-                                            display: "flex",
-                                            height: "40px",
-                                            width: "45px",
-                                        }}
-                                    >
-                                        <box-icon
-                                            type="solid"
-                                            name="file-pdf"
-                                            color="white"
-                                            size="sm"
-                                        ></box-icon>
-                                    </Button>
+                                    <div className="d-flex">
+                                        <div
+                                            className="d-flex"
+                                            onClick={() =>
+                                                window.open(
+                                                    `/stock-report/${row.receiptNo}`,
+                                                    "_blank"
+                                                )
+                                            }
+                                        >
+                                            <box-icon
+                                                type="solid"
+                                                name="file-pdf"
+                                                color="green"
+                                                size="sm"
+                                            ></box-icon>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         ))

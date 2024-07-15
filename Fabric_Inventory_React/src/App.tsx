@@ -5,6 +5,7 @@ import router from "./router";
 import { NotificationContextProvider } from "./contexts/NotificationsContext";
 import { Provider } from "react-redux";
 import { Store } from "./store/Store";
+import './index.css'
 
 function App() {
     return (

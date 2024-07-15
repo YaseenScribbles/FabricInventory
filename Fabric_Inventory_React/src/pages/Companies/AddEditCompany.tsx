@@ -2,7 +2,6 @@ import { ChangeEvent, useEffect, useState } from "react";
 import {
     Button,
     Col,
-    FloatingLabel,
     Form,
     Modal,
     Row,
@@ -158,40 +157,28 @@ const AddEditCompany: React.FC<AddEditCompanyProps> = ({
             </Modal.Header>
             <Form>
                 <Modal.Body>
-                    <Row>
+                    <Row className="mb-3">
                         <Col>
-                            <FloatingLabel
-                                controlId="name"
-                                label="Name"
-                                className="mb-3 text-secondary"
-                            >
-                                <Form.Control
-                                    name="name"
-                                    type="text"
-                                    placeholder="***"
-                                    value={company.name}
-                                    onChange={handleChange}
-                                    autoFocus
-                                />
-                            </FloatingLabel>
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control
+                                name="name"
+                                type="text"
+                                value={company.name}
+                                onChange={handleChange}
+                                autoFocus
+                            />
                         </Col>
                     </Row>
                     <Row>
                         <Col>
-                            <FloatingLabel
-                                controlId="address"
-                                label="Address"
-                                className="mb-3 text-secondary"
-                            >
-                                <Form.Control
-                                    name="address"
-                                    as="textarea"
-                                    placeholder="***"
-                                    style={{ height: "100px" }}
-                                    value={company.address}
-                                    onChange={handleChange}
-                                />
-                            </FloatingLabel>
+                            <Form.Label>Address</Form.Label>
+                            <Form.Control
+                                name="address"
+                                as="textarea"
+                                style={{ height: "100px" }}
+                                value={company.address}
+                                onChange={handleChange}
+                            />
                         </Col>
                     </Row>
                 </Modal.Body>

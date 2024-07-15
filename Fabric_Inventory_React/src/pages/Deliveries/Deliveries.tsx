@@ -1,5 +1,4 @@
 import {
-    Button,
     Container,
     OverlayTrigger,
     Spinner,
@@ -125,7 +124,7 @@ const Deliveries: React.FC = () => {
                     setShowAddEditModal(true);
                 }}
             />
-            <Table striped bordered hover>
+            <Table striped bordered hover size="sm">
                 <thead>
                     <tr style={{ verticalAlign: "middle" }}>
                         <th className="eightypixels">D. No</th>
@@ -234,68 +233,56 @@ const Deliveries: React.FC = () => {
                                 <td className="text-end">
                                     {(+delivery.weight).toFixed(2)}
                                 </td>
-                                <td className="d-flex flex-nowrap">
-                                    {user!.role === "admin" && (
-                                        <Button
-                                            variant="primary"
+                                <td>
+                                    <div className="d-flex">
+                                        {user!.role === "admin" && (
+                                            <div
+                                                onClick={() => {
+                                                    setEdit(true);
+                                                    setEditId(delivery.id);
+                                                    setShowAddEditModal(true);
+                                                }}
+                                                className="d-flex me-1"
+                                            >
+                                                <box-icon
+                                                    name="edit-alt"
+                                                    color="green"
+                                                    size="sm"
+                                                ></box-icon>
+                                            </div>
+                                        )}
+                                        <div
                                             onClick={() => {
-                                                setEdit(true);
-                                                setEditId(delivery.id);
-                                                setShowAddEditModal(true);
+                                                window.open(
+                                                    `/delivery-report/${delivery.id}`,
+                                                    "_blank"
+                                                );
                                             }}
-                                            style={{
-                                                display: "flex",
-                                                height: "40px",
-                                                width: "45px",
-                                                marginRight: "5px",
-                                            }}
+                                            className="d-flex me-1"
                                         >
                                             <box-icon
-                                                name="edit-alt"
-                                                color="white"
+                                                type="solid"
+                                                name="file-pdf"
+                                                color="green"
                                                 size="sm"
                                             ></box-icon>
-                                        </Button>
-                                    )}
-                                    {user!.role === "admin" && (
-                                        <Button
-                                            variant="danger"
-                                            onClick={() => {
-                                                setAlertId(delivery.id);
-                                                setShowAlert(true);
-                                            }}
-                                            style={{
-                                                display: "flex",
-                                                height: "40px",
-                                                width: "45px",
-                                                marginRight: "5px",
-                                            }}
-                                        >
-                                            <box-icon
-                                                name="x"
-                                                color="white"
-                                                size="sm"
-                                            ></box-icon>
-                                        </Button>
-                                    )}
-                                    <Button
-                                        variant="secondary"
-                                        href={`/delivery-report/${delivery.id}`}
-                                        target="_blank"
-                                        style={{
-                                            display: "flex",
-                                            height: "40px",
-                                            width: "45px",
-                                            marginRight: "5px",
-                                        }}
-                                    >
-                                        <box-icon
-                                            type="solid"
-                                            name="file-pdf"
-                                            color="white"
-                                            size="sm"
-                                        ></box-icon>
-                                    </Button>
+                                        </div>
+                                        {user!.role === "admin" && (
+                                            <div
+                                                onClick={() => {
+                                                    setAlertId(delivery.id);
+                                                    setShowAlert(true);
+                                                }}
+                                                className="d-flex"
+                                            >
+                                                <box-icon
+                                                    name="x"
+                                                    color="red"
+                                                    size="sm"
+                                                ></box-icon>
+                                            </div>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                         ))

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import {
     Button,
     Col,
-    FloatingLabel,
     Form,
     Modal,
     Row,
@@ -655,45 +654,34 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                 </ToastContainer>
                 <Row className="mb-3">
                     <Col xs={1}>
-                        <FloatingLabel
-                            controlId="lot_no"
-                            label="Lot No"
-                            className="text-secondary"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder="***"
-                                value={receipt.lot_no}
-                                onChange={(e) =>
-                                    setReceipt((prev) => ({
-                                        ...prev,
-                                        lot_no: e.target.value,
-                                    }))
-                                }
-                                autoFocus
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Lot No</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={receipt.lot_no}
+                            onChange={(e) =>
+                                setReceipt((prev) => ({
+                                    ...prev,
+                                    lot_no: e.target.value,
+                                }))
+                            }
+                            autoFocus
+                        />
                     </Col>
                     <Col xs={2}>
-                        <FloatingLabel
-                            controlId="brand"
-                            label="Brand"
-                            className="text-secondary"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder="***"
-                                value={receipt.brand}
-                                onChange={(e) =>
-                                    setReceipt((prev) => ({
-                                        ...prev,
-                                        brand: e.target.value,
-                                    }))
-                                }
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Brand</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={receipt.brand}
+                            onChange={(e) =>
+                                setReceipt((prev) => ({
+                                    ...prev,
+                                    brand: e.target.value,
+                                }))
+                            }
+                        />
                     </Col>
                     <Col xs={2}>
+                        <Form.Label>Company</Form.Label>
                         <Select
                             placeholder="Select Company"
                             value={selectedCompany}
@@ -705,15 +693,10 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                     company_id: Number(e ? e.value : 0),
                                 }));
                             }}
-                            styles={{
-                                control: (baseStyles, _) => ({
-                                    ...baseStyles,
-                                    minHeight: "58px",
-                                }),
-                            }}
                         />
                     </Col>
                     <Col xs={2}>
+                        <Form.Label>Store</Form.Label>
                         <Select
                             placeholder="Select Store"
                             value={selectedStore}
@@ -725,25 +708,14 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                     store_id: Number(e ? e.value : 0),
                                 }));
                             }}
-                            styles={{
-                                control: (baseStyles, _) => ({
-                                    ...baseStyles,
-                                    minHeight: "58px",
-                                }),
-                            }}
                         />
                     </Col>
                     <Col xs={3}>
+                        <Form.Label>Supplier</Form.Label>
                         <SelectAsync
-                            placeholder="Select Contact"
+                            placeholder="Select Supplier"
                             cacheOptions
                             loadOptions={loadSuppliers}
-                            styles={{
-                                control: (baseStyles, _) => ({
-                                    ...baseStyles,
-                                    minHeight: "58px",
-                                }),
-                            }}
                             onChange={(e) => {
                                 setReceipt((prev) => ({
                                     ...prev,
@@ -754,6 +726,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                         />
                     </Col>
                     <Col xs={2}>
+                        <Form.Label>Cloth Type</Form.Label>
                         <Select
                             placeholder="Select Cloth Type"
                             value={selectedFabric}
@@ -765,75 +738,52 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                     fabric_id: Number(e ? e.value : 0),
                                 }));
                             }}
-                            styles={{
-                                control: (baseStyles, _) => ({
-                                    ...baseStyles,
-                                    minHeight: "58px",
-                                }),
-                            }}
                         />
                     </Col>
                 </Row>
                 <Row>
                     <Col xs={3}>
-                        <FloatingLabel
-                            controlId="cloth"
-                            label="Cloth"
-                            className="text-secondary"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder="***"
-                                value={receipt.cloth}
-                                onChange={(e) =>
-                                    setReceipt((prev) => ({
-                                        ...prev,
-                                        cloth: e.target.value,
-                                    }))
-                                }
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Cloth</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={receipt.cloth}
+                            onChange={(e) =>
+                                setReceipt((prev) => ({
+                                    ...prev,
+                                    cloth: e.target.value,
+                                }))
+                            }
+                        />
                     </Col>
                     <Col xs={6}>
-                        <FloatingLabel
-                            controlId="remarks"
-                            label="Remarks"
-                            className="text-secondary"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder="***"
-                                value={receipt.remarks ?? ""}
-                                onChange={(e) =>
-                                    setReceipt((prev) => ({
-                                        ...prev,
-                                        remarks: e.target.value,
-                                    }))
-                                }
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Remarks</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={receipt.remarks ?? ""}
+                            onChange={(e) =>
+                                setReceipt((prev) => ({
+                                    ...prev,
+                                    remarks: e.target.value,
+                                }))
+                            }
+                        />
                     </Col>
                     <Col xs={2}>
-                        <FloatingLabel
-                            controlId="dias"
-                            label="Dias"
-                            className="text-secondary"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder="***"
-                                value={diasString ?? ""}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    setDiasString(value);
-                                }}
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Dias</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={diasString ?? ""}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                setDiasString(value);
+                            }}
+                        />
                     </Col>
                     <Col xs={1} className="mt-1">
+                        <Form.Label></Form.Label>
                         <Button
                             onClick={addEntry}
-                            className="p-0 b-0 d-flex w-100 justify-content-center"
+                            className="d-flex h-50 w-100 justify-content-center align-items-center"
                         >
                             <box-icon
                                 name="plus"
@@ -844,7 +794,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                     </Col>
                 </Row>
                 <hr />
-                <Table bordered hover>
+                <Table bordered hover size="sm">
                     <thead>
                         <tr>
                             <th>#</th>

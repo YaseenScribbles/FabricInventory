@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import {
     Button,
     Col,
-    FloatingLabel,
     Form,
     Modal,
     Row,
@@ -103,29 +102,23 @@ const EditColor: React.FC<EditColorProps> = ({
             <Modal.Body>
                 <Row>
                     <Col xs={12}>
-                        <FloatingLabel
-                            controlId="name"
-                            label="Name"
-                            className="mb-3 text-secondary"
-                        >
-                            <Form.Control
-                                type="name"
-                                placeholder="name"
-                                value={color.name}
-                                onChange={(e) => {
-                                    setColor((prev) => ({
-                                        ...prev,
-                                        name: e.target.value,
-                                    }));
-                                }}
-                                autoFocus
-                            />
-                        </FloatingLabel>
+                        <Form.Label>Name</Form.Label>
+                        <Form.Control
+                            type="name"
+                            value={color.name}
+                            onChange={(e) => {
+                                setColor((prev) => ({
+                                    ...prev,
+                                    name: e.target.value,
+                                }));
+                            }}
+                            autoFocus
+                        />
                     </Col>
                 </Row>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="success" size="lg" onClick={updateColor}>
+                <Button variant="success" size="sm" onClick={updateColor}>
                     {loading && (
                         <Spinner
                             as="span"

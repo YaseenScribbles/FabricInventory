@@ -1,5 +1,4 @@
 import {
-    Button,
     Col,
     Container,
     Form,
@@ -20,7 +19,7 @@ import "./Receipt.css";
 import { useUserContext } from "../../contexts/UserContext";
 import Select from "react-select";
 const AddEditDelivery = lazy(() => import("../Deliveries/AddEditDelivery"));
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import AlertModal from "../../components/AlertModal";
 import Brand from "./Brand";
 
@@ -87,6 +86,7 @@ const Receipts: React.FC = () => {
     const [showBrandModal, setShowBrandModal] = useState(false);
     const [brandEditId, setBrandEditId] = useState(0);
     const [brandEdit, setBrandEdit] = useState("");
+    const navigate = useNavigate();
 
     const getReceipts = async (page: number = 1) => {
         setLoading(true);
@@ -207,6 +207,10 @@ const Receipts: React.FC = () => {
         }
     };
 
+    const openReport = (id: number) => {
+        window.open(`/receipt-report/${id}`,'_blank')
+    }
+
     useEffect(() => {
         if (hasFetchedData.current) return;
         getStores();
@@ -217,14 +221,14 @@ const Receipts: React.FC = () => {
     }, [selectedStore, isClosed]);
 
     return (
-        <Container fluid className="p-3" id="receipts">
+        <Container fluid className="p-2" id="receipts">
             <Heading
                 title="Receipts"
                 buttonText="Add Receipt"
                 onClick={() => setShowAddReceipt(true)}
             />
             <Row>
-                <Col xs={2}>
+                <Col xs={3}>
                     <Select
                         value={selectedStore}
                         onChange={(e) => {
@@ -253,7 +257,7 @@ const Receipts: React.FC = () => {
                 </Col>
             </Row>
             <hr />
-            <Table striped bordered hover className="receipts-table">
+            <Table striped bordered hover className="receipts-table" size="sm">
                 <thead>
                     <tr style={{ verticalAlign: "middle" }}>
                         {/* <th>#</th> */}
@@ -391,137 +395,108 @@ const Receipts: React.FC = () => {
                                     <td className="text-end">
                                         {(+receipt.stockWeight).toFixed(2)}
                                     </td>
-                                    <td className="d-flex flex-nowrap">
-                                        {user?.role === "admin" && (
-                                            <Button
-                                                hidden={
-                                                    receipt.isLocked === "1"
-                                                }
-                                                variant="primary"
+                                    <td>
+                                        <div className="d-flex">
+                                            {user?.role === "admin" && (
+                                                <div
+                                                    hidden={
+                                                        receipt.isLocked === "1"
+                                                    }
+                                                    onClick={() => {
+                                                        // setEditReceipt(receipt.id);
+                                                        // setShowEditReceipt(true);
+                                                        setEdit(true);
+                                                        setEditId(receipt.id);
+                                                        setShowAddReceipt(true);
+                                                    }}
+                                                    className="d-flex me-1"
+                                                >
+                                                    <box-icon
+                                                        name="edit-alt"
+                                                        color="green"
+                                                        size="sm"
+                                                    ></box-icon>
+                                                </div>
+                                            )}
+                                            <div
+                                                hidden={isClosed}
+                                                className="d-flex me-1"
                                                 onClick={() => {
-                                                    // setEditReceipt(receipt.id);
-                                                    // setShowEditReceipt(true);
-                                                    setEdit(true);
-                                                    setEditId(receipt.id);
-                                                    setShowAddReceipt(true);
-                                                }}
-                                                style={{
-                                                    display: "flex",
-                                                    height: "40px",
-                                                    width: "45px",
-                                                    marginRight: "5px",
+                                                    setDeliveryReceipId(
+                                                        receipt.id
+                                                    );
+                                                    setShowDeliveryModal(true);
                                                 }}
                                             >
                                                 <box-icon
-                                                    name="edit-alt"
-                                                    color="white"
+                                                    type="solid"
+                                                    name="truck"
+                                                    color="green"
                                                     size="sm"
                                                 ></box-icon>
-                                            </Button>
-                                        )}
-                                        {user?.role === "admin" && (
-                                            <Button
-                                                hidden={
-                                                    receipt.isLocked === "1"
+                                            </div>
+                                            <div
+                                                onClick={() =>
+                                                    openReport(receipt.id)
                                                 }
-                                                variant="danger"
+                                                className="d-flex me-1"
+                                            >
+                                                <box-icon
+                                                    type="solid"
+                                                    name="file-pdf"
+                                                    color="green"
+                                                    size="sm"
+                                                ></box-icon>
+                                            </div>
+                                            <div
+                                                hidden={isClosed}
+                                                className="d-flex me-1"
                                                 onClick={() => {
                                                     setAlertId(receipt.id);
-                                                    setShowDeleteAlert(true);
-                                                }}
-                                                style={{
-                                                    display: "flex",
-                                                    height: "40px",
-                                                    width: "45px",
-                                                    marginRight: "5px",
+                                                    setShowAlert(true);
                                                 }}
                                             >
                                                 <box-icon
-                                                    name="x"
-                                                    color="white"
+                                                    name="check-double"
+                                                    color="green"
                                                     size="sm"
                                                 ></box-icon>
-                                            </Button>
-                                        )}
-                                        <Button
-                                            hidden={isClosed}
-                                            variant="dark"
-                                            style={{
-                                                display: "flex",
-                                                height: "40px",
-                                                width: "45px",
-                                                marginRight: "5px",
-                                            }}
-                                            onClick={() => {
-                                                setDeliveryReceipId(receipt.id);
-                                                setShowDeliveryModal(true);
-                                            }}
-                                        >
-                                            <box-icon
-                                                type="solid"
-                                                name="truck"
-                                                color="white"
-                                                size="sm"
-                                            ></box-icon>
-                                        </Button>
-                                        <Button
-                                            variant="secondary"
-                                            href={`/receipt-report/${receipt.id}`}
-                                            target="_blank"
-                                            style={{
-                                                display: "flex",
-                                                height: "40px",
-                                                width: "45px",
-                                                marginRight: "5px",
-                                            }}
-                                        >
-                                            <box-icon
-                                                type="solid"
-                                                name="file-pdf"
-                                                color="white"
-                                                size="sm"
-                                            ></box-icon>
-                                        </Button>
-                                        <Button
-                                            hidden={isClosed}
-                                            variant="info"
-                                            style={{
-                                                display: "flex",
-                                                height: "40px",
-                                                width: "45px",
-                                                marginRight: "5px",
-                                            }}
-                                            onClick={() => {
-                                                setAlertId(receipt.id);
-                                                setShowAlert(true);
-                                            }}
-                                        >
-                                            <box-icon
-                                                name="check-double"
-                                                color="white"
-                                                size="sm"
-                                            ></box-icon>
-                                        </Button>
-                                        <Button
-                                            variant="success"
-                                            style={{
-                                                display: "flex",
-                                                height: "40px",
-                                                width: "45px",
-                                                marginRight: "5px",
-                                            }}
-                                            onClick={() => {
-                                                setBrandEditId(receipt.id);
-                                                setBrandEdit(receipt.brand);
-                                                setShowBrandModal(true);
-                                            }}
-                                        >
-                                            <box-icon
-                                                name="customize"
-                                                color="white"
-                                                size="sm"
-                                            ></box-icon>
-                                        </Button>
+                                            </div>
+                                            <div
+                                                onClick={() => {
+                                                    setBrandEditId(receipt.id);
+                                                    setBrandEdit(receipt.brand);
+                                                    setShowBrandModal(true);
+                                                }}
+                                                className="d-flex"
+                                            >
+                                                <box-icon
+                                                    name="customize"
+                                                    color="green"
+                                                    size="sm"
+                                                ></box-icon>
+                                            </div>
+                                            {user?.role === "admin" && (
+                                                <div
+                                                    hidden={
+                                                        receipt.isLocked === "1"
+                                                    }
+                                                    onClick={() => {
+                                                        setAlertId(receipt.id);
+                                                        setShowDeleteAlert(
+                                                            true
+                                                        );
+                                                    }}
+                                                    className="d-flex me-1"
+                                                >
+                                                    <box-icon
+                                                        name="x"
+                                                        color="red"
+                                                        size="sm"
+                                                    ></box-icon>
+                                                </div>
+                                            )}
+                                        </div>
                                     </td>
                                 </tr>
                             );
