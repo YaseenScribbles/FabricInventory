@@ -132,7 +132,7 @@ const Deliveries: React.FC = () => {
                         <th className="eightypixels">R. No</th>
                         <th className="eightypixels">Lot No</th>
                         <th className="hundredpixels">Brand</th>
-                        <th className="hundredpixels">Contact</th>
+                        <th className="hundredpixels">Supplier</th>
                         <th className="hundredpixels">Cloth</th>
                         <th>Type</th>
                         <th className="remarks">Remarks</th>

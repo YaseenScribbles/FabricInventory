@@ -207,8 +207,21 @@ const Receipts: React.FC = () => {
     };
 
     const openReport = (id: number) => {
-        window.open(`/receipt-report/${id}`,'_blank')
-    }
+        window.open(`/receipt-report/${id}`, "_blank");
+    };
+
+    const isEditAllowed = (created_date: string): boolean => {
+        const currentDate = new Date();
+        const createdDateObj = new Date(created_date);
+        const allowedDate = new Date(
+            createdDateObj.setDate(createdDateObj.getDate() + 3)
+        );
+        if (user?.role === "admin") {
+            return true;
+        } else {
+            return currentDate <= allowedDate;
+        }
+    };
 
     useEffect(() => {
         if (hasFetchedData.current) return;
@@ -244,7 +257,7 @@ const Receipts: React.FC = () => {
                 >
                     <Form.Check
                         type="switch"
-                        label="CLOSED"
+                        label="Closed"
                         id="is_closed"
                         onClick={(
                             e: React.MouseEvent<HTMLInputElement, MouseEvent>
@@ -252,6 +265,7 @@ const Receipts: React.FC = () => {
                             const target = e.target as HTMLInputElement;
                             setIsClosed(target.checked);
                         }}
+                        className="text-secondary"
                     />
                 </Col>
             </Row>
@@ -264,7 +278,7 @@ const Receipts: React.FC = () => {
                         <th>Date</th>
                         <th className="eightypixels">Lot No</th>
                         <th className="hundredpixels">Brand</th>
-                        <th className="hundredpixels">Contact</th>
+                        <th className="hundredpixels">Supplier</th>
                         <th className="hundredpixels">Cloth</th>
                         <th>Type</th>
                         <th className="remarks">Remarks</th>
@@ -396,7 +410,7 @@ const Receipts: React.FC = () => {
                                     </td>
                                     <td>
                                         <div className="d-flex">
-                                            {user?.role === "admin" && (
+                                            {isEditAllowed(receipt.date) && (
                                                 <div
                                                     hidden={
                                                         receipt.isLocked === "1"

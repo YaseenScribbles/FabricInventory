@@ -17,14 +17,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\User::factory(10)->create();
+        // \App\Models\User::factory(10)->create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Admin',
-        //     'email' => 'admin@essa.com',
-        //     'password' => 'essa@7777',
-        //     'role' => 'admin'
-        // ]);
+        \App\Models\User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin@essa.com',
+            'password' => 'essa@77',
+            'role' => 'admin'
+        ]);
 
         // Fabric::create([
         //     'name' => 'FINE',
@@ -36,10 +36,10 @@ class DatabaseSeeder extends Seeder
         //     'user_id' => 1
         // ]);
 
-        Color::factory(60)->create();
+        // Color::factory(60)->create();
 
-        Store::factory(50)->create();
+        // Store::factory(50)->create();
 
-        UserStore::factory(25)->create();
+        // UserStore::factory(25)->create();
     }
 }

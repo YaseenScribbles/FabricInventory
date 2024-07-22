@@ -300,7 +300,7 @@ const ReceiptDocument: React.FC = () => {
                         </Text>
                     </View>
                     <View style={styles.columns}>
-                        <Text style={styles.heading}>Contact</Text>
+                        <Text style={styles.heading}>Supplier</Text>
                         <Text style={styles.colon}>:</Text>
                         <Text style={styles.master}>
                             {receipt.contact.toUpperCase()}
@@ -352,7 +352,7 @@ const ReceiptDocument: React.FC = () => {
                                             { textAlign: "right" },
                                         ]}
                                     >
-                                        <Text>{dia}</Text>
+                                        <Text>{`Dia - ${dia}`}</Text>
                                     </View>
                                 </View>
                             ))}

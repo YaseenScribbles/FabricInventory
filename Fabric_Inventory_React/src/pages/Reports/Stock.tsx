@@ -441,7 +441,7 @@ const Stock: React.FC = () => {
                         <th className="store">Store</th>
                         <th className="cloth">Cloth</th>
                         <th>Type</th>
-                        <th className="contact">Contact</th>
+                        <th className="contact">Supplier</th>
                         <th>Rolls</th>
                         <th>Weight</th>
                         <th>Days</th>
