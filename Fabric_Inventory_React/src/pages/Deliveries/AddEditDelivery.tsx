@@ -311,7 +311,7 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                         .map((item: DeliveryItem) => ({
                             dia: +item.dia,
                             rolls: +item.rolls,
-                            weight: item.weight,
+                            weight: (+item.weight).toFixed(2),
                         }));
 
                     dispatch(
@@ -581,7 +581,7 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                         .map((item: DeliveryItem) => ({
                             dia: +item.dia,
                             rolls: +item.rolls,
-                            weight: item.weight,
+                            weight: (+item.weight).toFixed(2),
                         }));
 
                     dispatch(
@@ -749,26 +749,26 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                         </Form.Select>
                     </Col>
                     <Col xs={3}>
-                            <Form.Label>Store</Form.Label>
-                            <Form.Select
-                                disabled
-                                value={delivery.store_id}
-                                onChange={(e) =>
-                                    setDelivery((prev) => ({
-                                        ...prev,
-                                        store_id: Number(e.target.value),
-                                    }))
-                                }
-                            >
-                                <option value="0"></option>
-                                {stores.map((s) => {
-                                    return (
-                                        <option key={s.id} value={s.id}>
-                                            {s.name.toUpperCase()}
-                                        </option>
-                                    );
-                                })}
-                            </Form.Select>
+                        <Form.Label>Store</Form.Label>
+                        <Form.Select
+                            disabled
+                            value={delivery.store_id}
+                            onChange={(e) =>
+                                setDelivery((prev) => ({
+                                    ...prev,
+                                    store_id: Number(e.target.value),
+                                }))
+                            }
+                        >
+                            <option value="0"></option>
+                            {stores.map((s) => {
+                                return (
+                                    <option key={s.id} value={s.id}>
+                                        {s.name.toUpperCase()}
+                                    </option>
+                                );
+                            })}
+                        </Form.Select>
                     </Col>
                 </Row>
                 <Row>
@@ -788,17 +788,17 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                         />
                     </Col>
                     <Col xs={10}>
-                            <Form.Label>Remarks</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={delivery.remarks ?? ""}
-                                onChange={(e) =>
-                                    setDelivery((prev) => ({
-                                        ...prev,
-                                        remarks: e.target.value,
-                                    }))
-                                }
-                            />
+                        <Form.Label>Remarks</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={delivery.remarks ?? ""}
+                            onChange={(e) =>
+                                setDelivery((prev) => ({
+                                    ...prev,
+                                    remarks: e.target.value,
+                                }))
+                            }
+                        />
                     </Col>
                 </Row>
                 <hr />
@@ -1010,7 +1010,7 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                                                                         0
                                                                     }
                                                                     value={
-                                                                        +deliveryItem
+                                                                        deliveryItem
                                                                             .details[
                                                                             i
                                                                         ]
