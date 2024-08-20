@@ -1,6 +1,6 @@
 #companies {
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 .address {
@@ -8,4 +8,9 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 200px;
+}
+
+#company-list.table {
+    --bs-table-hover-color: #fff;
+    --bs-table-hover-bg: rgb(142, 138, 138);
 }

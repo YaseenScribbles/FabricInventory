@@ -1,6 +1,6 @@
 #users {
     box-sizing: border-box;
-    font-family: 'Poppins',sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 .stores {
@@ -16,6 +16,11 @@
 
 .count {
     white-space: nowrap;
+}
+
+#user-list.table {
+    --bs-table-hover-color: #fff;
+    --bs-table-hover-bg: rgb(142, 138, 138);
 }
 
 /* @media screen and (width < 1370px) {

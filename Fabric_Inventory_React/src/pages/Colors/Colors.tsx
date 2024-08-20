@@ -1,4 +1,4 @@
-import {  Container, Table } from "react-bootstrap";
+import { Container, Table } from "react-bootstrap";
 import Heading from "../../components/Heading";
 import { useEffect, useState } from "react";
 import AddColor from "./AddColor";
@@ -107,7 +107,7 @@ const Colors: React.FC = () => {
                 buttonText="Add Color"
                 onClick={() => setShowAddColorModal(true)}
             />
-            <Table striped bordered hover size="sm">
+            <Table id="colors-list" bordered hover size="sm">
                 <thead>
                     <tr>
                         <th className="text-center">#</th>
@@ -152,11 +152,15 @@ const Colors: React.FC = () => {
                                                         );
                                                     }}
                                                     className="d-flex me-1"
+                                                    style={{
+                                                        cursor: "pointer",
+                                                    }}
                                                 >
                                                     <box-icon
                                                         name="edit-alt"
                                                         color="green"
                                                         size="sm"
+                                                        animation="tada-hover"
                                                     ></box-icon>
                                                 </div>
                                             )}
@@ -166,18 +170,23 @@ const Colors: React.FC = () => {
                                                         suspendColor(color.id)
                                                     }
                                                     className="d-flex"
+                                                    style={{
+                                                        cursor: "pointer",
+                                                    }}
                                                 >
                                                     {color.active === "1" ? (
                                                         <box-icon
                                                             name="x"
                                                             color="red"
                                                             size="sm"
+                                                            animation="tada-hover"
                                                         ></box-icon>
                                                     ) : (
                                                         <box-icon
                                                             name="check"
                                                             color="red"
                                                             size="sm"
+                                                            animation="tada-hover"
                                                         ></box-icon>
                                                     )}
                                                 </div>

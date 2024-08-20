@@ -1,9 +1,4 @@
-import {
-    Container,
-    OverlayTrigger,
-    Table,
-    Tooltip,
-} from "react-bootstrap";
+import { Container, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
 import Heading from "../../components/Heading";
 import { useEffect, useState } from "react";
 import "./companies.css";
@@ -128,7 +123,7 @@ const Companies: React.FC<CompaniesProps> = () => {
                 buttonText="Add Company"
                 onClick={() => setShowFormModal(true)}
             />
-            <Table striped bordered hover size="sm">
+            <Table id="company-list" bordered hover size="sm">
                 <thead>
                     <tr>
                         <th className="text-center">#</th>
@@ -190,11 +185,13 @@ const Companies: React.FC<CompaniesProps> = () => {
                                                     setEdit(true);
                                                     setShowFormModal(true);
                                                 }}
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 <box-icon
                                                     name="edit-alt"
                                                     color="green"
                                                     size="sm"
+                                                    animation="tada-hover"
                                                 />
                                             </div>
                                             <div
@@ -202,18 +199,21 @@ const Companies: React.FC<CompaniesProps> = () => {
                                                 onClick={() => {
                                                     suspendCompany(company.id);
                                                 }}
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 {company.active === "1" ? (
                                                     <box-icon
                                                         name="x"
                                                         color="red"
                                                         size="sm"
+                                                        animation="tada-hover"
                                                     />
                                                 ) : (
                                                     <box-icon
                                                         name="check"
                                                         color="red"
                                                         size="sm"
+                                                        animation="tada-hover"
                                                     />
                                                 )}
                                             </div>

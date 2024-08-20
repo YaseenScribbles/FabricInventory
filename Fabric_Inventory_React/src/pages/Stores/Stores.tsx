@@ -113,7 +113,7 @@ const Stores: React.FC = () => {
                 buttonText="Add Store"
                 onClick={() => setShowAddStoreModal(true)}
             />
-            <Table striped bordered hover size="sm">
+            <Table id="store-list" bordered hover size="sm">
                 <thead>
                     <tr>
                         <th className="text-center">#</th>
@@ -161,11 +161,13 @@ const Stores: React.FC = () => {
                                                     setEditStore(store);
                                                     setShowEditStoreModal(true);
                                                 }}
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 <box-icon
                                                     name="edit-alt"
                                                     color="green"
                                                     size="sm"
+                                                    animation="tada-hover"
                                                 ></box-icon>
                                             </div>
                                             <div
@@ -173,18 +175,21 @@ const Stores: React.FC = () => {
                                                 onClick={() =>
                                                     suspendStore(store.id)
                                                 }
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 {store.active === "1" ? (
                                                     <box-icon
                                                         name="x"
                                                         color="red"
                                                         size="sm"
+                                                        animation="tada-hover"
                                                     ></box-icon>
                                                 ) : (
                                                     <box-icon
                                                         name="check"
                                                         color="red"
                                                         size="sm"
+                                                        animation="tada-hover"
                                                     ></box-icon>
                                                 )}
                                             </div>

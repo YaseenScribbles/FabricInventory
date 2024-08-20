@@ -802,7 +802,7 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                     </Col>
                 </Row>
                 <hr />
-                <Table bordered hover size="sm">
+                <Table bordered size="sm">
                     <thead>
                         <tr>
                             <th>#</th>

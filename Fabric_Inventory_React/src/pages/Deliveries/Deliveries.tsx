@@ -14,6 +14,7 @@ import { LOCAL_URL } from "../../assets/common";
 import MyPagination from "../../components/Pagination";
 import AlertModal from "../../components/AlertModal";
 const AddEditDelivery = lazy(() => import("./AddEditDelivery"));
+import "./deliveries.css";
 
 interface Delivery {
     id: number;
@@ -124,7 +125,7 @@ const Deliveries: React.FC = () => {
                     setShowAddEditModal(true);
                 }}
             />
-            <Table striped bordered hover size="sm">
+            <Table id="delivery-list" bordered hover size="sm">
                 <thead>
                     <tr style={{ verticalAlign: "middle" }}>
                         <th className="eightypixels">D. No</th>
@@ -243,11 +244,13 @@ const Deliveries: React.FC = () => {
                                                     setShowAddEditModal(true);
                                                 }}
                                                 className="d-flex me-1"
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 <box-icon
                                                     name="edit-alt"
                                                     color="green"
                                                     size="sm"
+                                                    animation="tada-hover"
                                                 ></box-icon>
                                             </div>
                                         )}
@@ -259,12 +262,14 @@ const Deliveries: React.FC = () => {
                                                 );
                                             }}
                                             className="d-flex me-1"
+                                            style={{ cursor: "pointer" }}
                                         >
                                             <box-icon
                                                 type="solid"
                                                 name="file-pdf"
                                                 color="green"
                                                 size="sm"
+                                                animation="tada-hover"
                                             ></box-icon>
                                         </div>
                                         {user!.role === "admin" && (
@@ -274,11 +279,13 @@ const Deliveries: React.FC = () => {
                                                     setShowAlert(true);
                                                 }}
                                                 className="d-flex"
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 <box-icon
                                                     name="x"
                                                     color="red"
                                                     size="sm"
+                                                    animation="tada-hover"
                                                 ></box-icon>
                                             </div>
                                         )}

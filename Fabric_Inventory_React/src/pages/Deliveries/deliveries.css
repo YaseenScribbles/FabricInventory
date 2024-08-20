@@ -1,5 +1,5 @@
 #deliveries {
-    font-family: 'Poppins',sans-serif;
+    font-family: "Poppins", sans-serif;
     box-sizing: border-box;
 }
 
@@ -8,6 +8,11 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+#delivery-list.table {
+    --bs-table-hover-color: #fff;
+    --bs-table-hover-bg: rgb(142, 138, 138);
 }
 
 .table-input {

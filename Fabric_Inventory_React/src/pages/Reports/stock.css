@@ -1,8 +1,15 @@
-td.company, td.store, td.cloth, td.brand, td.contact {
+td.company,
+td.store,
+td.cloth,
+td.brand,
+td.contact {
     white-space: nowrap;
     overflow-x: hidden;
     max-width: 150px;
     text-overflow: ellipsis;
 }
 
-
+#stock-list.table {
+    --bs-table-hover-color: #fff;
+    --bs-table-hover-bg: rgb(142, 138, 138);
+}

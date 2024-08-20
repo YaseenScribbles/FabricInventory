@@ -107,7 +107,7 @@ const Fabrics: React.FC = () => {
                 buttonText="Add Cloth Type"
                 onClick={() => setShowAddFabricModal(true)}
             />
-            <Table striped bordered hover size="sm">
+            <Table id="fabric-list" bordered hover size="sm">
                 <thead>
                     <tr>
                         <th className="text-center">#</th>
@@ -152,11 +152,13 @@ const Fabrics: React.FC = () => {
                                                         );
                                                     }}
                                                     className="d-flex me-1"
+                                                    style={{ cursor:"pointer" }}
                                                 >
                                                     <box-icon
                                                         name="edit-alt"
                                                         color="green"
                                                         size="sm"
+                                                        animation="tada-hover"
                                                     ></box-icon>
                                                 </div>
                                             )}
@@ -166,18 +168,21 @@ const Fabrics: React.FC = () => {
                                                         suspendFabric(fabric.id)
                                                     }
                                                     className="d-flex"
+                                                    style={{ cursor:"pointer" }}
                                                 >
                                                     {fabric.active === "1" ? (
                                                         <box-icon
                                                             name="x"
                                                             color="red"
                                                             size="sm"
+                                                            animation="tada-hover"
                                                         ></box-icon>
                                                     ) : (
                                                         <box-icon
                                                             name="check"
                                                             color="red"
                                                             size="sm"
+                                                            animation="tada-hover"
                                                         ></box-icon>
                                                     )}
                                                 </div>

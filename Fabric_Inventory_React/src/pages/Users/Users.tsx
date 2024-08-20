@@ -1,9 +1,4 @@
-import {
-    Container,
-    OverlayTrigger,
-    Table,
-    Tooltip,
-} from "react-bootstrap";
+import { Container, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
 import "./Users.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -127,7 +122,7 @@ export const Users: React.FC = () => {
                 onClick={() => setShowAddUser(true)}
                 buttonText="Add User"
             />
-            <Table striped bordered hover size="sm">
+            <Table id="user-list" bordered hover size="sm">
                 <thead>
                     <tr>
                         <th className="text-center">#</th>
@@ -197,11 +192,13 @@ export const Users: React.FC = () => {
                                                     setEditUser(user);
                                                     setShowEditUser(true);
                                                 }}
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 <box-icon
                                                     name="edit-alt"
                                                     color="green"
                                                     size="sm"
+                                                    animation="tada-hover"
                                                 ></box-icon>
                                             </div>
                                             <div
@@ -210,11 +207,13 @@ export const Users: React.FC = () => {
                                                     setShowAssignModal(true);
                                                 }}
                                                 className="d-flex me-1"
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 <box-icon
                                                     name="store-alt"
                                                     color="green"
                                                     size="sm"
+                                                    animation="tada-hover"
                                                 ></box-icon>
                                             </div>
                                             <div
@@ -222,18 +221,21 @@ export const Users: React.FC = () => {
                                                 onClick={() =>
                                                     suspendUser(user.id)
                                                 }
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 {user.active === "1" ? (
                                                     <box-icon
                                                         name="x"
                                                         color="red"
                                                         size="sm"
+                                                        animation="tada-hover"
                                                     ></box-icon>
                                                 ) : (
                                                     <box-icon
                                                         name="check"
                                                         color="red"
                                                         size="sm"
+                                                        animation="tada-hover"
                                                     ></box-icon>
                                                 )}
                                             </div>

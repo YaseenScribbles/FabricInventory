@@ -15,13 +15,13 @@ const AddReceipt = lazy(() => import("./AddReceipt"));
 import axios from "axios";
 import { LOCAL_URL } from "../../assets/common";
 import MyPagination from "../../components/Pagination";
-import "./Receipt.css";
 import { useUserContext } from "../../contexts/UserContext";
 import Select from "react-select";
 const AddEditDelivery = lazy(() => import("../Deliveries/AddEditDelivery"));
 import { Navigate } from "react-router";
 import AlertModal from "../../components/AlertModal";
 import Brand from "./Brand";
+import "./Receipt.css";
 
 interface Receipt {
     id: number;
@@ -270,7 +270,7 @@ const Receipts: React.FC = () => {
                 </Col>
             </Row>
             <hr />
-            <Table striped bordered hover className="receipts-table" size="sm">
+            <Table bordered hover id="receipts-table" size="sm">
                 <thead>
                     <tr style={{ verticalAlign: "middle" }}>
                         {/* <th>#</th> */}
@@ -423,11 +423,13 @@ const Receipts: React.FC = () => {
                                                         setShowAddReceipt(true);
                                                     }}
                                                     className="d-flex me-1"
+                                                    style={{ cursor: "pointer" }}
                                                 >
                                                     <box-icon
                                                         name="edit-alt"
                                                         color="green"
                                                         size="sm"
+                                                        animation="tada-hover"
                                                     ></box-icon>
                                                 </div>
                                             )}
@@ -440,12 +442,14 @@ const Receipts: React.FC = () => {
                                                     );
                                                     setShowDeliveryModal(true);
                                                 }}
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 <box-icon
                                                     type="solid"
                                                     name="truck"
                                                     color="green"
                                                     size="sm"
+                                                    animation="tada-hover"
                                                 ></box-icon>
                                             </div>
                                             <div
@@ -453,12 +457,14 @@ const Receipts: React.FC = () => {
                                                     openReport(receipt.id)
                                                 }
                                                 className="d-flex me-1"
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 <box-icon
                                                     type="solid"
                                                     name="file-pdf"
                                                     color="green"
                                                     size="sm"
+                                                    animation="tada-hover"
                                                 ></box-icon>
                                             </div>
                                             <div
@@ -468,11 +474,13 @@ const Receipts: React.FC = () => {
                                                     setAlertId(receipt.id);
                                                     setShowAlert(true);
                                                 }}
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 <box-icon
                                                     name="check-double"
                                                     color="green"
                                                     size="sm"
+                                                    animation="tada-hover"
                                                 ></box-icon>
                                             </div>
                                             <div
@@ -482,11 +490,13 @@ const Receipts: React.FC = () => {
                                                     setShowBrandModal(true);
                                                 }}
                                                 className="d-flex"
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 <box-icon
                                                     name="customize"
                                                     color="green"
                                                     size="sm"
+                                                    animation="tada-hover"
                                                 ></box-icon>
                                             </div>
                                             {user?.role === "admin" && (
@@ -501,11 +511,13 @@ const Receipts: React.FC = () => {
                                                         );
                                                     }}
                                                     className="d-flex me-1"
+                                                    style={{ cursor: "pointer" }}
                                                 >
                                                     <box-icon
                                                         name="x"
                                                         color="red"
                                                         size="sm"
+                                                        animation="tada-hover"
                                                     ></box-icon>
                                                 </div>
                                             )}
