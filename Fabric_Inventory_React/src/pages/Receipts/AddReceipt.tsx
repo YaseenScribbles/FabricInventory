@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
     Button,
     Col,
+    Container,
     Form,
     Modal,
     Row,
@@ -26,6 +27,7 @@ import Select, { GroupBase, OptionsOrGroups } from "react-select";
 // import CustomAlert from "../../components/Alert";
 import AlertModal from "../../components/AlertModal";
 import SelectAsync from "react-select/async";
+import AddColor from "../Colors/AddColor";
 
 type AddReceiptProps = {
     show: boolean;
@@ -134,6 +136,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
     const [showAlert, setShowAlert] = useState(false);
     const [removeIndex, setRemoveIndex] = useState(0);
     const hasFetchedData = useRef(false);
+    const [showAddColorModal, setShowAddColorModal] = useState(false);
 
     const [receipt, setReceipt] = useState<Receipt>({
         lot_no: "",
@@ -621,37 +624,40 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <ToastContainer
-                    position="bottom-end"
-                    className="p-3 font-monospace"
-                    style={{ zIndex: 1 }}
-                >
-                    {errors.map((e, i) => {
-                        return (
-                            <Toast
-                                key={i}
-                                bg={
-                                    `${e.type === "failure"}`
-                                        ? "warning"
-                                        : "success"
-                                }
-                            >
-                                <Toast.Header closeButton={false}>
-                                    <strong className="me-auto">
-                                        Fabric Inventory
-                                    </strong>
-                                </Toast.Header>
-                                <Toast.Body>
-                                    <b
-                                        className={`${
-                                            e.type === "success" && "text-light"
-                                        }`}
-                                    >{`${e.message.toUpperCase()}`}</b>
-                                </Toast.Body>
-                            </Toast>
-                        );
-                    })}
-                </ToastContainer>
+                <Container fluid className="position-relative">
+                    <ToastContainer
+                        position="bottom-start"
+                        className="p-3 font-monospace"
+                        style={{ zIndex: 1, height: "100%" }}
+                    >
+                        {errors.map((e, i) => {
+                            return (
+                                <Toast
+                                    key={i}
+                                    bg={
+                                        `${e.type === "failure"}`
+                                            ? "warning"
+                                            : "success"
+                                    }
+                                >
+                                    <Toast.Header closeButton={false}>
+                                        <strong className="me-auto">
+                                            Fabric Inventory
+                                        </strong>
+                                    </Toast.Header>
+                                    <Toast.Body>
+                                        <b
+                                            className={`${
+                                                e.type === "success" &&
+                                                "text-light"
+                                            }`}
+                                        >{`${e.message.toUpperCase()}`}</b>
+                                    </Toast.Body>
+                                </Toast>
+                            );
+                        })}
+                    </ToastContainer>
+                </Container>
                 <Row className="mb-3">
                     <Col xs={1}>
                         <Form.Label>Lot No</Form.Label>
@@ -755,7 +761,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                             }
                         />
                     </Col>
-                    <Col xs={6}>
+                    <Col xs={4}>
                         <Form.Label>Remarks</Form.Label>
                         <Form.Control
                             type="text"
@@ -784,12 +790,28 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                         <Button
                             onClick={addEntry}
                             className="d-flex h-50 w-100 justify-content-center align-items-center"
+                            variant="success"
                         >
                             <box-icon
                                 name="plus"
                                 color="white"
                                 size="lg"
                             ></box-icon>
+                        </Button>
+                    </Col>
+                    <Col xs={2} className="mt-1">
+                        <Form.Label></Form.Label>
+                        <Button
+                            onClick={() => setShowAddColorModal(true)}
+                            className="d-flex h-50 w-100 justify-content-center align-items-center"
+                            variant="success"
+                        >
+                            <box-icon
+                                name="plus"
+                                color="white"
+                                size="sm"
+                            ></box-icon>
+                            Add Color
                         </Button>
                     </Col>
                 </Row>
@@ -1075,7 +1097,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                                         <tr>
                                                             <td>
                                                                 <Button
-                                                                    variant="primary"
+                                                                    variant="success"
                                                                     onClick={() => {
                                                                         addEntry();
                                                                     }}
@@ -1141,6 +1163,29 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                         setShowAlert(false);
                     }}
                 />
+                <AddColor
+                    show={showAddColorModal}
+                    onAdded={async () => {
+                        try {
+                            const response = await axios.get(
+                                `${LOCAL_URL}/colors?all=true`
+                            );
+                            const { data } = response;
+                            setColors(data.data);
+                        } catch (error: any) {
+                            const { response } = error;
+                            setErrors((p) => [
+                                ...p,
+                                {
+                                    message: response.data.message,
+                                    type: "failure",
+                                },
+                            ]);
+                            clearErrors();
+                        }
+                    }}
+                    onClose={() => setShowAddColorModal(false)}
+                />
             </Modal.Body>
             <Modal.Footer>
                 <div className="d-flex justify-content-between w-100">
@@ -1168,7 +1213,7 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                             </Col>
                         </Row>
                     </div>
-                    <Button size="lg" onClick={saveReceipt}>
+                    <Button size="lg" onClick={saveReceipt} variant="success">
                         {`${edit ? "Update" : "Save"}`}
                     </Button>
                 </div>

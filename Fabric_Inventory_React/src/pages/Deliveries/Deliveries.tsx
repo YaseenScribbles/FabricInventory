@@ -125,7 +125,7 @@ const Deliveries: React.FC = () => {
                     setShowAddEditModal(true);
                 }}
             />
-            <Table id="delivery-list" bordered hover size="sm">
+            <Table id="delivery-list" bordered striped hover size="sm">
                 <thead>
                     <tr style={{ verticalAlign: "middle" }}>
                         <th className="eightypixels">D. No</th>
@@ -248,7 +248,7 @@ const Deliveries: React.FC = () => {
                                             >
                                                 <box-icon
                                                     name="edit-alt"
-                                                    color="green"
+                                                    color="#3e9d8f"
                                                     size="sm"
                                                     animation="tada-hover"
                                                 ></box-icon>
@@ -267,7 +267,7 @@ const Deliveries: React.FC = () => {
                                             <box-icon
                                                 type="solid"
                                                 name="file-pdf"
-                                                color="green"
+                                                color="#3e9d8f"
                                                 size="sm"
                                                 animation="tada-hover"
                                             ></box-icon>

@@ -123,7 +123,7 @@ const Companies: React.FC<CompaniesProps> = () => {
                 buttonText="Add Company"
                 onClick={() => setShowFormModal(true)}
             />
-            <Table id="company-list" bordered hover size="sm">
+            <Table id="company-list" bordered striped hover size="sm">
                 <thead>
                     <tr>
                         <th className="text-center">#</th>
@@ -189,7 +189,7 @@ const Companies: React.FC<CompaniesProps> = () => {
                                             >
                                                 <box-icon
                                                     name="edit-alt"
-                                                    color="green"
+                                                    color="#3e9d8f"
                                                     size="sm"
                                                     animation="tada-hover"
                                                 />

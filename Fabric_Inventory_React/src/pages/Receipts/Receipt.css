@@ -12,7 +12,8 @@
 
 #receipts-table.table {
     --bs-table-hover-color: #fff; /* Your custom text color */
-    --bs-table-hover-bg: rgb(142, 138, 138); /* Your custom background color */
+    /* --bs-table-hover-bg: rgb(142, 138, 138); Your custom background color */
+    --bs-table-hover-bg: rgba(var(--bs-success-rgb), 0.8);
 }
 
 .table-input {

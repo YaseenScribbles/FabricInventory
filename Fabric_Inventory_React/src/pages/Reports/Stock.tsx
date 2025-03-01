@@ -431,7 +431,7 @@ const Stock: React.FC = () => {
                 </Col>
             </Row>
             <hr />
-            <Table id="stock-list" bordered hover size="sm">
+            <Table id="stock-list" bordered striped hover size="sm">
                 <thead>
                     <tr style={{ verticalAlign: "middle" }}>
                         <th>R. No</th>
@@ -547,7 +547,7 @@ const Stock: React.FC = () => {
                                             <box-icon
                                                 type="solid"
                                                 name="file-pdf"
-                                                color="green"
+                                                color="#3e9d8f"
                                                 size="sm"
                                                 animation="tada-hover"
                                             ></box-icon>

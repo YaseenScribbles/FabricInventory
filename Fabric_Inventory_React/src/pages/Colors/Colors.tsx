@@ -107,7 +107,7 @@ const Colors: React.FC = () => {
                 buttonText="Add Color"
                 onClick={() => setShowAddColorModal(true)}
             />
-            <Table id="colors-list" bordered hover size="sm">
+            <Table id="colors-list" bordered striped hover size="sm">
                 <thead>
                     <tr>
                         <th className="text-center">#</th>
@@ -158,7 +158,7 @@ const Colors: React.FC = () => {
                                                 >
                                                     <box-icon
                                                         name="edit-alt"
-                                                        color="green"
+                                                        color="#3e9d8f"
                                                         size="sm"
                                                         animation="tada-hover"
                                                     ></box-icon>

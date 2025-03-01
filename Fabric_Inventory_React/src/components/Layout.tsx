@@ -47,7 +47,7 @@ export const Layout = () => {
 
     return (
         <div id="layout">
-            <Navbar bg="light" data-bs-theme="light">
+            <Navbar bg="success" data-bs-theme="dark" >
                 <Container>
                     <Navbar.Brand href="/">Fabric Inventory</Navbar.Brand>
                     <Nav className="me-auto">
@@ -124,7 +124,7 @@ export const Layout = () => {
                 <ToastContainer
                     position="top-end"
                     className="font-monospace"
-                    style={{ zIndex: 1 }}
+                    style={{ zIndex: 2000 }}
                 >
                     {notifications.map((n, i) => {
                         return (

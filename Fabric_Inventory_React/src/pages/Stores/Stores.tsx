@@ -113,7 +113,7 @@ const Stores: React.FC = () => {
                 buttonText="Add Store"
                 onClick={() => setShowAddStoreModal(true)}
             />
-            <Table id="store-list" bordered hover size="sm">
+            <Table id="store-list" bordered striped hover size="sm">
                 <thead>
                     <tr>
                         <th className="text-center">#</th>
@@ -165,7 +165,7 @@ const Stores: React.FC = () => {
                                             >
                                                 <box-icon
                                                     name="edit-alt"
-                                                    color="green"
+                                                    color="#3e9d8f"
                                                     size="sm"
                                                     animation="tada-hover"
                                                 ></box-icon>

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
     Button,
     Col,
+    Container,
     Form,
     Modal,
     Row,
@@ -624,37 +625,40 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <ToastContainer
-                    position="bottom-end"
-                    className="p-3 font-monospace"
-                    style={{ zIndex: 1 }}
-                >
-                    {errors.map((e, i) => {
-                        return (
-                            <Toast
-                                key={i}
-                                bg={
-                                    `${e.type === "failure"}`
-                                        ? "warning"
-                                        : "success"
-                                }
-                            >
-                                <Toast.Header closeButton={false}>
-                                    <strong className="me-auto">
-                                        Fabric Inventory
-                                    </strong>
-                                </Toast.Header>
-                                <Toast.Body>
-                                    <b
-                                        className={`${
-                                            e.type === "success" && "text-light"
-                                        }`}
-                                    >{`${e.message.toUpperCase()}`}</b>
-                                </Toast.Body>
-                            </Toast>
-                        );
-                    })}
-                </ToastContainer>
+                <Container className="position-relative">
+                    <ToastContainer
+                        position="bottom-end"
+                        className="p-3 font-monospace"
+                        style={{ zIndex: 1, height: "100%" }}
+                    >
+                        {errors.map((e, i) => {
+                            return (
+                                <Toast
+                                    key={i}
+                                    bg={
+                                        `${e.type === "failure"}`
+                                            ? "warning"
+                                            : "success"
+                                    }
+                                >
+                                    <Toast.Header closeButton={false}>
+                                        <strong className="me-auto">
+                                            Fabric Inventory
+                                        </strong>
+                                    </Toast.Header>
+                                    <Toast.Body>
+                                        <b
+                                            className={`${
+                                                e.type === "success" &&
+                                                "text-light"
+                                            }`}
+                                        >{`${e.message.toUpperCase()}`}</b>
+                                    </Toast.Body>
+                                </Toast>
+                            );
+                        })}
+                    </ToastContainer>
+                </Container>
                 <Row className="mb-3">
                     <Col xs={1}>
                         <Form.Label>Receipt No</Form.Label>
@@ -1176,7 +1180,7 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                             </Col>
                         </Row>
                     </div>
-                    <Button size="lg" onClick={saveDelivery}>
+                    <Button variant="success" size="lg" onClick={saveDelivery}>
                         {`${edit ? "Update" : "Save"}`}
                     </Button>
                 </div>

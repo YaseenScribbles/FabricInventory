@@ -122,7 +122,7 @@ export const Users: React.FC = () => {
                 onClick={() => setShowAddUser(true)}
                 buttonText="Add User"
             />
-            <Table id="user-list" bordered hover size="sm">
+            <Table id="user-list" bordered striped hover size="sm">
                 <thead>
                     <tr>
                         <th className="text-center">#</th>
@@ -196,7 +196,7 @@ export const Users: React.FC = () => {
                                             >
                                                 <box-icon
                                                     name="edit-alt"
-                                                    color="green"
+                                                    color="#3e9d8f"
                                                     size="sm"
                                                     animation="tada-hover"
                                                 ></box-icon>
@@ -211,7 +211,7 @@ export const Users: React.FC = () => {
                                             >
                                                 <box-icon
                                                     name="store-alt"
-                                                    color="green"
+                                                    color="#3e9d8f"
                                                     size="sm"
                                                     animation="tada-hover"
                                                 ></box-icon>

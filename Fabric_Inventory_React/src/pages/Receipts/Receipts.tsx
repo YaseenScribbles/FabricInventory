@@ -270,7 +270,7 @@ const Receipts: React.FC = () => {
                 </Col>
             </Row>
             <hr />
-            <Table bordered hover id="receipts-table" size="sm">
+            <Table bordered hover striped id="receipts-table" size="sm">
                 <thead>
                     <tr style={{ verticalAlign: "middle" }}>
                         {/* <th>#</th> */}
@@ -427,7 +427,7 @@ const Receipts: React.FC = () => {
                                                 >
                                                     <box-icon
                                                         name="edit-alt"
-                                                        color="green"
+                                                        color="#3e9d8f"
                                                         size="sm"
                                                         animation="tada-hover"
                                                     ></box-icon>
@@ -447,7 +447,7 @@ const Receipts: React.FC = () => {
                                                 <box-icon
                                                     type="solid"
                                                     name="truck"
-                                                    color="green"
+                                                    color="#3e9d8f"
                                                     size="sm"
                                                     animation="tada-hover"
                                                 ></box-icon>
@@ -462,7 +462,7 @@ const Receipts: React.FC = () => {
                                                 <box-icon
                                                     type="solid"
                                                     name="file-pdf"
-                                                    color="green"
+                                                    color="#3e9d8f"
                                                     size="sm"
                                                     animation="tada-hover"
                                                 ></box-icon>
@@ -478,7 +478,7 @@ const Receipts: React.FC = () => {
                                             >
                                                 <box-icon
                                                     name="check-double"
-                                                    color="green"
+                                                    color="#3e9d8f"
                                                     size="sm"
                                                     animation="tada-hover"
                                                 ></box-icon>
@@ -494,7 +494,7 @@ const Receipts: React.FC = () => {
                                             >
                                                 <box-icon
                                                     name="customize"
-                                                    color="green"
+                                                    color="#3e9d8f"
                                                     size="sm"
                                                     animation="tada-hover"
                                                 ></box-icon>

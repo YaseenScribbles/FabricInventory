@@ -20,7 +20,8 @@
 
 #user-list.table {
     --bs-table-hover-color: #fff;
-    --bs-table-hover-bg: rgb(142, 138, 138);
+    /* --bs-table-hover-bg: rgb(142, 138, 138); */
+    --bs-table-hover-bg: rgba(var(--bs-success-rgb), 0.8);
 }
 
 /* @media screen and (width < 1370px) {
