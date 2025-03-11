@@ -13,7 +13,7 @@ import { useNotificationContext } from "../../contexts/NotificationsContext";
 import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
 const AddReceipt = lazy(() => import("./AddReceipt"));
 import axios from "axios";
-import { LOCAL_URL } from "../../assets/common";
+import { colorPrimary, LOCAL_URL } from "../../assets/common";
 import MyPagination from "../../components/Pagination";
 import { useUserContext } from "../../contexts/UserContext";
 import Select from "react-select";
@@ -249,6 +249,16 @@ const Receipts: React.FC = () => {
                         options={stores}
                         placeholder="Select Store"
                         isClearable
+                        theme={(theme) => ({
+                            ...theme,
+                            colors: {
+                                ...theme.colors,
+                                primary :colorPrimary,
+                                primary25: colorPrimary,
+                                primary50:colorPrimary,
+                                primary75: colorPrimary
+                            }
+                        })}
                     />
                 </Col>
                 <Col

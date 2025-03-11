@@ -13,7 +13,7 @@ import {
 import { useUserContext } from "../../contexts/UserContext";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { LOCAL_URL } from "../../assets/common";
+import { colorPrimary, LOCAL_URL } from "../../assets/common";
 import { useTypedSelector } from "../../store/Store";
 import {
     add,
@@ -699,6 +699,16 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                     company_id: Number(e ? e.value : 0),
                                 }));
                             }}
+                            theme={(theme) => ({
+                                ...theme,
+                                colors: {
+                                    ...theme.colors,
+                                    primary: colorPrimary,
+                                    primary25: colorPrimary,
+                                    primary50: colorPrimary,
+                                    primary75: colorPrimary,
+                                },
+                            })}
                         />
                     </Col>
                     <Col xs={2}>
@@ -714,6 +724,16 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                     store_id: Number(e ? e.value : 0),
                                 }));
                             }}
+                            theme={(theme) => ({
+                                ...theme,
+                                colors: {
+                                    ...theme.colors,
+                                    primary: colorPrimary,
+                                    primary25: colorPrimary,
+                                    primary50: colorPrimary,
+                                    primary75: colorPrimary,
+                                },
+                            })}
                         />
                     </Col>
                     <Col xs={3}>
@@ -729,6 +749,16 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                 }));
                             }}
                             isClearable
+                            theme={(theme) => ({
+                                ...theme,
+                                colors: {
+                                    ...theme.colors,
+                                    primary: colorPrimary,
+                                    primary25: colorPrimary,
+                                    primary50: colorPrimary,
+                                    primary75: colorPrimary,
+                                },
+                            })}
                         />
                     </Col>
                     <Col xs={2}>
@@ -744,6 +774,16 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                     fabric_id: Number(e ? e.value : 0),
                                 }));
                             }}
+                            theme={(theme) => ({
+                                ...theme,
+                                colors: {
+                                    ...theme.colors,
+                                    primary: colorPrimary,
+                                    primary25: colorPrimary,
+                                    primary50: colorPrimary,
+                                    primary75: colorPrimary,
+                                },
+                            })}
                         />
                     </Col>
                 </Row>
@@ -892,6 +932,16 @@ const AddReceipt: React.FC<AddReceiptProps> = ({
                                                 }}
                                                 options={availableColors}
                                                 placeholder="Select Color"
+                                                theme={(theme) => ({
+                                                    ...theme,
+                                                    colors: {
+                                                        ...theme.colors,
+                                                        primary: colorPrimary,
+                                                        primary25: colorPrimary,
+                                                        primary50: colorPrimary,
+                                                        primary75: colorPrimary,
+                                                    },
+                                                })}
                                             />
                                         </td>
                                         <td>

@@ -12,7 +12,7 @@ import {
 } from "react-bootstrap";
 import { useUserContext } from "../../contexts/UserContext";
 import axios from "axios";
-import { LOCAL_URL } from "../../assets/common";
+import { colorPrimary, LOCAL_URL } from "../../assets/common";
 import { useTypedSelector } from "../../store/Store";
 import { useDispatch } from "react-redux";
 import { add, clear, update } from "../../store/DeliveryItemsSlice";
@@ -789,6 +789,16 @@ const AddEditDelivery: React.FC<AddEditDeliveryProps> = ({
                                 }));
                             }}
                             isClearable
+                            theme={(theme) => ({
+                                ...theme,
+                                colors: {
+                                    ...theme.colors,
+                                    primary: colorPrimary,
+                                    primary25: colorPrimary,
+                                    primary50: colorPrimary,
+                                    primary75: colorPrimary,
+                                },
+                            })}
                         />
                     </Col>
                     <Col xs={10}>
